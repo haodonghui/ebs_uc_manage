@@ -1,0 +1,89 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户账户流水管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="mobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="accountNo" name="账户编码" maxlength="10"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="amountEgt" name="发生金额大于等于" maxlength="11" onkeyup="Feng.validateNumber('amountEgt')" />
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="amountElt" name="发生金额小于等于" maxlength="11" onkeyup="Feng.validateNumber('amountElt')" />
+                            </div>
+                       		<div class="col-sm-3 col-lg-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 col-lg-3">
+                                <#SelectCon id="type" name="方向">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">增加</option>
+			                        <option value="2">减少</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#SelectCon id="tradeType" name="交易类型">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#SelectCon id="payType" name="充值类型">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="tradeNo" name="大益卡流水号" maxlength="50"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="thirdpartyTradeNo" name="第三方交易单号" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#button name="搜索" icon="fa-search" clickFun="UserAccountFlow.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="UserAccountFlowTableToolbar" role="group">
+                            @if(shiro.hasPermission("/userAccountFlow/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="UserAccountFlow.openAddUserAccountFlow()"/>
+                            @}
+                            @if(shiro.hasPermission("/userAccountFlow/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="UserAccountFlow.openUserAccountFlowDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/userAccountFlow/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="UserAccountFlow.delete()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/userAccountFlow/export")){
+                                <#button name="导出" icon="fa-download" clickFun="UserAccountFlow.export()"/>
+                            @}
+                        </div>
+                        <#table id="UserAccountFlowTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/userAccountFlow/userAccountFlow.js"></script>
+@}

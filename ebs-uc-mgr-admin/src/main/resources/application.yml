@@ -1,0 +1,282 @@
+##########################################################
+##################  所有profile共有的配置  #################
+##########################################################
+
+###################  guns配置  ###################
+uc-mgr:
+  swagger-open: true #是否开启swagger (true/false)
+  session-open: false #是否开启session超时验证（受影响的类SessionTimeoutInterceptor） (true/false)
+  #file-upload-path: d:/tmp  #文件上传目录(不配置的话为java.io.tmpdir目录)
+  muti-datasource-open: true #是否开启多数据源(true/false)
+  spring-session-open: false #是否开启spring session,如果是多机环境需要开启(true/false)
+  session-invalidate-time: 7200 #session失效时间(只在单机环境下生效，多机环境在SpringSessionConfig类中配置) 单位：秒
+  session-validation-interval: 900 #多久检测一次失效的session(只在单机环境下生效) 单位：秒
+
+###################  beetl配置  ###################
+beetl:
+  delimiter-statement-start: \@   #开始结束标签(yaml不允许@开头)
+  delimiter-statement-end: null
+  resource-tagroot: common/tags   #自定义标签文件Root目录和后缀
+  resource-tagsuffix: tag
+
+###################  spring配置  ###################
+spring:
+  profiles:
+    active: #spring.profiles.active#
+  mvc:
+    static-path-pattern: /static/**
+    view:
+#      prefix: /WEB-INF/view
+      prefix: /view
+  http:
+    converters:
+      preferred-json-mapper: fastjson
+    multipart:
+      max-request-size: 100MB #最大请求大小
+      max-file-size: 100MB #最大文件大小
+  devtools:
+    restart:
+      enabled: false #是否开启开发者工具（true/false）
+      additional-paths: src/main/java
+      exclude: static/**,view/**
+  aop:
+    proxy-target-class: true #false为启用jdk默认动态代理,true为cglib动态代理
+    
+
+
+###################  mybatis-plus配置  ###################
+mybatis-plus:
+  mapper-locations: classpath*:com/yestae/user/manage/**/mapping/*.xml
+  typeAliasesPackage: com.yestae.user.manage.**.persistence.model
+  global-config:
+    id-type: 3  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+
+---
+
+##########################################################
+###################  本机环境的profile  ###################
+##########################################################
+
+spring:
+  profiles: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/dev_tea_uc_mgr?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: root
+    filters: log4j,wall,mergeStat
+          
+#多数据源
+uc-mgr:
+  muti-datasource:
+    default-dataSource-name: dataSourceUcMgr #默认的数据源名称
+    url: jdbc:mysql://192.168.100.220:3306/dev_tea_uc?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: lb,LtawoFcd.eV@J
+
+  kaptcha-open: false #是否开启登录时验证码 (true/false)
+
+server:
+  port: 8060 #项目启动端口
+
+beetl:
+  resource-auto-check: true #是否检测文件变化,开发用true合适，但线上要改为false
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+#公共常量
+uc-constant:
+  defaultPassword: tae7542 #重置密码
+  imageDir: d:/upload #图片存放路径
+  imageServer: http://localhost:8060/imageServer #图片服务器
+  userImageDir: /app/user #用户图片路径
+  weixinQrCodeDir: /app/qrcode #微信小程序码图片路径
+  poaTmplFileDir: /app/poa #授权委托书模板文件
+
+logging:
+  level.root: info
+  level.com.yestae: info
+  path: logs/
+  file: uc-mgr.log
+---
+
+##########################################################
+###################  开发环境的profile  ###################
+##########################################################
+
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://dev-app-db.tae-tea.net:3306/dev_tea_uc_mgr?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: lb,LtawoFcd.eV@J
+    filters: log4j,wall,mergeStat
+
+#多数据源
+uc-mgr:
+  muti-datasource:
+    default-dataSource-name: dataSourceUcMgr #默认的数据源名称
+    url: jdbc:mysql://dev-app-db.tae-tea.net:3306/dev_tea_uc?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: lb,LtawoFcd.eV@J
+
+  kaptcha-open: false #是否开启登录时验证码 (true/false)
+
+  muti-datasource-coin:
+    default-dataSource-name: dataSourceCoin
+    url: jdbc:mysql://192.168.100.153:3306/yestae-coin?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: lb,LtawoFcd.eV@J
+
+server:
+  port: 8060 #项目启动端口
+
+beetl:
+  resource-auto-check: true #是否检测文件变化,开发用true合适，但线上要改为false
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+#公共常量
+uc-constant:
+  defaultPassword: tae7542 #重置密码
+  imageDir: /data/image/dev-image-yyh #图片存放路径
+  imageServer: http://localhost:8060/imageServer #图片服务器
+#  imageServer: http://192.168.100.221:8060/imageServer #图片服务器
+  userRealNameImageDir: /websupport/idcard #用户实名制图片路径
+  userImageDir: /app/user #用户图片路径
+  weixinQrCodeDir: /app/qrcode #微信小程序码图片路径
+  poaTmplFileDir: /app/poa #授权委托书模板文件
+
+logging:
+  level.root: info
+  level.com.yestae: info
+  path: logs/
+  file: uc-mgr.log
+
+smshttp:
+  validapiUrl: https://sms-api-test.yestae.com/sms-api/sms/open/send/sendVerificationCode
+  platform: HOAQZTSPCXI
+
+---
+
+##########################################################
+###################  测试环境的profile  ###################
+##########################################################
+
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:mysql://172.17.186.164:3306/test_tea_user_center_mgr?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: test_tea_user_center_mgr
+    password: "t-=7=Lg@U%mA40m2"
+    filters: log4j,wall,mergeStat
+
+#多数据源
+uc-mgr:
+  muti-datasource:
+    default-dataSource-name: dataSourceUcMgr #默认的数据源名称
+    url: jdbc:mysql://172.17.186.153:3306/test_tea_uc?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: test_tea_uc
+    password: "pw@kbm9p0Yl@!t3bZD"
+
+  kaptcha-open: true #是否开启登录时验证码 (true/false)
+
+  muti-datasource-coin:
+    default-dataSource-name: dataSourceCoin
+    url: jdbc:mysql://172.17.186.164:3306/test_yestae_coin?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: test_yestae_coin
+    password: u16xbyyxmkVCxxs
+
+server:
+  port: 8060 #项目启动端口
+
+beetl:
+  resource-auto-check: false #是否检测文件变化,开发用true合适，但线上要改为false
+
+#公共常量
+uc-constant:
+  defaultPassword: tae7542 #重置密码
+  imageDir: /data/image/test-image-yyh #图片存放路径
+  imageServer: https://test-image-ccq.yestae.com #图片服务器
+  userImageDir: /app/user #用户图片路径
+  weixinQrCodeDir: /app/qrcode #微信小程序码图片路径
+  userRealNameImageDir: /websupport/idcard #用户实名制图片路径
+  poaTmplFileDir: /app/poa #授权委托书模板文件
+
+
+logging:
+  level.root: info
+  level.com.yestae: info
+  path: logs/
+  file: uc-mgr.log
+
+smshttp:
+  validapiUrl: https://sms-api-test.yestae.com/sms-api/sms/open/send/sendVerificationCode
+  platform: HOAQZTSPCXI
+  
+---
+
+##########################################################
+###################  正式环境的profile  ###################
+##########################################################
+
+spring:
+  profiles: pro
+  datasource:
+    url: jdbc:mysql://mall-mysql-master:3306/tea_uc_manage?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: tea_uc_manage
+    password: a%X8fh*=gVE2Ez2M$@m7
+    filters: log4j,wall,mergeStat
+
+#多数据源
+uc-mgr:
+  muti-datasource:
+    default-dataSource-name: dataSourceUcMgr #默认的数据源名称
+    url: jdbc:mysql://uc-mysql-master:3306/tea_uc?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: tea_uc
+    password: "!xkpLr6aW2Z~XW!B8.k~"
+
+  kaptcha-open: true #是否开启登录时验证码 (true/false)
+
+  muti-datasource-coin:
+    default-dataSource-name: dataSourceCoin
+    url: jdbc:mysql://mall-mysql-master:3306/yestae_coin?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: yestae_coin
+    password: O3DYwq#qo%ZZ2DiU841Ue0
+
+server:
+  port: 8060 #项目启动端口
+
+beetl:
+  resource-auto-check: false #是否检测文件变化,开发用true合适，但线上要改为false
+
+uc-constant:
+  defaultPassword: tae7542 #重置密码
+  imageDir: /data/image/image-bbs #图片存放路径
+  imageServer: http://image-bbs.yestae.com #图片服务器
+  userImageDir: /app/user #用户图片路径
+  weixinQrCodeDir: /app/qrcode #微信小程序码图片路径
+  userRealNameImageDir: /websupport/idcard #用户实名制图片路径
+  poaTmplFileDir: /app/poa #授权委托书模板文件
+
+
+logging:
+  level.root: info
+  level.com.yestae: info
+  path: /data/logs/uc-manage/
+  file: uc-mgr.log
+
+smshttp:
+  validapiUrl: https://sms-api.yestae.com/sms-api/sms/open/send/sendVerificationCode
+  platform: HOAQZTSPCXI

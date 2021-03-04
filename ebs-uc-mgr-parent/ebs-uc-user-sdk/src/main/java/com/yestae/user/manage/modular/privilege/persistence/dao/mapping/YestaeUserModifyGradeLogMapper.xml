@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserModifyGradeLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyGradeLog">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="operator_id" property="operatorId" />
+		<result column="operator_name" property="operatorName" />
+		<result column="source_card" property="sourceCard" />
+		<result column="target_card" property="targetCard" />
+		<result column="remark" property="remark" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map" >
+		<id column="id" property="id" />
+		<result column="name" property="name"/>
+		<result column="mobile" property="mobile" />
+		<result column="operator_name" property="operatorName" />
+		<result column="source_card" property="sourceCard" />
+		<result column="target_card" property="targetCard" />
+		<result column="remark" property="remark" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, operator_id AS operatorId, operator_name AS operatorName, source_card AS sourceCard, target_card AS targetCard, remark, create_time AS createTime, update_time AS updateTime
+    </sql>
+    
+    <select id="selectYestaeUserModifyGradeLogList" parameterType="map" resultMap="ResultMap">
+	    select g.id, u.name, u.mobile, g.operator_name, g.source_card, g.target_card, g.remark, g.create_time
+	    from uc_user_modify_grade_log g
+	    join uc_user u on g.user_id = u.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.mobile != null and map.mobile !=''">
+		        and u.mobile like CONCAT('%',#{map.mobile},'%')
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and u.if_del = #{map.ifDel}
+		    </if>  
+	    </where> 
+	    order by g.create_time desc
+    </select>
+
+</mapper>

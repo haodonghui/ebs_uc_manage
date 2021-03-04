@@ -1,0 +1,6 @@
+# Project exclude paths
+/ebs-uc-mgr-admin/target/
+/ebs-uc-mgr-core/target/
+/ebs-uc-mgr-parent/ebs-uc-common-sdk/target/
+/ebs-uc-mgr-parent/ebs-uc-user-sdk/target/
+/ebs-uc-mgr-parent/ebs-uc-vas-sdk/target/

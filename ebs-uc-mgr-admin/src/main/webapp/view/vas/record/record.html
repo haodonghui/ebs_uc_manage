@@ -1,0 +1,74 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户增值服务管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="会员名称" maxlength="50" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="会员手机号" maxlength="50"/>
+                            </div> 
+                            <div class="col-sm-3">
+                                <#NameCon id="vasName" name="增值服务名称" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="vasCode" name="增值服务编码" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="stop" name="增值服务状态"><!-- id="数据库字段" -->
+			                         <option value="" selected="selected">请选择</option>
+			                        <option value="0" >启用</option>
+			                        <option value="1">停用</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="invalid" name="是否有效">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="0" >有效</option>
+			                        <option value="1">无效</option> 
+			                    </#SelectCon>
+			                 </div>
+			                 <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="Record.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="RecordTableToolbar" role="group">
+                            @if(shiro.hasPermission("/record/userBindVas")){
+                                <#button name="用户绑定增值服务" icon="fa-upload" clickFun="Record.userBindVas()"/>
+                            @}
+                            @if(shiro.hasPermission("/record/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="Record.openAddRecord()"/>
+                            @}
+                            @if(shiro.hasPermission("/record/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="Record.openRecordDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/record/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="Record.delete()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="RecordTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="${ctxPath}/static/modular/vas/record/record.js"></script>
+@}

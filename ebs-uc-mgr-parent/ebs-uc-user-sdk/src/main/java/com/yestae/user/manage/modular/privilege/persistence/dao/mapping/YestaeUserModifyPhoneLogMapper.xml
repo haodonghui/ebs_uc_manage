@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserModifyPhoneLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyPhoneLog">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="operator_id" property="operatorId" />
+		<result column="operator_name" property="operatorName" />
+		<result column="source_mobile" property="sourceMobile" />
+		<result column="target_mobile" property="targetMobile" />
+		<result column="remark" property="remark" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="user_id" property="userId" />
+		<result column="mobile" property="mobile" />
+		<result column="operator_id" property="operatorId" />
+		<result column="operator_name" property="operatorName" />
+		<result column="source_mobile" property="sourceMobile" />
+		<result column="target_mobile" property="targetMobile" />
+		<result column="remark" property="remark" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, operator_id AS operatorId, operator_name AS operatorName, source_mobile AS sourceMobile, target_mobile AS targetMobile, remark, create_time AS createTime, update_time AS updateTime
+    </sql>
+
+	<select id="selectYestaeUserModifyPhoneLogList" parameterType="map" resultMap="ResultMap">
+	    select p.id, u.name, u.mobile, p.operator_id, p.operator_name, p.source_mobile, p.target_mobile, p.remark, p.create_time
+	    from uc_user_modify_phone_log p
+	    join uc_user u on p.user_id = u.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.sourceMobile != null and map.sourceMobile !=''">
+		        and p.source_mobile like CONCAT('%',#{map.sourceMobile},'%')
+		    </if>  
+			<if test="map.targetMobile != null and map.targetMobile !=''">
+		        and p.target_mobile like CONCAT('%',#{map.targetMobile},'%')
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and u.if_del = #{map.ifDel}
+		    </if>  
+	    </where> 
+	    order by p.create_time desc
+    </select>
+
+</mapper>

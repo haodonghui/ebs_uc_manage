@@ -1,0 +1,52 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="${userInvoice.id}">
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <#input id="userId" name="用户ID" value="${userInvoice.userId}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="realName" name="是否实名" value="${userInvoice.realNameFlagName}" underline="false" maxlength="50" disabled="disabled"/>
+                    <#input id="companyName" name="单位名称" value="${userInvoice.companyName}" underline="false" maxlength="50"  disabled="disabled"/>
+                    <#input id="companyRegisteredPhone" name="公司注册电话"  value="${userInvoice.companyRegisteredPhone}" underline="false" maxlength="50" disabled="disabled"/>
+                    <#input id="createTime" name="申请时间"  value="${userInvoice.createTimeStr}" underline="false" maxlength="50" disabled="disabled"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">授权委托书</label>
+                        <a href="javascript: parent.parent.Feng.showImg('${userInvoice.large}')">
+                            <div class="col-sm-9">
+                                <img width="150px" height="150px" src="${userInvoice.thumb}">
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <#input id="name" name="用户昵称" value="${userInvoice.name}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="realName" name="真实姓名" value="${userInvoice.realName}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="taxpayerIdentificationNumber" name="纳税人识别码/信用代码" value="${userInvoice.taxpayerIdentificationNumber}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="depositBank" name="开户银行" value="${userInvoice.depositBank}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="updateTime" name="审核时间" value="${userInvoice.updateTimeStr}" maxlength="50" underline="false" disabled="disabled"/>
+                </div>
+
+                <div class="col-sm-4">
+                    <#input id="accountNo" name="用户账号" value="${userInvoice.mobile}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="verifyState" name="审核状态" value="${userInvoice.verifyStateName}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="companyRegisteredAddress" name="公司注册地址" value="${userInvoice.companyRegisteredAddress}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="bankAccount" name="银行账户" value="${userInvoice.bankAccount}" maxlength="50" underline="false" disabled="disabled"/>
+                    <#input id="verifyBy" name="审核人" value="${userInvoice.verifyBy}" maxlength="50" underline="false" disabled="disabled"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="danger" name="关闭" id="cancel" icon="fa-eraser" clickFun="UserInvoiceInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/invoice/userInvoice/userInvoice_info.js"></script>
+@}

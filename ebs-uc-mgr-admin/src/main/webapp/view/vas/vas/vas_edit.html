@@ -1,0 +1,141 @@
+
+
+@layout("/common/_container.html"){
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#tab_1" data-toggle="tab">增值服务</a></li>
+  <li><a href="#tab_2" data-toggle="tab">关联权益</a></li>
+  <li><a href="#tab_3" data-toggle="tab">服务条款</a></li>
+  <li><a href="#tab_4" data-toggle="tab">权益详情</a></li>
+  <li><a href="#tab_5" data-toggle="tab">常见问题</a></li>
+</ul>
+
+
+<div class="tab-content">
+
+	<div class="tab-pane fade in active" id="tab_1">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		
+		            <input type="hidden" id="id" value="${vas.id}">
+		
+		            <div class="row">
+		            <#input id="vasCode" name="服务编码" disabled="disabled" value="${vas.vasCode}" underline="false" maxlength="50"/>
+		            <#vasImage id="surfaceId" name="封面图 (654x308) *" underline="false" upload="true"
+						hiddenValue="${vas.surfaceId!}" avatarImg="${vas.surfaceUrl!}"/>
+		            <#input id="vasName" name="服务名称 * " value="${vas.vasName}" underline="false" maxlength="50"/>
+		            <#bizSelect id="organizName" name="机构 * " value="${organizName!}" clickFun="VasInfoDlg.showOrganizList()" 
+		            	hidden="organizId" hiddenValue="${vas.organizId!}"/>
+		            <#input id="salePrice" name="服务售价 * " value="${vas.salePrice}" underline="false" maxlength="11"
+		            	placeholder="保留两位小数" onkeyup="Feng.validateDecimal('salePrice')"/>
+		            <#input id="remindDays" name="到期提醒 * " value="${vas.remindDays}" underline="false" maxlength="10" 
+		            	placeholder="请输入天数" onkeyup="Feng.validateNumber('remindDays')"/>
+		            <#select id="validType" name="有效期类型 *" hidden="validTypeValue" hiddenValue="${vas.validType}">
+		            </#select>
+		            <#textarea name="简介" id="intro" rows="3" underline="false" maxlength="200" value="${vas.intro}" />
+		            </div>
+		@if(vas.status != 2){
+		            <div class="row btn-group-m-t">
+		                <div class="col-sm-10">
+		                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="VasInfoDlg.editSubmit()"/>
+		                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="VasInfoDlg.close()"/>
+		                </div>
+		            </div>
+		@}
+		        </div>
+		
+		    </div>
+		</div>
+    </div>
+
+	<div class="tab-pane fade" id="tab_2">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		        	<div class="row">
+			            <div class="col-sm-3">
+			                <#NameCon id="equityCode" name="权益编码" maxlength="50"/>
+			            </div>
+			            <div class="col-sm-3">
+			                <#NameCon id="equityName" name="权益名称" maxlength="50"/>
+			            </div>
+			            <div class="col-sm-3">
+			                <#SelectCon id="status" name="权益状态">
+					           <option value="" selected="selected">请选择</option>
+					           <option value="1" >启用</option>
+					           <option value="2">停用</option>
+					        </#SelectCon>
+	            		</div>
+			            <div class="col-sm-3">
+			                <#SelectCon id="type" name="线上线下类型">
+				            <option value="" selected="selected">请选择</option>
+				            <option value="1" >线上</option>
+				            <option value="2">线下</option>
+				            </#SelectCon>
+				   		</div>
+	            		<div class="col-sm-3">
+		                	<#button name="搜索" icon="fa-search" clickFun="EquitySelect.search()"/>
+							<#button name="添加" icon="fa-plus" clickFun="EquitySelect.addEquity()"/>
+	            		</div>
+                    </div>
+		            <#table id="EquitySelectTable"/>
+		            <#table id="EquityBindTable"/>
+		        </div>
+		    </div>
+		</div>
+    </div>
+	<div class="tab-pane fade" id="tab_3">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		            <div class="row">
+						<div class="form-group">
+						    <label class="col-sm-2 control-label">服务条款</label>
+						    <div class="col-sm-10">
+						        <textarea class="form-control" id="serviceTerms" rows="10" maxlength="100000">${vas.serviceTerms}</textarea>
+						    </div>
+						</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+	<div class="tab-pane fade" id="tab_4">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		            <div class="row">
+						<div class="form-group">
+						    <label class="col-sm-2 control-label">权益详情</label>
+						    <div class="col-sm-10">
+						        <textarea class="form-control" id="equityDetail" rows="10" maxlength="100000">${vas.equityDetail}</textarea>
+						    </div>
+						</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+	<div class="tab-pane fade" id="tab_5">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		            <div class="row">
+						<div class="form-group">
+						    <label class="col-sm-2 control-label">常见问题</label>
+						    <div class="col-sm-10">
+						        <textarea class="form-control" id="faq" rows="10" maxlength="100000">${vas.faq}</textarea>
+						    </div>
+						</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+
+</div>
+<script src="${ctxPath}/static/modular/vas/vas/equity_bind.js"></script>
+<script src="${ctxPath}/static/modular/vas/vas/equity_select.js"></script>
+<script src="${ctxPath}/static/modular/vas/vas/vas_info.js"></script>
+@}
+

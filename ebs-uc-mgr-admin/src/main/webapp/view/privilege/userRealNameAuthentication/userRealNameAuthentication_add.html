@@ -1,0 +1,85 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="">
+            <input type="hidden" id="userId" value="">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+					<#input id="name" name="用户名" disabled="disabled" 
+						underline="false" maxlength="50"/>
+					
+					<#input id="realName" name="真实姓名 * " underline="false" maxlength="50"/>
+					<#input id="bankCardNo" name="银行卡号 * " underline="false" maxlength="50"/>
+					
+					<#select id="id1Type" name="证件类型1 *" underline="false" hidden="id1TypeValue">
+                        <option value="">请选择</option>
+                        <option value="1">台胞证</option>
+                        <option value="2">台湾身份证</option>
+                        <option value="3">身份证</option>
+                    </#select>
+						
+					<#select id="id2Type" name="证件类型2" underline="false" hidden="id2TypeValue">
+                        <option value="">请选择</option>
+                        <option value="1">台胞证</option>
+                        <option value="2">台湾身份证</option>
+                        <option value="3">身份证</option>
+                    </#select>
+						
+					<#select id="gender" name="性别" underline="false" hidden="genderValue">
+                        <option value="0">保密</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </#select>
+						
+                </div>
+
+                <div class="col-sm-6">
+					<#input id="mobile" name="实名手机号 * " placeholder="输入手机号获取用户"
+					    underline="false" maxlength="11" onkeyup="Feng.validatePhone('mobile')"/>
+					
+					<#select id="born" name="生肖" underline="false" hidden="bornValue">
+                    </#select>
+					<#select id="dataSource" name="数据来源 *" underline="false" hidden="dataSourceValue">
+                    </#select>
+					
+					<#input id="id1No" name="证件号码1 *" underline="false" maxlength="50"/>
+					
+					<#input id="id2No" name="证件号码2" underline="false" maxlength="50"/>
+					
+                </div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6 b-r">
+					<#userImage id="id1FrontImg" name="证件1正面" underline="false" 
+						upload="true" />
+						
+					<#userImage id="id2FrontImg" name="证件2正面" underline="false" 
+						upload="true" />
+						
+					<#userImage id="mobilePic" name="手机运营商截图" underline="false" 
+						upload="true" />
+                </div>
+
+                <div class="col-sm-6">
+					<#userImage id="id1BackImg" name="证件1反面" underline="false" 
+						upload="true" />
+						
+					<#userImage id="id2BackImg" name="证件2反面" underline="false" 
+						upload="true" />
+				</div>
+			</div>
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10 text-center">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="UserRealNameAuthenticationInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="UserRealNameAuthenticationInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/userRealNameAuthentication/userRealNameAuthentication_info.js"></script>
+@}

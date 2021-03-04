@@ -1,0 +1,75 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>推广渠道管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="channelCode" name="渠道编码" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="渠道名称" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="pcode" name="上级渠道编码" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="pname" name="上级渠道名称" maxlength="50"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="ifEnd" name="是否末级">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">否</option>
+			                        <option value="2">是</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeGeneralizeChannel.search(false)"/>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="hidden-xs" id="YestaeGeneralizeChannelTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeGeneralizeChannel/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="YestaeGeneralizeChannel.openAddYestaeGeneralizeChannel()"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeGeneralizeChannel/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="YestaeGeneralizeChannel.openYestaeGeneralizeChannelDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeGeneralizeChannel/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="YestaeGeneralizeChannel.delete()" space="true"/>
+                            @}
+                        </div>
+                        <div class="row">
+							<div class="col-lg-2 col-sm-3">
+								<div class="panel panel-default">
+									<div class="panel-heading">推广渠道</div>
+									<div class="panel-body dept-tree">
+										<ul id="channelTree" class="ztree"></ul>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-10 col-sm-9">
+                       			<#table id="YestaeGeneralizeChannelTable"/>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeGeneralizeChannel/yestaeGeneralizeChannel.js"></script>
+@}

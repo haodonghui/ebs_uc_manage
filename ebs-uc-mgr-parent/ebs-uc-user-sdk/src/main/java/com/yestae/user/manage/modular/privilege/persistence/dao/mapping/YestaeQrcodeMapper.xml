@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeQrcodeMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeQrcode">
+		<id column="id" property="id" />
+		<result column="generalize_user_id" property="generalizeUserId" />
+		<result column="scene_id" property="sceneId" />
+		<result column="type" property="type" />
+		<result column="qrcode_id" property="qrcodeId" />
+		<result column="goods_id" property="goodsId" />
+		<result column="product_no" property="productNo" />
+		<result column="remark" property="remark" />
+		<result column="code_url" property="codeUrl" />
+		<result column="code_info" property="codeInfo" />
+		<result column="if_del" property="ifDel" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="qrcode_id" property="qrcodeId" />
+		<result column="generalize_user_id" property="generalizeUserId" />
+		<result column="name" property="name" />
+		<result column="user_id" property="userId" />
+		<result column="recommend_code" property="recommendCode" />
+		<result column="scene_id" property="sceneId" />
+		<result column="scene_name" property="sceneName" />
+		<result column="channel_name" property="channelName" />
+		<result column="user_type" property="userType" />
+		<result column="type" property="type" />
+		<result column="jump_page_url" property="jumpPageUrl" />
+		<result column="jump_type" property="jumpType" />
+		<result column="apply_scope" property="applyScope" />
+		<result column="remark" property="remark" />
+		<result column="code_url" property="codeUrl" />
+		<result column="code_info" property="codeInfo" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, qrcode_id qrcodeId, generalize_user_id AS generalizeUserId, product_no as productNo, scene_id AS sceneId, remark, code_url AS codeUrl, code_info AS codeInfo, if_del AS ifDel, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="selectYestaeQrcodeList" parameterType="map" resultMap="ResultMap">
+	    select q.id, q.qrcode_id, q.remark, q.code_url, q.generalize_user_id, q.scene_id
+	    , u.name, u.user_id, u.recommend_code, c.name channel_name
+	    , pu.user_type
+	    , s.name scene_name, s.type, s.jump_page_url, s.apply_scope
+	    , q.create_time
+			from uc_m_qrcode q
+			join uc_m_generalize_user u on q.generalize_user_id = u.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and u.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_generalize_channel c on u.channel_id = c.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and c.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_qrcode_scene s on q.scene_id = s.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and s.if_del = #{map.ifDel}
+			    </if>
+			left join uc_m_platform_user pu on pu.user_id = u.user_id 
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode !=''">
+		        and u.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+		    </if>  
+			<if test="map.channelName != null and map.channelName !=''">
+		        and c.name like CONCAT('%',#{map.channelName},'%')
+		    </if>  
+			<if test="map.sceneName != null and map.sceneName != ''">
+			    and s.name like CONCAT('%',#{map.sceneName},'%')
+			</if> 
+			<if test="map.startTime != null and map.startTime !=''">
+		        and q.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and q.create_time &lt; #{map.endTime}
+		    </if>  
+			<if test="map.ifDel != null and map.ifDel !=''">
+		        and q.if_del = #{map.ifDel}
+		    </if>  
+			<if test="map.applyScope != null and map.applyScope !=''">
+		        and s.apply_scope = #{map.applyScope}
+		    </if>  
+			<if test="map.type != null and map.type !=''">
+		        and s.type = #{map.type}
+		    </if>  
+			<if test="map.jumpType != null and map.jumpType !=''">
+		        and s.jump_type = #{map.jumpType}
+		    </if>  
+			<if test="map.userType != null and map.userType !=''">
+		        and pu.user_type = #{map.userType}
+		    </if>  
+		    
+	    </where> 
+	    order by q.create_time desc
+    </select>
+    
+    <update id="updateByMap" parameterType="map">
+    	update uc_m_qrcode
+		set if_del = #{map.ifDelYes}
+		<if test="map.updateTime != null">
+			, update_time = #{map.updateTime} 
+		</if> 
+		<if test="map.updateBy != null and map.updateBy !=''">
+			, update_by = #{map.updateBy} 
+		</if> 
+		where if_del = #{map.ifDelNo} 
+		<if test="map.sceneId != null and map.sceneId !=''">
+			and scene_id = #{map.sceneId} 
+		</if> 
+		<if test="map.generalizeUserId != null and map.generalizeUserId !=''">
+			and generalize_user_id = #{map.generalizeUserId} 
+		</if> 
+		<if test="map.generalizeUserList != null and map.generalizeUserList.size > 0">
+			and generalize_user_id in (
+			<foreach collection="map.generalizeUserList" item="list" separator=",">
+				#{list.id}
+			</foreach>
+			)
+		</if> 
+    </update>
+
+</mapper>

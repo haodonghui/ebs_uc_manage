@@ -1,0 +1,55 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户邀请关系</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="mobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="inviterName" name="注册推荐人" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="inviterMobile" name="注册推荐人手机号" maxlength="11" onkeyup="Feng.validatePhone('inviterMobile')"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="upgradeName" name="升级推荐人" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#NameCon id="upgradeMobile" name="升级推荐人手机号" maxlength="11" onkeyup="Feng.validatePhone('upgradeMobile')"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-3 col-lg-3">
+                                <#TimeCon id="startTime" name="注册时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#TimeCon id="endTime" name="注册时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeUserRelation.search()"/>
+                            </div>
+                        </div>
+                        <#table id="YestaeUserRelationTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeUserRelation/yestaeUserRelation.js"></script>
+@}

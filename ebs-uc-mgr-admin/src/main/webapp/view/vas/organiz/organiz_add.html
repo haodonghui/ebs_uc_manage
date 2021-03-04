@@ -1,0 +1,57 @@
+@layout("/common/_container.html"){
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#tab_1" data-toggle="tab">添加机构</a></li>
+  <li><a href="#tab_2" data-toggle="tab">机构故事</a></li>
+</ul>
+
+
+<div class="tab-content">
+
+	<div class="tab-pane fade in active" id="tab_1">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		
+		            <input type="hidden" id="id" value="">
+		
+		            <div class="row">
+		                <div class="col-sm-6 b-r">
+							<#vasImage id="logo" name="扫码页logo *" underline="false" upload="true"/>
+							<#input id="organizName" name="机构名称 * " underline="false" maxlength="50"/>
+							<#input id="simpleName" name="机构简称 * " underline="false" maxlength="50"/>
+							<#input id="category" name="商品分类 * " underline="false" maxlength="50"/>
+		                	<#textarea id="intro" rows="8" name="机构简介" maxlength="200"/>
+		                </div>
+		
+		                <div class="col-sm-6">
+							<#vasImage id="surfaceId" name="封面图 *" underline="false" upload="true"/>
+							<#vasImage id="organizLogo" name="彩色logo *" underline="false" upload="true"/>
+							<#vasImage id="organizLogoInvalid" name="普通logo *" underline="false" upload="true"/>
+		                </div>
+		            </div>
+		
+		            <div class="row btn-group-m-t">
+		                <div class="col-sm-12 text-center">
+		                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="OrganizInfoDlg.addSubmit()"/>
+		                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="OrganizInfoDlg.close()"/>
+		                </div>
+		            </div>
+        		</div>
+        	</div>
+		</div>
+    </div>
+	<div class="tab-pane fade" id="tab_2">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		            <div class="row">
+						<#input id="content" name="机构故事链接" underline="false" maxlength="200"/>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+</div>
+
+<script src="${ctxPath}/static/modular/vas/organiz/organiz_info.js"></script>
+@}

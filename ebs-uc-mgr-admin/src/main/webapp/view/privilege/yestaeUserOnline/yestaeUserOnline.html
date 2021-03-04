@@ -1,0 +1,60 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>登录用户管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-4 col-lg-3">
+                                <#NameCon id="mobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                            <div class="col-sm-4 col-lg-3">
+                                <#SelectCon id="source" name="登录平台">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">益友会APP</option>
+			                        <option value="3">益友会WEB</option>
+			                        <option value="9">益购微信小程序</option>
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 col-lg-3">
+                                <#TimeCon id="startTime" name="登录时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-4 col-lg-3">
+                                <#TimeCon id="endTime" name="登录时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-4 col-lg-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeUserOnline.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="YestaeUserOnlineTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeUserOnline/quit/batch")){
+                                <#button name="踢出" icon="fa-plus" clickFun="YestaeUserOnline.quitBatch()"/>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @}
+                            @if(shiro.hasPermission("/yestaeUserOnline/quit/source")){
+                            	<select id="quitBySource" class="btn btn-primary">
+			                        <option value="1">益友会APP</option>
+			                        <option value="3">益友会WEB</option>
+			                        <option value="9">益购微信小程序</option>
+			                    </select>
+                                <#button name="按平台踢出" icon="fa-edit" clickFun="YestaeUserOnline.quitBySource()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="YestaeUserOnlineTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeUserOnline/yestaeUserOnline.js"></script>
+@}

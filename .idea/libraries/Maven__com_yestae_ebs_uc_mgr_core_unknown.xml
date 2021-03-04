@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.yestae:ebs-uc-mgr-core:unknown">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/yestae/ebs-uc-mgr-core/unknown/ebs-uc-mgr-core-unknown.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/yestae/ebs-uc-mgr-core/unknown/ebs-uc-mgr-core-unknown-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/yestae/ebs-uc-mgr-core/unknown/ebs-uc-mgr-core-unknown-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

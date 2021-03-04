@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeGeneralizeMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralize">
+		<id column="id" property="id" />
+		<result column="qrcode_id" property="qrcodeId" />
+		<result column="user_id" property="userId" />
+		<result column="type" property="type" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="user_id" property="userId" />
+		<result column="recommend_code" property="recommendCode" />
+		<result column="first_channel_name" property="firstChannelName" />
+		<result column="second_channel_name" property="secondChannelName" />
+		<result column="scene_name" property="sceneName" />
+		<result column="scene_id" property="sceneId" />
+		<result column="regist_num" property="registNum" />
+		<result column="regist_upgrade_num" property="registUpgradeNum" />
+		<result column="upgrade_num" property="upgradeNum" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+	
+	<resultMap id="SaleResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="recommend_code" property="recommendCode" />
+		<result column="second_channel_name" property="secondChannelName" />
+		<result column="regist_num" property="registNum" />
+		<result column="money" property="money" />
+	</resultMap>
+	
+	<resultMap id="SaleDetailResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="user_name" property="userName" />
+		<result column="user_id" property="userId" />
+		<result column="order_number" property="orderNumber" />
+		<result column="amount_money" property="amountMoney" />
+		<result column="recommend_code" property="recommendCode" />
+		<result column="second_channel_name" property="secondChannelName" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+	
+	<resultMap id="YestaeUserRelationResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="mobile" property="mobile" />
+		<result column="name" property="name" />
+		<result column="inviter_mobile" property="inviterMobile" />
+		<result column="inviter_name" property="inviterName" />
+		<result column="upgrade_mobile" property="upgradeMobile" />
+		<result column="upgrade_name" property="upgradeName" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, qrcode_id AS qrcodeId, user_id AS userId, type, create_time AS createTime
+    </sql>
+    
+    <select id="selectYestaeUserRelationList" parameterType="map" resultMap="YestaeUserRelationResultMap" >
+       SELECT * FROM (
+        SELECT  g1.user_id AS gl_user_id, u.user_id, u.mobile, u.name, u.create_time,u1.mobile inviter_mobile, u1.name inviter_name
+	    FROM uc_user u LEFT JOIN uc_m_generalize g1 ON u.user_id = g1.user_id
+		  	<if test="map.registType != null and map.registType !=''">
+				 AND g1.type = #{map.registType}
+			</if>
+			<if test="map.mobile != null and map.mobile !=''">
+		            AND u.mobile LIKE CONCAT('%',#{map.mobile},'%')
+		    </if>
+			<if test="map.name != null and map.name !=''">
+		            AND u.name LIKE CONCAT('%',#{map.name},'%')
+		    </if>
+			<if test="map.userId != null and map.userId !=''">
+			        AND u.user_id = #{map.userId}
+	        </if> 
+			<if test="map.startTime != null and map.startTime !=''">
+			        AND u.create_time &gt; #{map.startTime}
+			</if>  
+		    <if test="map.endTime != null and map.endTime !=''">
+			        AND u.create_time &lt; #{map.endTime}
+			</if> 
+	 		 LEFT JOIN uc_m_qrcode	q1 ON (g1.qrcode_id = q1.id OR g1.qrcode_id = q1.qrcode_id)
+		  	 <if test="map.ifDel != null and map.ifDel !=''">
+			        AND q1.if_del = #{map.ifDel}
+		 	 </if>
+	 		 JOIN uc_m_generalize_user u1 ON q1.generalize_user_id = u1.id 
+	   		<if test="map.inviterMobile != null and map.inviterMobile !=''">
+	            AND u1.mobile LIKE CONCAT('%',#{map.inviterMobile},'%')
+       		</if>
+	  		<if test="map.inviterName != null and map.inviterName !=''">
+	            AND u1.name LIKE CONCAT('%',#{map.inviterName},'%')
+	   		</if>
+	  		<if test="map.ifDel != null and map.ifDel !=''">
+		        AND u.if_del = #{map.ifDel}
+		        AND u1.if_del = #{map.ifDel}
+	        </if>  
+		) t1 LEFT JOIN (
+		   SELECT g2.user_id AS g2_user_id,  u2.mobile upgrade_mobile, u2.name upgrade_name  
+		   FROM uc_user u LEFT JOIN uc_m_generalize g2 ON u.user_id = g2.user_id 
+		    <if test="map.upgradeType != null and map.upgradeType !=''">
+					    AND g2.type = #{map.upgradeType}
+		    </if> 
+		   LEFT JOIN uc_m_qrcode q2 ON (g2.qrcode_id = q2.id OR g2.qrcode_id = q2.qrcode_id )
+		    <if test="map.ifDel != null and map.ifDel !=''">
+				        AND q2.if_del = #{map.ifDel}
+		    </if>
+		   LEFT JOIN uc_m_generalize_user u2 ON q2.generalize_user_id = u2.id
+		    <if test="map.upgradeMobile != null and map.upgradeMobile !=''">
+			             AND u2.mobile LIKE CONCAT('%',#{map.upgradeMobile},'%')
+			</if>
+			<if test="map.upgradeName != null and map.upgradeName !=''">
+			            AND u2.name LIKE CONCAT('%',#{map.upgradeName},'%')
+			</if> 
+		) t2 ON t1.gl_user_id = t2.g2_user_id  
+    </select>
+    
+    <select id="selectYestaeGeneralizeList" parameterType="map" resultMap="ResultMap">
+	    select distinct u.id , u.name, u.recommend_code, u.user_id, s.name scene_name, s.id, scene_id,
+	    	if((sf_c.name is not null and sf_c.name &lt;&gt; ''), sf_c.name, first_c.name) first_channel_name, 
+	    	second_c.name second_channel_name ,
+	    	( select count(yg.id) from uc_m_generalize yg 
+	    		join uc_m_qrcode yq on (yg.qrcode_id = yq.id or yg.qrcode_id = yq.qrcode_id)
+	    		<if test="map.ifDel != null and map.ifDel !=''">
+			        and yq.if_del = #{map.ifDel}
+			    </if>
+	    		where yq.generalize_user_id = u.id
+	    		and yq.scene_id = s.id
+				<if test="map.registType != null and map.registType !=''">
+			        and yg.type = #{map.registType}
+			    </if>
+	    	) regist_num,
+	    	( select count(yg.id) from uc_m_generalize yg 
+	    		join uc_m_qrcode yq on (yg.qrcode_id = yq.id or yg.qrcode_id = yq.qrcode_id)
+	    		<if test="map.ifDel != null and map.ifDel !=''">
+			        and yq.if_del = #{map.ifDel}
+			    </if>
+			    join uc_user user on yg.user_id = user.user_id and user.type = 2
+	    		where yq.generalize_user_id = u.id
+	    		and yq.scene_id = s.id
+				<if test="map.registType != null and map.registType !=''">
+			        and yg.type = #{map.registType}
+			    </if>
+	    	) regist_upgrade_num,
+	    	(select count(yg.id) from uc_m_generalize yg 
+	    		join uc_m_qrcode yq on (yg.qrcode_id = yq.id or yg.qrcode_id = yq.qrcode_id)
+	    		<if test="map.ifDel != null and map.ifDel !=''">
+			        and yq.if_del = #{map.ifDel}
+			    </if>
+	    		where yq.generalize_user_id = u.id
+	    		and yq.scene_id = s.id
+				<if test="map.upgradeType != null and map.upgradeType !=''">
+			        and yg.type = #{map.upgradeType}
+			    </if>
+			) upgrade_num 
+		from uc_m_generalize g
+			join uc_m_qrcode q on (g.qrcode_id = q.id or g.qrcode_id = q.qrcode_id)
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and q.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_generalize_user u on q.generalize_user_id = u.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and u.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_qrcode_scene s on q.scene_id = s.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and s.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize_channel first_c on u.channel_id = first_c.id
+				<if test="map.ifEndNo != null and map.ifEndNo !=''">
+					and first_c.if_end = #{map.ifEndNo}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and first_c.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize_channel second_c on u.channel_id = second_c.id
+				<if test="map.ifEndYes != null and map.ifEndYes !=''">
+					and second_c.if_end = #{map.ifEndYes}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and second_c.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize_channel sf_c on second_c.pid = sf_c.id
+				<if test="map.ifEndNo != null and map.ifEndNo !=''">
+					and sf_c.if_end = #{map.ifEndNo}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and sf_c.if_del = #{map.ifDel}
+			    </if>
+			left join uc_m_platform_user pu on u.user_id = pu.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode !=''">
+		        and u.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+		    </if>  
+			<if test="map.channelName != null and map.channelName !=''">
+		        and (first_c.name like CONCAT('%',#{map.channelName},'%') or 
+		        	second_c.name like CONCAT('%',#{map.channelName},'%') or 
+		        	sf_c.name like CONCAT('%',#{map.channelName},'%'))
+		    </if>  
+			<if test="map.sceneName != null and map.sceneName != ''">
+			    and s.name like CONCAT('%',#{map.sceneName},'%')
+			</if> 
+			<if test="map.userType != null and map.userType !=''">
+		        and pu.user_type = #{map.userType}
+		    </if>
+			<if test="map.startTime != null and map.startTime !=''">
+		        and g.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and g.create_time &lt; #{map.endTime}
+		    </if>  
+		    
+	    </where> 
+	    <if test="(map.orderByRegist != null and (map.orderByRegist == 1 or map.orderByRegist == 2))  or (map.orderByUpgrade != null and (map.orderByUpgrade == 1 or map.orderByUpgrade == 2))">
+	    	order by 
+		    <if test="map.orderByRegist != null and map.orderByRegist == 1">
+			     regist_num asc,
+			</if>
+		    <if test="map.orderByRegist != null and map.orderByRegist == 2">
+			     regist_num desc,
+			</if> 
+		    <if test="map.orderByUpgrade != null and map.orderByUpgrade == 1">
+			     upgrade_num asc,
+			</if> 
+		    <if test="map.orderByUpgrade != null and map.orderByUpgrade == 2">
+			     upgrade_num desc,
+			</if> 
+			u.create_time desc
+		</if> 
+	    
+    </select>
+    <select id="selectSaleList" parameterType="map" resultMap="SaleResultMap">
+	    select u.id , u.name, u.recommend_code, u.user_id
+	    	, second_c.name second_channel_name 
+	    	,count(g.id) regist_num
+	    	,SUM(IF((f.amount_money IS NOT NULL AND f.amount_money &lt;&gt; ''), f.amount_money, 0)) money
+		from 
+			uc_m_generalize_channel first_c
+			join uc_m_generalize_channel second_c on first_c.id = second_c.pid
+				<if test="map.ifEndYes != null and map.ifEndYes !=''">
+					and second_c.if_end = #{map.ifEndYes}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and second_c.if_del = #{map.ifDel}
+			    </if> 
+			    <if test="map.channelId != null and map.channelId !=''">
+			        and second_c.id = #{map.channelId}
+			    </if> 
+			join uc_m_generalize_user u on  u.channel_id = second_c.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and u.if_del = #{map.ifDel}
+			    </if> 
+			    <if test="map.generalizeUserId != null and map.generalizeUserId !=''">
+			        and u.id = #{map.generalizeUserId}
+			    </if> 
+			left join uc_m_qrcode q on q.generalize_user_id = u.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and q.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize g on (g.qrcode_id = q.id or g.qrcode_id = q.qrcode_id)
+				<if test="map.registType != null and map.registType !=''">
+			        and g.type = #{map.registType}
+			    </if>
+				<if test="map.startRegistTime != null and map.startRegistTime !=''">
+			        and g.create_time &gt; #{map.startRegistTime}
+			    </if>  
+				<if test="map.endRegistTime != null and map.endRegistTime !=''">
+			        and g.create_time &lt; #{map.endRegistTime}
+			    </if>  
+			left join uc_transaction_flow f on f.user_id = g.user_id
+				<if test="map.startTime != null and map.startTime !=''">
+			        and f.create_time &gt; #{map.startTime}
+			    </if>  
+				<if test="map.endTime != null and map.endTime !=''">
+			        and f.create_time &lt; #{map.endTime}
+			    </if> 
+			    <if test="map.flowType != null and map.flowType !=''">
+			        and f.flow_type = #{map.flowType}
+			    </if> 
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode !=''">
+		        and u.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+		    </if>  
+			<if test="map.channelName != null and map.channelName !=''">
+		        and second_c.name like CONCAT('%',#{map.channelName},'%') 
+		    </if>  
+			 
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and first_c.if_del = #{map.ifDel}
+		    </if> 
+		    <if test="map.channelCode != null and map.channelCode !=''">
+		        and first_c.channel_code = #{map.channelCode}
+		    </if> 
+		    
+	    </where> 
+	    group by u.id
+	    order by second_c.create_time desc, u.create_time desc
+    </select>
+    
+    
+    <select id="selectSaleListCount" parameterType="map" resultType="int">
+	    select count(distinct u.id)
+		from 
+			uc_m_generalize_channel first_c
+			join uc_m_generalize_channel second_c on first_c.id = second_c.pid
+				<if test="map.ifEndYes != null and map.ifEndYes !=''">
+					and second_c.if_end = #{map.ifEndYes}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and second_c.if_del = #{map.ifDel}
+			    </if> 
+			    <if test="map.channelId != null and map.channelId !=''">
+			        and second_c.id = #{map.channelId}
+			    </if> 
+			join uc_m_generalize_user u on  u.channel_id = second_c.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and u.if_del = #{map.ifDel}
+			    </if> 
+			    <if test="map.generalizeUserId != null and map.generalizeUserId !=''">
+			        and u.id = #{map.generalizeUserId}
+				</if>  
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode !=''">
+		        and u.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+		    </if>  
+			<if test="map.channelName != null and map.channelName !=''">
+		        and second_c.name like CONCAT('%',#{map.channelName},'%') 
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and first_c.if_del = #{map.ifDel}
+		    </if> 
+		    <if test="map.channelCode != null and map.channelCode !=''">
+		        and first_c.channel_code = #{map.channelCode}
+		    </if> 
+		    
+	    </where> 
+    </select>
+    
+    <select id="selectSaleDetailList" parameterType="map" resultMap="SaleDetailResultMap">
+	    select u.id , u.name, u.recommend_code 
+	    	,uc.user_id, uc.name user_name, uc.mobile 
+	    	,second_c.name second_channel_name 
+	    	,f.amount_money , f.create_time, f.order_number
+		from 
+			uc_m_generalize_channel first_c
+			join uc_m_generalize_channel second_c on first_c.id = second_c.pid
+				<if test="map.ifEndYes != null and map.ifEndYes !=''">
+					and second_c.if_end = #{map.ifEndYes}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and second_c.if_del = #{map.ifDel}
+			    </if>
+			    <if test="map.channelId != null and map.channelId !=''">
+			        and second_c.id = #{map.channelId}
+			    </if>  
+			join uc_m_generalize_user u on  u.channel_id = second_c.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and u.if_del = #{map.ifDel}
+			    </if> 
+				<if test="map.generalizeUserId != null and map.generalizeUserId !=''">
+			        and u.id = #{map.generalizeUserId}
+			    </if> 
+			join uc_m_qrcode q on q.generalize_user_id = u.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and q.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_generalize g on (g.qrcode_id = q.id or g.qrcode_id = q.qrcode_id)
+				<if test="map.registType != null and map.registType !=''">
+			        and g.type = #{map.registType}
+			    </if>
+			join uc_user uc on uc.user_id = g.user_id
+			join uc_transaction_flow f on f.user_id = g.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode !=''">
+		        and u.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+		    </if>  
+			<if test="map.channelName != null and map.channelName !=''">
+		        and second_c.name like CONCAT('%',#{map.channelName},'%') 
+		    </if>  
+			<if test="map.startRegistTime != null and map.startRegistTime !=''">
+		        and g.create_time &gt; #{map.startRegistTime}
+		    </if>  
+			<if test="map.endRegistTime != null and map.endRegistTime !=''">
+		        and g.create_time &lt; #{map.endRegistTime}
+		    </if>  
+			<if test="map.startTime != null and map.startTime !=''">
+		        and f.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and f.create_time &lt; #{map.endTime}
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and first_c.if_del = #{map.ifDel}
+		    </if> 
+		    <if test="map.channelCode != null and map.channelCode !=''">
+		        and first_c.channel_code = #{map.channelCode}
+		    </if> 
+		    <if test="map.flowType != null and map.flowType !=''">
+		        and f.flow_type = #{map.flowType}
+		    </if> 
+	    </where> 
+	    order by second_c.create_time desc, u.create_time desc, f.create_time desc
+    </select>
+    
+    <select id="selectYestaeGeneralizeListCount" parameterType="map" resultType="int">
+	    select  count(distinct q.id)
+		from uc_m_generalize g
+			join uc_m_qrcode q on (g.qrcode_id = q.id or g.qrcode_id = q.qrcode_id)
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and q.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_generalize_user u on q.generalize_user_id = u.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and u.if_del = #{map.ifDel}
+			    </if> 
+			join uc_m_qrcode_scene s on q.scene_id = s.id
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and s.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize_channel first_c on u.channel_id = first_c.id
+				<if test="map.ifEndNo != null and map.ifEndNo !=''">
+					and first_c.if_end = #{map.ifEndNo}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and first_c.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize_channel second_c on u.channel_id = second_c.id
+				<if test="map.ifEndYes != null and map.ifEndYes !=''">
+					and second_c.if_end = #{map.ifEndYes}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and second_c.if_del = #{map.ifDel}
+			    </if> 
+			left join uc_m_generalize_channel sf_c on second_c.pid = sf_c.id
+				<if test="map.ifEndNo != null and map.ifEndNo !=''">
+					and sf_c.if_end = #{map.ifEndNo}
+			    </if> 
+				<if test="map.ifDel != null and map.ifDel !=''">
+			        and sf_c.if_del = #{map.ifDel}
+			    </if>
+			left join uc_m_platform_user pu on u.user_id = pu.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode !=''">
+		        and u.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+		    </if>  
+			<if test="map.channelName != null and map.channelName !=''">
+		        and (first_c.name like CONCAT('%',#{map.channelName},'%') or 
+		        	second_c.name like CONCAT('%',#{map.channelName},'%') or 
+		        	sf_c.name like CONCAT('%',#{map.channelName},'%'))
+		    </if>  
+		    <if test="map.ifYestaeUser != null and map.ifYestaeUser == 2">
+			    and u.user_id is not null and u.user_id &lt;&gt; ''
+			</if>
+		    <if test="map.userType != null and map.userType !=''">
+		        and pu.user_type = #{map.userType}
+		    </if>
+			<if test="map.sceneName != null and map.sceneName != ''">
+			    and s.name like CONCAT('%',#{map.sceneName},'%')
+			</if> 
+			<if test="map.startTime != null and map.startTime !=''">
+		        and g.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and g.create_time &lt; #{map.endTime}
+		    </if>  
+		    
+	    </where> 
+	   
+	    
+    </select>
+</mapper>

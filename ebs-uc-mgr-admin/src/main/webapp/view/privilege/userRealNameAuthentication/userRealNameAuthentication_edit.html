@@ -1,0 +1,106 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="${userRealNameAuthentication.id}">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+					<#input id="name" name="用户名" disabled="disabled" 
+						value="${userRealNameAuthentication.name}" underline="false" maxlength="50"/>
+					
+					<#input id="realName" name="真实姓名" disabled="disabled" 
+						value="${userRealNameAuthentication.realName}" underline="false" maxlength="50"/>
+					
+					<#input id="gender" name="性别" disabled="disabled" 
+						value="${gender}" underline="false" maxlength="50"/>
+					
+					<#input id="bankCardNo" name="银行卡号" disabled="disabled" 
+						value="${userRealNameAuthentication.bankCardNo}" underline="false" maxlength="50"/>
+						
+					<#input id="id1Type" name="证件类型1" disabled="disabled" 
+						value="${id1Type}" underline="false" maxlength="50"/>
+						
+					<#input id="id2Type" name="证件类型2" disabled="disabled" 
+						value="${id2Type}" underline="false" maxlength="50"/>
+						
+					<#userImage id="id1FrontImg" name="证件1正面" underline="false" 
+						upload="false" avatarImg="${userRealNameAuthentication.id1FrontImg}"/>
+						
+					<#userImage id="id2FrontImg" name="证件2正面" underline="false" 
+						upload="false" avatarImg="${userRealNameAuthentication.id2FrontImg}"/>
+						
+					<#userImage id="mobilePic" name="手机运营商截图" underline="false" 
+						upload="false" avatarImg="${userRealNameAuthentication.mobilePic}"/>
+                </div>
+
+                <div class="col-sm-6">
+					<#input id="mobile" name="实名手机号" disabled="disabled" 
+						value="${userRealNameAuthentication.mobile}" underline="false" maxlength="50"/>
+					
+					<#input id="born" name="生肖" disabled="disabled" 
+						value="${born}" underline="false" maxlength="50"/>
+					
+					<#input id="createTime" name="申请时间" disabled="disabled" 
+						value="${createTime}" underline="false" maxlength="50"/>
+					
+					<#input id="dataSourceName" name="数据来源" disabled="disabled" 
+						value="${dataSource}" underline="false" maxlength="50"/>
+					
+						@if("1"==id1Flag){
+						<#input id="id1No" name="证件号码1" disabled="disabled" 
+							value="${userRealNameAuthentication.id1No}" 
+							style="color:#fed100" 
+							underline="false" maxlength="50"/>
+						@}else{
+						<#input id="id1No" name="证件号码1" disabled="disabled" 
+							value="${userRealNameAuthentication.id1No}" 
+							underline="false" maxlength="50"/>
+						@}
+						@if("1"==id2Flag){
+						<#input id="id2No" name="证件号码2" disabled="disabled" 
+							value="${userRealNameAuthentication.id2No}" 
+								style="color:#fed100" 
+							underline="false" maxlength="50"/>
+						@}else{
+						<#input id="id2No" name="证件号码2" disabled="disabled" 
+							value="${userRealNameAuthentication.id2No}" 
+							underline="false" maxlength="50"/>
+						@}
+					
+					<#userImage id="id1BackImg" name="证件1反面" underline="false" 
+						upload="false" avatarImg="${userRealNameAuthentication.id1BackImg}"/>
+						
+					<#userImage id="id2BackImg" name="证件2反面" underline="false" 
+						upload="false" avatarImg="${userRealNameAuthentication.id2BackImg}"/>
+						
+                </div>
+                
+            </div>
+            <div class="row">
+
+            	<div class="col-sm-6">
+             	<#select id="verify" name="审核结果 * " underline="false" hidden="verifyValue">
+                     <option value="2">审核通过</option>
+                     <option value="3">审核不通过</option>
+                 </#select>
+                </div>
+
+	             <div class="col-sm-6">
+	                 <#textarea id="verifyDesc" name="备注" rows="4" underline="false" maxlength="100"/>
+	             </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10 text-center">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="UserRealNameAuthenticationInfoDlg.verifySubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="UserRealNameAuthenticationInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/userRealNameAuthentication/userRealNameAuthentication_info.js"></script>
+@}

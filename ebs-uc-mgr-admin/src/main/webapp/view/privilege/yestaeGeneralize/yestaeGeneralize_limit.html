@@ -1,0 +1,70 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>推广明细管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="推广人" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="recommendCode" name="推荐码" maxlength="6"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="channelName" name="推广渠道" underline="false" readonly="readonly" hidden="pid"
+								clickFun="YestaeGeneralize.showChannelSelectTree(); return false;" value="上海餐茶"
+								style="background-color: #ffffff !important;"/>
+                            </div>
+                            <!-- 这是渠道选择的下拉框 -->
+							<div id="channelContent" class="menuContent"
+								style="display: none; position: absolute; z-index: 200;">
+								<ul id="channelTree" class="ztree tree-box" style="width: 249px !important;"></ul>
+							</div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="userType" name="用户业务类型">
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#NameCon id="sceneName" name="场景名称" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="orderByRegist" name="推广注册人数">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">升序</option>
+			                        <option value="2">降序</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="orderByUpgrade" name="推广金卡人数">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">升序</option>
+			                        <option value="2">降序</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeGeneralize.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="YestaeGeneralizeTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeGeneralize/export")){
+                                <#button name="导出" icon="fa-download" clickFun="YestaeGeneralize.export()"/>
+                            @}
+                        </div>
+                        
+                        
+                        <#table id="YestaeGeneralizeTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeGeneralize/yestaeGeneralize_limit.js"></script>
+@}

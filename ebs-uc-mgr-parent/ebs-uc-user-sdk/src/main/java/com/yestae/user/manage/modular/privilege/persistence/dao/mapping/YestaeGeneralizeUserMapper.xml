@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeGeneralizeUserMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeUser">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="user_id" property="userId" />
+		<result column="recommend_code" property="recommendCode" />
+		<result column="channel_id" property="channelId" />
+		<result column="remark" property="remark" />
+		<result column="if_del" property="ifDel" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="user_id" property="userId" />
+		<result column="user_name" property="userName" />
+		<result column="user_type" property="userType" />
+		<result column="user_mobile" property="userMobile" />
+		<result column="recommend_code" property="recommendCode" />
+		<result column="channel_id" property="channelId" />
+		<result column="channel_name" property="channelName" />
+		<result column="remark" property="remark" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, mobile, user_id AS userId, recommend_code AS recommendCode, channel_id AS channelId, inviter_is_f_code AS inviterIsFCode, remark, if_del AS ifDel, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="selectYestaeGeneralizeUserList" parameterType="map" resultMap="ResultMap">
+		select gu.id, gu.name, gu.mobile
+			, u.user_id, u.name user_name, u.mobile user_mobile, u.user_type 
+			, gu.recommend_code, gu.channel_id, c.name channel_name
+			, gu.remark, gu.create_time
+		from uc_m_generalize_user gu
+		join uc_m_generalize_channel c on gu.channel_id = c.id
+			<if test="map.ifDel != null and map.ifDel !=''">
+		        and c.if_del = #{map.ifDel}
+		    </if> 
+		left join uc_m_platform_user u on gu.user_id = u.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    gu.name like CONCAT('%',#{map.name},'%')
+			</if> 
+			<if test="map.generalizeUserIds != null and map.generalizeUserIds !=''">
+		        and gu.id in 
+		        <foreach collection="map.generalizeUserIds" item="generalizeUserId" index="index"
+	              open="(" close=")" separator=",">
+			      #{generalizeUserId}
+			    </foreach>
+		    </if>
+			<if test="map.userType != null and map.userType !=''">
+		        and u.user_type = #{map.userType}
+		    </if> 
+			<if test="map.userName != null and map.userName != ''">
+			    and u.name like CONCAT('%',#{map.userName},'%')
+			</if>  
+			<if test="map.mobile != null and map.mobile != ''">
+			    and gu.mobile like CONCAT('%',#{map.mobile},'%')
+			</if>  
+			<if test="map.userMobile != null and map.userMobile != ''">
+			    and u.mobile like CONCAT('%',#{map.userMobile},'%')
+			</if>  
+			<if test="map.recommendCode != null and map.recommendCode != ''">
+			    and gu.recommend_code like CONCAT('%',#{map.recommendCode},'%')
+			</if>  
+			<if test="map.channelName != null and map.channelName != ''">
+			    and c.name like CONCAT('%',#{map.channelName},'%')
+			</if>  
+			<if test="map.startTime != null and map.startTime !=''">
+		        and gu.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and gu.create_time &lt; #{map.endTime}
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and gu.if_del = #{map.ifDel}
+		    </if>  
+		    
+	    </where> 
+	    order by gu.create_time desc
+	</select>
+	
+    <select id="selectYestaeGeneralizeUserListDYCT" parameterType="map" resultMap="ResultMap">
+		select u.id, u.name
+		from uc_m_generalize_channel first_c
+		join uc_m_generalize_channel second_c on first_c.id = second_c.pid
+			<if test="map.ifEndYes != null and map.ifEndYes !=''">
+				and second_c.if_end = #{map.ifEndYes}
+		    </if> 
+			<if test="map.ifDel != null and map.ifDel !=''">
+		        and second_c.if_del = #{map.ifDel}
+		    </if>
+		    <if test="map.channelId != null and map.channelId !=''">
+		        and second_c.id = #{map.channelId}
+		    </if>  
+		join uc_m_generalize_user u on  u.channel_id = second_c.id
+			<if test="map.ifDel != null and map.ifDel !=''">
+		        and u.if_del = #{map.ifDel}
+		    </if> 
+	    <where>
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and first_c.if_del = #{map.ifDel}
+		    </if>  
+		    <if test="map.channelCode != null and map.channelCode !=''">
+		        and first_c.channel_code = #{map.channelCode}
+		    </if> 
+	    </where> 
+	</select>
+	
+	<update id="updateByMap" parameterType="map">
+    	update uc_m_generalize_user
+		set if_del = #{map.ifDelYes}
+		<if test="map.updateTime != null and map.updateTime !=''">
+			, update_time = #{map.updateTime} 
+		</if> 
+		<if test="map.updateBy != null and map.updateBy !=''">
+			, update_by = #{map.updateBy} 
+		</if> 
+		where if_del = #{map.ifDelNo} 
+		<if test="map.channelId != null and map.channelId !=''">
+			and channel_id = #{map.channelId} 
+		</if> 
+    </update>
+
+</mapper>

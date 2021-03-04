@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.StoreMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.Store">
+		<id column="id" property="id" />
+		<result column="store_name" property="storeName" />
+		<result column="store_code" property="storeCode" />
+		<result column="organiz_id" property="organizId" />
+		<result column="organiz_code" property="organizCode" />
+		<result column="intro" property="intro" />
+		<result column="tel" property="tel" />
+		<result column="linkman" property="linkman" />
+		<result column="address" property="address" />
+		<result column="province_code" property="provinceCode" />
+		<result column="province_name" property="provinceName" />
+		<result column="city_code" property="cityCode" />
+		<result column="city_name" property="cityName" />
+		<result column="area_code" property="areaCode" />
+		<result column="area_name" property="areaName" />
+		<result column="wifi_name" property="wifiName" />
+		<result column="wifi_password" property="wifiPassword" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="lon" property="lon" />
+		<result column="lat" property="lat" />
+		<result column="recommend_flag" property="recommendFlag" />
+		<result column="status" property="status" />
+		<result column="del_flag" property="delFlag" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	<!-- 通用查询映射结果 -->
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="store_name" property="storeName" />
+		<result column="store_code" property="storeCode" />
+		<result column="organiz_id" property="organizId" />
+		<result column="organiz_code" property="organizCode" />
+		<result column="organiz_name" property="organizName" />
+		<result column="intro" property="intro" />
+		<result column="tel" property="tel" />
+		<result column="linkman" property="linkman" />
+		<result column="address" property="address" />
+		<result column="province_code" property="provinceCode" />
+		<result column="province_name" property="provinceName" />
+		<result column="city_code" property="cityCode" />
+		<result column="city_name" property="cityName" />
+		<result column="area_code" property="areaCode" />
+		<result column="area_name" property="areaName" />
+		<result column="wifi_name" property="wifiName" />
+		<result column="wifi_password" property="wifiPassword" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="lon" property="lon" />
+		<result column="lat" property="lat" />
+		<result column="recommend_flag" property="recommendFlag" />
+		<result column="status" property="status" />
+		<result column="del_flag" property="delFlag" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, store_name AS storeName, store_code AS storeCode, organiz_id AS organizId, organiz_code AS organizCode, intro, tel, linkman, address, province_code AS provinceCode, province_name AS provinceName, city_code AS cityCode, city_name AS cityName, area_code AS areaCode, area_name AS areaName, wifi_name AS wifiName, wifi_password AS wifiPassword, start_time AS startTime, end_time AS endTime, lon, lat, recommend_flag AS recommendFlag, status, del_flag AS delFlag, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="selectStoreList" parameterType="map" resultMap="ResultMap" >
+    select 
+     s.id, s.store_name, s.store_code, s.intro, s.tel, s.linkman, s.address, s.province_code, s.province_name, s.city_code, s.city_name,
+     s.area_code, s.area_name, s.wifi_name, s.wifi_password, s.start_time, s.end_time, s.lon, s.lat, s.recommend_flag, s.status, 
+     s.del_flag, s.create_time, s.create_by, s.update_time, s.update_by,
+     o.id organiz_id, o.organiz_code, o.organiz_name, o.simple_name organiz_simple_name
+    from uc_m_vas_organiz o
+    join uc_m_vas_store s on o.id = s.organiz_id
+    <where>
+	    
+	    <if test="map.storeName != null and map.storeName !=''">
+	    	and s.store_name like CONCAT ('%',#{map.storeName},'%')
+	    </if>
+	   
+	    <if test="map.storeCode != null and map.storeCode !=''">
+	        and s.store_code like CONCAT('%',#{map.storeCode},'%')
+	    </if>
+	   
+	    <if test="map.organizCode != null and map.organizCode !=''">
+	        and o.organiz_code like CONCAT('%',#{map.organizCode},'%')
+	    </if>
+	    <if test="map.organizName != null and map.organizName !=''">
+	        and o.organizName like CONCAT('%',#{map.organizName},'%')
+	    </if>
+	    <if test="map.status != null and map.status !=  ''">
+	    	and s.status = #{map.status}
+	    </if>
+	    <if test="map.recommendFlag != null and map.recommendFlag !=  ''">
+	    	and s.recommend_flag = #{map.recommendFlag}
+	    </if>
+	    <if test="map.delFlag != null and map.delFlag !=  ''">
+	    	and s.del_flag = #{map.delFlag}
+	    	and o.del_flag = #{map.delFlag}
+	    </if>
+	    
+    </where>
+    order by s.status ASC,s.update_time desc
+    </select>
+
+</mapper>

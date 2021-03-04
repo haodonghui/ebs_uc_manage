@@ -1,0 +1,75 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户账户管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                        
+                            <div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+	                        <div class="col-sm-3">
+			                    <#SelectCon id="state" name="账户状态">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1" >正常</option>
+			                        <option value="2">冻结</option>
+			                        <option value="3">注销</option>
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="amountEgt" name="余额大于等于" maxlength="11" onkeyup="Feng.validateNumber('amountEgt')" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="amountElt" name="余额小于等于" maxlength="11" onkeyup="Feng.validateNumber('amountElt')" />
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#NameCon id="accountNo" name="账户编码" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="UserAccount.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="UserAccountTableToolbar" role="group">
+                            @if(shiro.hasPermission("/userAccount/freeze")){
+                                <#button name="冻结" icon="fa-unlock-alt" clickFun="UserAccount.freeze()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/userAccount/unfreeze")){
+                                <#button name="解冻" icon="fa-unlock" clickFun="UserAccount.unfreeze()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/userAccount/export")){
+                                <#button name="导出" icon="fa-download" clickFun="UserAccount.export()"/>
+                            @}
+                            @/*if(shiro.hasPermission("/userAccount/update")){
+                                <#button name="余额修改" icon="fa-edit" clickFun="UserAccount.openUserAccountDetail()" space="true"/>
+                            @}*/
+                        </div>
+                        <#table id="UserAccountTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/userAccount/userAccount.js"></script>
+@}

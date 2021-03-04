@@ -1,0 +1,49 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="${yestaeGeneralizeUser.id}">
+
+             <div class="row">
+                <div class="col-sm-12 b-r">
+					<#input id="channelName" name="推广渠道 * " underline="false" readonly="readonly" hidden="channelId"
+						clickFun="YestaeGeneralizeUserInfoDlg.showChannelSelectTree(); return false;" 
+						style="background-color: #ffffff !important;" 
+						value="${channelName}" hiddenValue="${yestaeGeneralizeUser.channelId}"/>
+					<#bizSelect id="platformUserName" name="关联用户" clickFun="YestaeGeneralizeUserInfoDlg.showPlatformUserList()" 
+		            	value="${userName!}" hidden="userId" hiddenValue="${yestaeGeneralizeUser.userId}"/>
+					<#input id="name" name="推广人名称 * " value="${yestaeGeneralizeUser.name}" underline="false" maxlength="50"/>
+					<div class="form-group">
+					    <label class="col-sm-3 control-label">推广人手机号</label>
+					    <div class="col-sm-9">
+					        <input class="form-control" type="text" id="mobile" value="${yestaeGeneralizeUser.mobile}" maxlength="11" onkeyup="Feng.validatePhone('mobile')">
+					    </div>
+					</div>
+					<div class="form-group">
+					    <label class="col-sm-3 control-label">备注</label>
+					    <div class="col-sm-9">
+					        <textarea class="form-control" id="remark" rows="3" maxlength="100">${yestaeGeneralizeUser.remark}</textarea>
+					    </div>
+					</div>
+                </div>
+            </div>
+            
+            <!-- 这是渠道选择的下拉框 -->
+			<div id="channelContent" class="menuContent"
+				style="display: none; position: absolute; z-index: 200;">
+				<ul id="channelTree" class="ztree tree-box" style="width: 249px !important;"></ul>
+			</div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="YestaeGeneralizeUserInfoDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="YestaeGeneralizeUserInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeGeneralizeUser/yestaeGeneralizeUser_info.js"></script>
+@}

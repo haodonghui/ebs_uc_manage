@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.UserInvoiceMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.UserInvoice">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="invoice_type" property="invoiceType" />
+		<result column="invoice_title" property="invoiceTitle" />
+		<result column="personal_name" property="personalName" />
+		<result column="company_name" property="companyName" />
+		<result column="taxpayer_identification_number" property="taxpayerIdentificationNumber" />
+		<result column="taker_phone" property="takerPhone" />
+		<result column="taker_email" property="takerEmail" />
+		<result column="company_registered_address" property="companyRegisteredAddress" />
+		<result column="company_registered_phone" property="companyRegisteredPhone" />
+		<result column="deposit_bank" property="depositBank" />
+		<result column="bank_account" property="bankAccount" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, invoice_type AS invoiceType, invoice_title AS invoiceTitle, personal_name AS personalName, company_name AS companyName, taxpayer_identification_number AS taxpayerIdentificationNumber, taker_phone AS takerPhone, taker_email AS takerEmail, company_registered_address AS companyRegisteredAddress, company_registered_phone AS companyRegisteredPhone, deposit_bank AS depositBank, bank_account AS bankAccount, create_time AS createTime, update_time AS updateTime
+    </sql>
+
+	<sql id="userInvoiceColumn">
+        ui.id,
+		ui.user_id AS userId,
+		ui.invoice_type AS invoiceType,
+		ui.invoice_title AS invoiceTitle,
+		ui.personal_name AS personalName,
+		ui.company_name AS companyName,
+		ui.taxpayer_identification_number AS taxpayerIdentificationNumber,
+		ui.taker_phone AS takerPhone,
+		ui.taker_email AS takerEmail,
+		ui.company_registered_address AS companyRegisteredAddress,
+		ui.company_registered_phone AS companyRegisteredPhone,
+		ui.deposit_bank AS depositBank,
+		ui.bank_account AS bankAccount,
+		ui.create_time AS createTime,
+		ui.update_time AS updateTime,
+		ui.verify_state AS verifyState,
+		ui.verify_by AS verifyBy,
+		ui.remark AS remark,
+		u.NAME AS NAME,
+		u.mobile AS mobile,
+		rn.real_name AS realName,
+		img.thumb AS thumb,img.large AS large,
+		ISNULL(rn.real_name) as realNameFlag
+    </sql>
+
+	<select id="selectUserInvoiceList" resultType="com.yestae.user.manage.modular.vas.persistence.model.UserInvoice" parameterType="map">
+		SELECT
+			<include refid="userInvoiceColumn"/>
+		FROM
+			uc_user_invoice ui
+			LEFT JOIN uc_user u ON ui.user_id = u.user_id
+			LEFT JOIN uc_user_invoice_image img ON ui.id = img.invoice_id
+			LEFT JOIN uc_user_real_name_authentication rn ON ui.user_id = rn.user_id
+			<where>
+				ui.invoice_type = 5
+				and ui.if_del = 1
+				<if test="map.id != null and map.id != ''">
+					and ui.id CONCAT('%',#{map.id},'%')
+				</if>
+				<if test="map.verifyStartTime != null and map.verifyStartTime != ''">
+					and ui.update_time &gt; #{map.verifyStartTime}
+				</if>
+				<if test="map.verifyEndTime != null and map.verifyEndTime != ''">
+					and ui.update_time &lt; #{map.verifyEndTime}
+				</if>
+
+				<if test="map.applyStartTime != null and map.applyStartTime != ''">
+					and ui.create_time &gt; #{map.applyStartTime}
+				</if>
+				<if test="map.applyEndTime != null and map.applyEndTime != ''">
+					and ui.create_time &lt; #{map.applyEndTime}
+				</if>
+
+				<if test="map.verifyState != null and map.verifyState != '' and map.verifyState != 0">
+					and ui.verify_state = #{map.verifyState}
+				</if>
+
+				<if test="map.userId != null and map.userId != ''">
+					and ui.user_id like CONCAT('%',#{map.userId},'%')
+				</if>
+
+				<if test="map.realName != null and map.realName != ''">
+					and rn.real_name like CONCAT('%',#{map.realName},'%')
+				</if>
+
+				<if test="map.verifyBy != null and map.verifyBy != ''">
+					and ui.verify_by = #{map.verifyBy}
+				</if>
+
+				<if test="map.mobile != null and map.mobile != ''">
+					and u.mobile like CONCAT('%',#{map.mobile},'%')
+				</if>
+
+				<if test="map.realNameFlag != null and map.realNameFlag != '' and map.realNameFlag == 1">
+					and rn.real_name is not null
+				</if>
+				<if test="map.realNameFlag != null and map.realNameFlag != '' and map.realNameFlag == 0">
+					and rn.real_name is null
+				</if>
+
+			</where>
+			ORDER BY ui.verify_state ASC,ui.update_time DESC
+
+	</select>
+
+	<select id="selectUserInvoiceById" resultType="com.yestae.user.manage.modular.vas.persistence.model.UserInvoice" parameterType="java.lang.String">
+		SELECT
+		<include refid="userInvoiceColumn"/>
+		FROM
+		uc_user_invoice ui
+		LEFT JOIN uc_user u ON ui.user_id = u.user_id
+		LEFT JOIN uc_user_invoice_image img ON ui.id = img.invoice_id
+		LEFT JOIN uc_user_real_name_authentication rn ON ui.user_id = rn.user_id
+		WHERE ui.id = #{id}
+	</select>
+
+</mapper>

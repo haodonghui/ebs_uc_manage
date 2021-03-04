@@ -1,0 +1,51 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>推广人选择</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="userId" name="用户id" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="用户手机号" maxlength="11"/>
+                            </div>
+                            <div class="col-sm-3">
+	                            <#SelectCon id="userType" name="用户业务类型">
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="起始日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="截止日期" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="PlatformUserSelect.search()"/>
+                            </div>
+                        </div>
+                        <#table id="PlatformUserTable"/>
+                        <div class="row btn-group-m-t">
+			                <div class="col-sm-12 text-center">
+			                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="PlatformUserSelect.chooseSubmit()"/>
+			                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="PlatformUserSelect.close()"/>
+			                </div>
+			            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/platformUser/platformUser_select.js"></script>
+@}

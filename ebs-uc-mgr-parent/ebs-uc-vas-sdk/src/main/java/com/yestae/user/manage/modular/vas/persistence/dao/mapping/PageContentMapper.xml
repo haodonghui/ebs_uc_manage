@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.PageContentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.PageContent">
+		<id column="id" property="id" />
+		<result column="biz_type" property="bizType" />
+		<result column="biz_id" property="bizId" />
+		<result column="content_type" property="contentType" />
+		<result column="content" property="content" />
+		<result column="title" property="title" />
+		<result column="del_flag" property="delFlag" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, biz_type AS bizType, biz_id AS bizId, content_type AS contentType, content, title, del_flag AS delFlag, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+
+</mapper>

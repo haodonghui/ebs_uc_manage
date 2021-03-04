@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserAddressMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserAddress">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="consignee" property="consignee" />
+		<result column="consignee_phone" property="consigneePhone" />
+		<result column="consignee_privince" property="consigneePrivince" />
+		<result column="consignee_privince_code" property="consigneePrivinceCode" />
+		<result column="consignee_city" property="consigneeCity" />
+		<result column="consignee_city_code" property="consigneeCityCode" />
+		<result column="consignee_area" property="consigneeArea" />
+		<result column="consignee_area_code" property="consigneeAreaCode" />
+		<result column="consignee_full_address" property="consigneeFullAddress" />
+		<result column="default_address" property="defaultAddress" />
+		<result column="if_del" property="ifDel" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, consignee, consignee_phone AS consigneePhone, consignee_privince AS consigneePrivince, consignee_privince_code AS consigneePrivinceCode, consignee_city AS consigneeCity, consignee_city_code AS consigneeCityCode, consignee_area AS consigneeArea, consignee_area_code AS consigneeAreaCode, consignee_full_address AS consigneeFullAddress, default_address AS defaultAddress, if_del AS ifDel, create_time AS createTime, update_time AS updateTime
+    </sql>
+
+</mapper>

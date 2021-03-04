@@ -1,0 +1,62 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <div id="vasList" class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <#NameCon id="vasName" name="服务名称" maxlength="50"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <#NameCon id="vasCode" name="服务编码" maxlength="50"/>
+                    </div>
+                    <div class="col-sm-3">
+		               <#SelectCon id="vasStatus" disabled="disabled" name="服务状态">
+		               </#SelectCon>
+		               <input id="vasStatusHidden" type="hidden" value="2">
+                    </div>
+                    <div class="col-sm-3">
+		               <#SelectCon id="validType" name="有效期类型">
+		               </#SelectCon>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <#NameCon id="organizNameFind" name="机构名称" maxlength="50"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <#NameCon id="organizCode" name="机构编码" maxlength="50"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <#button name="搜索" icon="fa-search" clickFun="RecordBindDlg.search()"/>
+                    </div>
+                </div>
+                <div class="hidden-xs" id="VasTableToolbar" role="group">
+                    @if(shiro.hasPermission("/vas/add")){
+                        <#button name="上传" icon="fa-upload" clickFun="RecordBindDlg.import()"/>
+                        <font color="red">建议上传500条以内</font>
+                    @}
+                </div>
+                <#table id="VasTable"/>
+            </div>
+            
+            <div id="warnList" style="display:none">
+            	<#table id="WarnTable"/>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="danger" name="关闭" id="cancel" icon="fa-eraser" clickFun="RecordBindDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<form id="excelForm" method="post" enctype="multipart/form-data" >
+<input id="excelFile" name = "file" type="file" style="display: none;">
+</form>
+<script src="${ctxPath}/static/js/jquery-form.js"></script>
+<script src="${ctxPath}/static/modular/vas/record/record_bind.js"></script>
+@}

@@ -1,0 +1,39 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="">
+
+            <div class="row">
+                <div class="col-sm-12 b-r">
+					<#input id="channelCode" name="渠道编码 * " underline="false" maxlength="50"/>
+					<#input id="name" name="渠道名称 * " underline="false" maxlength="50"/>
+					<#input id="channelName" name="上级渠道 * " underline="false" readonly="readonly" hidden="pid"
+						clickFun="YestaeGeneralizeChannelInfoDlg.showChannelSelectTree(); return false;"
+						style="background-color: #ffffff !important;"/>
+					<!-- <#select id="ifEnd" name="是否末级 * ">
+                        <option value="1" selected="selected">否</option>
+                        <option value="2">是</option>
+                    </#select> -->
+                </div>
+            </div>
+            
+            <!-- 这是渠道选择的下拉框 -->
+			<div id="channelContent" class="menuContent"
+				style="display: none; position: absolute; z-index: 200;">
+				<ul id="channelTree" class="ztree tree-box" style="width: 249px !important;"></ul>
+			</div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="YestaeGeneralizeChannelInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="YestaeGeneralizeChannelInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeGeneralizeChannel/yestaeGeneralizeChannel_info.js"></script>
+@}

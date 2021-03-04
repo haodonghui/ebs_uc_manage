@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.VasMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.Vas">
+		<id column="id" property="id" />
+		<result column="vas_code" property="vasCode" />
+		<result column="vas_name" property="vasName" />
+		<result column="organiz_id" property="organizId" />
+		<result column="organiz_code" property="organizCode" />
+		<result column="intro" property="intro" />
+		<result column="sale_price" property="salePrice" />
+		<result column="remind_days" property="remindDays" />
+		<result column="valid_type" property="validType" />
+		<result column="status" property="status" />
+		<result column="del_flag" property="delFlag" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="vas_code" property="vasCode" />
+		<result column="vas_name" property="vasName" />
+		<result column="organiz_id" property="organizId" />
+		<result column="organiz_code" property="organizCode" />
+		<result column="organiz_name" property="organizName" />
+		<result column="organiz_simple_name" property="organizSimpleName" />
+		<result column="intro" property="intro" />
+		<result column="sale_price" property="salePrice" />
+		<result column="remind_days" property="remindDays" />
+		<result column="valid_type" property="validType" />
+		<result column="status" property="status" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+	
+	<resultMap id="OrganizVasResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.OrganizVas">
+		<id column="vas_id" property="vasId" />
+		<result column="vas_code" property="vasCode" />
+		<result column="vas_name" property="vasName" />
+		<result column="organiz_id" property="organizId" />
+		<result column="organiz_code" property="organizCode" />
+		<result column="organiz_name" property="organizName" />
+		<result column="organiz_simple_name" property="organizSimpleName" />
+		<result column="intro" property="intro" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, vas_code AS vasCode, vas_name AS vasName, organiz_id AS organizId, organiz_code AS organizCode, intro, sale_price AS salePrice, remind_days AS remindDays, valid_type AS validType, status, del_flag AS delFlag, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="findOrganizVas" parameterType="map" resultMap="OrganizVasResultMap" >
+    select 
+    v.id vas_id, v.vas_code, v.vas_name, v.intro, v.create_time,
+    o.id organiz_id, o.organiz_code, o.organiz_name, o.simple_name organiz_simple_name
+    from uc_m_vas_organiz o
+    join uc_m_vas v on o.id = v.organiz_id
+    <where>
+	    <if test="map.vasId != null and map.vasId !=  ''">
+	    	and v.id = #{map.vasId}
+	    </if>
+    	<if test="map.delFlag != null and map.delFlag !=  ''">
+	    	and v.del_flag = #{map.delFlag}
+	    	and o.del_flag = #{map.delFlag}
+	    </if>
+	    <if test="map.organizStatus != null and map.organizStatus !=  ''">
+	    	and o.status = #{map.organizStatus}
+	    </if>
+	    <if test="map.vasStatus != null and map.vasStatus !=  ''">
+	    	and v.status = #{map.vasStatus}
+	    </if>
+    </where>
+    order by o.create_time desc, v.create_time desc
+    </select>
+    
+    <select id="selectVasList" parameterType="map" resultMap="ResultMap" >
+    select 
+    v.id, v.vas_code, v.vas_name, v.intro, v.sale_price, 
+    v.remind_days, v.valid_type, v.status,
+    o.id organiz_id, o.organiz_code, o.organiz_name, o.simple_name organiz_simple_name
+    from uc_m_vas_organiz o
+    join uc_m_vas v on o.id = v.organiz_id
+    <where>
+	    <if test="map.vasId != null and map.vasId !=  ''">
+	    	and v.id = #{map.vasId}
+	    </if>
+	    <if test="map.validType != null and map.validType !=  ''">
+	    	and v.valid_type = #{map.validType}
+	    </if>
+	    <if test="map.vasName != null and map.vasName !=''">
+	        and v.vas_name like CONCAT('%',#{map.vasName},'%')
+	    </if>
+	    <if test="map.vasCode != null and map.vasCode !=''">
+	        and v.vas_code like CONCAT('%',#{map.vasCode},'%')
+	    </if>
+	    <if test="map.organizName != null and map.organizName !=''">
+	        and o.organiz_name like CONCAT('%',#{map.organizName},'%')
+	    </if>
+	    <if test="map.organizCode != null and map.organizCode !=''">
+	        and o.organiz_code like CONCAT('%',#{map.organizCode},'%')
+	    </if>
+    	<if test="map.delFlag != null and map.delFlag !=  ''">
+	    	and v.del_flag = #{map.delFlag}
+	    	and o.del_flag = #{map.delFlag}
+	    </if>
+	    <if test="map.organizStatus != null and map.organizStatus !=  ''">
+	    	and o.status = #{map.organizStatus}
+	    </if>
+	    <if test="map.vasStatus != null and map.vasStatus !=  ''">
+	    	and v.status = #{map.vasStatus}
+	    </if>
+    </where>
+    order by o.create_time desc, v.create_time desc
+    </select>
+
+</mapper>

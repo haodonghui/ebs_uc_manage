@@ -1,0 +1,38 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="">
+
+            <div class="row">
+                <div class="col-sm-12">
+					<#input id="name" name="等级名称" underline="false" value="${yestaeUserGrade.name!}" maxlength="50"/>
+					<#input id="money" name="所需消费金额（元）" underline="false" value="${yestaeUserGrade.money!}" maxlength="13" placeholder="整数部分最多十位数，小数部分最多两位数"/>
+					<#input id="discount" name="会员折扣" underline="false" value="${yestaeUserGrade.discount!}" maxlength="4" placeholder="不大于1，保留两位小数"/>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">是否默认</label>
+						<div class="col-sm-9">
+							<label class="radio-inline">
+							  <input type="radio" name="ifDefault" value="2"> 是
+							</label>
+							<label class="radio-inline">
+							  <input type="radio" name="ifDefault" checked="checked" value="1"> 否
+							</label>
+	               		</div>
+               		</div>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="YestaeUserGradeInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="YestaeUserGradeInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeUserGrade/yestaeUserGrade_info.js"></script>
+@}

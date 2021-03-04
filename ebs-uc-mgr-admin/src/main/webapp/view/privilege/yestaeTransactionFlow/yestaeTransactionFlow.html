@@ -1,0 +1,73 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户消费流水管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="flowType" name="类型 ">
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="amountMoneyEgt" name="金额大于等于" maxlength="19" onkeyup="Feng.validateNumber('amountMoneyEgt')" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="amountMoneyElt" name="金额小于等于" maxlength="19" onkeyup="Feng.validateNumber('amountMoneyElt')" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="payMethod" name="支付方式 ">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="orderNumber" name="关联订单号" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="tradeNumber" name="关联交易单号" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="flowNumber" name="第三方流水号" maxlength="50"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeTransactionFlow.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="UserAccountFlowTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeTransactionFlow/export")){
+                                <#button name="导出" icon="fa-download" clickFun="YestaeTransactionFlow.export()"/>
+                            @}
+                        </div>
+                        <#table id="YestaeTransactionFlowTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeTransactionFlow/yestaeTransactionFlow.js"></script>
+@}

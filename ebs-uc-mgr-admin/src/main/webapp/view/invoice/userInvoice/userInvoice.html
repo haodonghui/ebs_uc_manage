@@ -1,0 +1,75 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>增票审核管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#SelectCon id="verifyState" name="审核状态" ></#SelectCon>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <#TimeCon id="applyStartTime" name="申请时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <#TimeCon id="applyEndTime" name="申请时间到" isTime="false" pattern="YYYY-MM-DD" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <#SelectCon id="realNameFlag" name="是否实名" ></#SelectCon>
+                    </div>
+                    <div class="col-sm-3">
+                        <#TimeCon id="verifyStartTime" name="审核时间从" isTime="false" pattern="YYYY-MM-DD" />
+                    </div>
+                    <div class="col-sm-3">
+                        <#TimeCon id="verifyEndTime" name="审核时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <#NameCon id="userId" name="用户ID" maxlength="20"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <#NameCon id="mobile" name="用户账号" maxlength="20"/>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <#NameCon id="realName" name="真实姓名" maxlength="20"/>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <#NameCon id="verifyBy" name="审核人" maxlength="20"/>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <#button name="搜索" icon="fa-search" clickFun="UserInvoice.search()"/>
+                    </div>
+                </div>
+
+                <div class="hidden-xs" id="VasTableToolbar" role="group">
+
+                    <#button name="审核" icon="fa-plus" clickFun="UserInvoice.openUserInvoiceDetail()"/>
+                    <#button name="撤销" icon="fa-plus" clickFun="UserInvoice.cancel()"/>
+                    <#button name="增票资质配置" icon="fa-plus" clickFun="UserInvoice.openUserInvoiceConfig()"/>
+
+                </div>
+
+            </div>
+
+            <#table id="UserInvoiceTable"/>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<script src="${ctxPath}/static/modular/invoice/userInvoice/userInvoice.js"></script>
+@}
+

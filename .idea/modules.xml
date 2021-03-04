@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-common-sdk/ebs-uc-common-sdk.iml" filepath="$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-common-sdk/ebs-uc-common-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ebs-uc-mgr-admin/ebs-uc-mgr-admin.iml" filepath="$PROJECT_DIR$/ebs-uc-mgr-admin/ebs-uc-mgr-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ebs-uc-mgr-core/ebs-uc-mgr-core.iml" filepath="$PROJECT_DIR$/ebs-uc-mgr-core/ebs-uc-mgr-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-mgr-parent.iml" filepath="$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-mgr-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-user-sdk/ebs-uc-user-sdk.iml" filepath="$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-user-sdk/ebs-uc-user-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-vas-sdk/ebs-uc-vas-sdk.iml" filepath="$PROJECT_DIR$/ebs-uc-mgr-parent/ebs-uc-vas-sdk/ebs-uc-vas-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ebs_uc_manage.iml" filepath="$PROJECT_DIR$/.idea/ebs_uc_manage.iml" />
+    </modules>
+  </component>
+</project>

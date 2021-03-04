@@ -1,0 +1,53 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>茶庭注册会员商城销售统计</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#SelectCon id="channelId" name="推广渠道" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="startRegistTime" name="注册时间从*" choose="true" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="消费时间从*" min="startRegistTime" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#SelectCon id="generalizeUserId" name="门店" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endRegistTime" name="注册时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        	
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="消费时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="Sale.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="SaleTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeGeneralize/sale/export")){
+                                <#button name="导出" icon="fa-download" clickFun="Sale.export()"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeGeneralize/sale/export/detail")){
+                                <#button name="全部明细导出" icon="fa-download" clickFun="Sale.exportDetail()"/>
+                            @}
+                        </div>
+                        <#table id="SaleTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeGeneralize/sale.js"></script>
+@}

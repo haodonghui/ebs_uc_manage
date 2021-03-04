@@ -1,0 +1,77 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>二维码管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="推广人" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="recommendCode" name="推荐码" maxlength="6"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="channelName" name="推广渠道" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="userType" name="用户业务类型">
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="sceneName" name="场景名称" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+			                    <#SelectCon id="applyScope" name="应用范围 ">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+			                    <#SelectCon id="jumpType" name="跳转页面类型">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+			                    <#SelectCon id="type" name="跳转类型">
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeQrcode.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="YestaeQrcodeTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeQrcode/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="YestaeQrcode.openAddYestaeQrcode()"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeQrcode/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="YestaeQrcode.openYestaeQrcodeDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeQrcode/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="YestaeQrcode.delete()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeQrcode/download")){
+                                <#button name="二维码下载" icon="fa-download" clickFun="YestaeQrcode.download()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="YestaeQrcodeTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeQrcode/yestaeQrcode.js"></script>
+@}

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.UserRealNameAuthenticationMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.UserRealNameAuthentication">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="mobile" property="mobile" />
+		<result column="gender" property="gender" />
+		<result column="name" property="name" />
+		<result column="real_name" property="realName" />
+		<result column="born" property="born" />
+		<result column="mobile_pic" property="mobilePic" />
+		<result column="id1_no" property="id1No" />
+		<result column="id1_type" property="id1Type" />
+		<result column="id1_front_img" property="id1FrontImg" />
+		<result column="id1_back_img" property="id1BackImg" />
+		<result column="id2_no" property="id2No" />
+		<result column="id2_type" property="id2Type" />
+		<result column="id2_front_img" property="id2FrontImg" />
+		<result column="id2_back_img" property="id2BackImg" />
+		<result column="id3_no" property="id3No" />
+		<result column="id3_type" property="id3Type" />
+		<result column="id3_front_img" property="id3FrontImg" />
+		<result column="id3_back_img" property="id3BackImg" />
+		<result column="bank_card_no" property="bankCardNo" />
+		<result column="third_party_veryify" property="thirdPartyVeryify" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="verify_id" property="verifyId" />
+		<result column="verify_name" property="verifyName" />
+		<result column="verify_desc" property="verifyDesc" />
+		<result column="verify_time" property="verifyTime" />
+		<result column="verify" property="verify" />
+		<result column="data_source" property="dataSource" />
+		<result column="flag" property="flag" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="mobile" property="mobile" />
+		<result column="login_mobile" property="loginMobile" />
+		<result column="gender" property="gender" />
+		<result column="name" property="name" />
+		<result column="real_name" property="realName" />
+		<result column="born" property="born" />
+		<result column="id1_no" property="id1No" />
+		<result column="id1_type" property="id1Type" />
+		<result column="id2_no" property="id2No" />
+		<result column="id2_type" property="id2Type" />
+		<result column="id3_no" property="id3No" />
+		<result column="id3_type" property="id3Type" />
+		<result column="bank_card_no" property="bankCardNo" />
+		<result column="third_party_veryify" property="thirdPartyVeryify" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="verify_id" property="verifyId" />
+		<result column="verify_name" property="verifyName" />
+		<result column="verify_time" property="verifyTime" />
+		<result column="regist_time" property="registTime" />
+		<result column="data_source" property="dataSource" />
+		<result column="verify" property="verify" />
+		<result column="flag" property="flag" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, data_source AS dataSource, user_id AS userId, mobile, gender, name, real_name AS realName, born, mobile_pic AS mobilePic, id1_no AS id1No, id1_type AS id1Type, id1_front_img AS id1FrontImg, id1_back_img AS id1BackImg, id2_no AS id2No, id2_type AS id2Type, id2_front_img AS id2FrontImg, id2_back_img AS id2BackImg, id3_no AS id3No, id3_type AS id3Type, id3_front_img AS id3FrontImg, id3_back_img AS id3BackImg, bank_card_no AS bankCardNo, third_party_veryify AS thirdPartyVeryify, create_time AS createTime, update_time AS updateTime, verify_id AS verifyId, verify_name AS verifyName, verify_desc AS verifyDesc, verify_time AS verifyTime, verify, flag
+    </sql>
+
+	<select id="selectCountByIdNo" resultType="int">
+	select count(id) from uc_user_real_name_authentication 
+	where (id1_no = #{idNo} and id1_type = #{idType}) 
+	or (id2_no = #{idNo} and id2_type = #{idType}) 
+	or (id3_no = #{idNo} and id3_type = #{idType})
+	</select>
+	
+	<select id="selectUserRealNameAuthenticationList" parameterType="map" resultMap="ResultMap">
+	select ur.id, ur.user_id, ur.name, ur.real_name, ur.mobile, ur.verify, ur.born, ur.flag, ur.create_time, 
+    	ur.verify_name, ur.verify_time, ur.id1_type, ur.id1_no, ur.id2_type, id2_no, ur.bank_card_no, ur.data_source,
+    	u.create_time regist_time, u.mobile login_mobile, type
+    from uc_user_real_name_authentication ur 
+    join uc_user u on u.user_id = ur.user_id
+    <where>
+        <if test="map.name != null and map.name != ''">
+	        and ur.name like CONCAT('%',#{map.name},'%')
+	    </if>
+        <if test="map.bankCardNo != null and map.bankCardNo != ''">
+	        and ur.bank_card_no like CONCAT('%',#{map.bankCardNo},'%')
+	    </if>
+        <if test="map.bankCardNoFlag != null and map.bankCardNoFlag == 1">
+	        and ur.bank_card_no is not null
+	        and ur.bank_card_no &lt;&gt; ''
+	    </if>
+        <if test="map.bankCardNoFlag != null and map.bankCardNoFlag == 2">
+	        and (ur.bank_card_no = '' or ur.bank_card_no is null)
+	    </if>
+        <if test="map.idNo != null and map.idNo != ''">
+	        and (ur.id1_no like CONCAT('%',#{map.idNo},'%') 
+	        or ur.id2_no like CONCAT('%',#{map.idNo},'%')
+	        or ur.id3_no like CONCAT('%',#{map.idNo},'%')) 
+	    </if>
+        <if test="map.realName != null and map.realName != ''">
+	        and ur.real_name like CONCAT('%',#{map.realName},'%')
+	    </if>
+        <if test="map.verifyName != null and map.verifyName != ''">
+	        and ur.verify_name like CONCAT('%',#{map.verifyName},'%')
+	    </if>
+        <if test="map.mobile != null and map.mobile != ''">
+	        and ur.mobile like CONCAT('%',#{map.mobile},'%')
+	    </if>
+        <if test="map.verify != null and map.verify != ''">
+	        and ur.verify = #{map.verify}
+	    </if>
+        <if test="map.flag != null and map.flag != ''">
+	        and ur.flag = #{map.flag}
+	    </if>
+        <if test="map.userId != null and map.userId !=''">
+		    and ur.user_id = #{map.userId}
+		</if>
+        <if test="map.dataSource != null and map.dataSource != ''">
+	        and ur.data_source = #{map.dataSource}
+	    </if>
+        <if test="map.type != null and map.type != ''">
+	        and u.type = #{map.type}
+	    </if>
+	    <if test="map.startTime != null and map.startTime !=''">
+	        and ur.create_time &gt; #{map.startTime}
+	    </if>  
+		<if test="map.endTime != null and map.endTime !=''">
+	        and ur.create_time &lt; #{map.endTime}
+	    </if>
+        <if test="map.loginMobile != null and map.loginMobile != ''">
+	        and u.mobile like CONCAT('%',#{map.loginMobile},'%')
+	    </if>
+	    <if test="map.startRegistTime != null and map.startRegistTime !=''">
+	        and u.create_time &gt; #{map.startRegistTime}
+	    </if>  
+		<if test="map.endRegistTime != null and map.endRegistTime !=''">
+	        and u.create_time &lt; #{map.endRegistTime}
+	    </if>
+    </where>
+    order by verify asc, create_time asc
+	</select>
+</mapper>

@@ -1,0 +1,183 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                            
+                            <div class="col-sm-3">
+			                    <#SelectCon id="source" name="来源渠道">
+			                        <!-- <option value="" selected="selected">请选择</option>
+			                        <option value="0" >未知</option>
+			                        <option value="1">益友会APP</option>
+			                        <option value="2">益友会微信公众号</option>
+			                        <option value="3">益友会WEB</option>
+			                        <option value="4">总裁茶室APP</option>
+			                        <option value="5">益购APP</option>
+			                        <option value="6">益购WEB</option>
+			                        <option value="9">益购微信小程序</option> -->
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#TimeCon id="startUpgradeTime" name="升级时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endUpgradeTime" name="升级时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="注册时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="注册时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="type" name="等级">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1" >普通会员</option>
+			                        <option value="2">金卡会员</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeUser.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="YestaeUserTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeUser/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="YestaeUser.openYestaeUserDetail()" space="true"/>
+                            @}
+                            @/*if(shiro.hasPermission("/yestaeUser/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="YestaeUser.delete()" space="true"/>
+                            @} */
+                            @/*if(shiro.hasPermission("/yestaeUser/online")){
+                                <#button name="启用" icon="fa-long-arrow-up" clickFun="YestaeUser.online()" space="true"/>
+                            @}*/
+                            @/*if(shiro.hasPermission("/yestaeUser/offline")){
+                                <#button name="停用" icon="fa-long-arrow-down" clickFun="YestaeUser.offline()" space="true"/>
+                            @}*/
+                            @if(shiro.hasPermission("/yestaeUser/update/mobile")){
+                                <#button name="修改手机号" icon="fa-edit" clickFun="YestaeUser.openYestaeUserMobile()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeUser/update/mobile/forcedModification")){
+                            <#button name="修改手机号(无校验)" icon="fa-edit" clickFun="YestaeUser.openYestaeUserMobileForce()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeUser/send/code")){
+                                <#button name="发送支付验证码" icon="fa-edit" clickFun="YestaeUser.sendCode()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeUser/reset/password")){
+                                <#button name="重置密码" icon="fa-cogs" clickFun="YestaeUser.resetPassword()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="YestaeUserTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 手机号修改弹窗 -->
+<div id="mobileEdit" style="display: none;" >
+	<div class="ibox float-e-margins ibox-content form-horizontal row" >
+	    <div class="col-sm-12">
+			<div class="form-group">
+			    <label class="col-sm-3 control-label">原手机号</label>
+			    <div class="col-sm-9">
+			        <input class="form-control" type="text" id="sourceMobile" readonly="readonly">
+			    </div>
+			</div>
+			<div class="form-group">
+			    <label class="col-sm-3 control-label">新手机号<font color="red"> * </font></label>
+			    <div class="col-sm-9">
+			        <input class="form-control" type="text" id="targetMobile" maxlength="11" onkeyup="Feng.validatePhone('targetMobile')" >
+			    </div>
+			</div>
+			<div class="form-group">
+			    <label class="col-sm-3 control-label">备注<font color="red"> * </font></label>
+			    <div class="col-sm-9">
+			        <textarea class="form-control" id="remark" rows="3" maxlength="50"></textarea>
+			    </div>
+			</div>
+			<div class="row btn-group-m-t">
+		        <div class="col-sm-12 text-center">
+		            <#button btnCss="info" name="提交" icon="fa-check" clickFun="YestaeUser.editMobileSubmit()"/>
+		            <#button btnCss="danger" name="取消" icon="fa-eraser" clickFun="layer.close(YestaeUser.layerIndex)"/>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+<!-- 强制修改手机号修改弹窗 -->
+<div id="mobileEditForce" style="display: none;" >
+    <div class="ibox float-e-margins ibox-content form-horizontal row" >
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">原手机号</label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" id="sourceMobile2" readonly="readonly">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">新手机号<font color="red"> * </font></label>
+                <div class="col-sm-9">
+                    <input class="form-control" type="text" id="targetMobile2" maxlength="11" onkeyup="Feng.validatePhone('targetMobile2')" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">备注<font color="red"> * </font></label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" id="remark2" rows="3" maxlength="50"></textarea>
+                </div>
+            </div>
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="info" name="提交" icon="fa-check" clickFun="YestaeUser.forceEditMobileSubmit()"/>
+                    <#button btnCss="danger" name="取消" icon="fa-eraser" clickFun="layer.close(YestaeUser.layerIndex)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 发送支付验证码弹窗 -->
+<div id="sendCodeWindow" style="display: none;" >
+	<div class="ibox float-e-margins ibox-content form-horizontal row" >
+	    <div class="col-sm-12">
+			<div class="form-group">
+			    <#select id="clientType" name="客户端类型 * " underline="false" hidden="id1TypeValue">
+                    <option value="">请选择</option>
+                    <option value="1">益友会APP</option>
+                    <option value="2">益友会微信公众号</option>
+                    <option value="3">益友会WEB</option>
+                    <option value="4">总裁茶室APP</option>
+                    <option value="5">益购APP</option>
+                    <option value="6">益购WEB</option>
+                    <option value="9">益购微信小程序</option>
+                </#select>
+			</div>
+			<div class="row btn-group-m-t">
+		        <div class="col-sm-12 text-center">
+		            <#button btnCss="info" name="提交" icon="fa-check" clickFun="YestaeUser.sendCodeSubmit()"/>
+		            <#button btnCss="danger" name="取消" icon="fa-eraser" clickFun="layer.close(YestaeUser.layerIndex)"/>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeUser/yestaeUser.js"></script>
+@}

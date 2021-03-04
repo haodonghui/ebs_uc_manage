@@ -1,0 +1,62 @@
+@layout("/common/_container.html"){
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#tab_1" data-toggle="tab">修改机构</a></li>
+  <li><a href="#tab_2" data-toggle="tab">机构故事</a></li>
+</ul>
+
+
+<div class="tab-content">
+
+	<div class="tab-pane fade in active" id="tab_1">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		
+		            <input type="hidden" id="id" value="${organiz.id}">
+
+					<div class="row">
+		                <div class="col-sm-6 b-r">
+							<#vasImage id="logo" name="扫码页logo *" underline="false" upload="true"
+								hiddenValue="${organiz.logo!}" avatarImg="${organiz.logoUrl!}"/>
+							<#input id="organizCode" name="机构编码" disabled="disabled" value="${organiz.organizCode}" underline="false" maxlength="50"/>
+							<#input id="organizName" name="机构名称 * " value="${organiz.organizName}" underline="false" maxlength="50"/>
+							<#input id="simpleName" name="机构简称 * " value="${organiz.simpleName}" underline="false" maxlength="50"/>
+							<#input id="category" name="商品分类 * " value="${organiz.category}" underline="false" maxlength="50"/>
+		                	<#textarea id="intro"  rows="6" name="机构简介" value="${organiz.intro}" maxlength="200"/>
+		                </div>
+		
+		                <div class="col-sm-6">
+							<#vasImage id="surfaceId" name="封面图 *" underline="false" upload="true"
+								hiddenValue="${organiz.surfaceId!}" avatarImg="${organiz.surfaceUrl!}"/>
+							<#vasImage id="organizLogo" name="彩色logo *" underline="false" upload="true"
+								hiddenValue="${organiz.organizLogo!}" avatarImg="${organiz.organizLogoUrl!}"/>
+							<#vasImage id="organizLogoInvalid" name="普通logo *" underline="false" upload="true"
+								hiddenValue="${organiz.organizLogoInvalid!}" avatarImg="${organiz.organizLogoInvalidUrl!}"/>
+		                </div>
+		            </div>
+		
+		            <div class="row btn-group-m-t">
+		                <div class="col-sm-12 text-center">
+		                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="OrganizInfoDlg.editSubmit()"/>
+		                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="OrganizInfoDlg.close()"/>
+		                </div>
+		            </div>
+        		</div>
+        	</div>
+		</div>
+    </div>
+	<div class="tab-pane fade" id="tab_2">
+		<div class="ibox float-e-margins">
+		    <div class="ibox-content">
+		        <div class="form-horizontal">
+		        	<div class="row">
+						<#input id="content" name="机构故事链接" underline="false" value="${organiz.content!}" maxlength="200"/>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/vas/organiz/organiz_info.js"></script>
+@}

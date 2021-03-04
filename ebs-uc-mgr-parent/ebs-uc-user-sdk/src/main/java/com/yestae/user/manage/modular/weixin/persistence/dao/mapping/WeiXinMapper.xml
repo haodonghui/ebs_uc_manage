@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.weixin.persistence.dao.WeiXinMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.weixin.persistence.model.WeiXin">
+		<id column="id" property="id" />
+		<result column="code" property="code" />
+		<result column="name" property="name" />
+		<result column="appid" property="appid" />
+		<result column="secret" property="secret" />
+		<result column="url" property="url" />
+		<result column="token" property="token" />
+		<result column="access_token" property="accessToken" />
+		<result column="access_token_expires_in" property="accessTokenExpiresIn" />
+		<result column="access_token_time" property="accessTokenTime" />
+		<result column="jsapi_ticket" property="jsapiTicket" />
+		<result column="jsapi_ticket_expires_in" property="jsapiTicketExpiresIn" />
+		<result column="jsapi_ticket_time" property="jsapiTicketTime" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, name, appid, secret, url, token, access_token AS accessToken, access_token_expires_in AS accessTokenExpiresIn, 
+        access_token_time AS accessTokenTime, jsapi_ticket AS jsapiTicket, jsapi_ticket_expires_in AS jsapiTicketExpiresIn, 
+        jsapi_ticket_time AS jsapiTicketTime, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from uc_m_weixin
+		where code = #{code,jdbcType=VARCHAR}
+    </select>
+    
+    <update id="updateByMap" parameterType="map">
+	    update uc_m_weixin
+	    <set >
+	      <if test="map.code != null" >
+	        code = #{map.code},
+	      </if>
+	      <if test="map.name != null" >
+	        name = #{map.name},
+	      </if>
+	      <if test="map.appid != null" >
+	        appid = #{map.appid},
+	      </if>
+	      <if test="map.secret != null" >
+	        secret = #{map.secret},
+	      </if>
+	      <if test="map.url != null" >
+	        url = #{map.url},
+	      </if>
+	      <if test="map.token != null" >
+	        token = #{map.token},
+	      </if>
+	      <if test="map.accessToken != null" >
+	        access_token = #{map.accessToken},
+	      </if>
+	      <if test="map.accessTokenExpiresIn != null" >
+	        access_token_expires_in = #{map.accessTokenExpiresIn},
+	      </if>
+	      <if test="map.accessTokenTime != null" >
+	        access_token_time = #{map.accessTokenTime},
+	      </if>
+	      <if test="map.jsapiTicket != null" >
+	        jsapi_ticket = #{map.jsapiTicket},
+	      </if>
+	      <if test="map.jsapiTicketExpiresIn != null" >
+	        jsapi_ticket_expires_in = #{map.jsapiTicketExpiresIn},
+	      </if>
+	      <if test="map.jsapiTicketTime != null" >
+	        jsapi_ticket_time = #{map.jsapiTicketTime},
+	      </if>
+	      <if test="map.createTime != null" >
+	        create_time = #{map.createTime},
+	      </if>
+	      <if test="map.createBy != null" >
+	        create_by = #{map.createBy},
+	      </if>
+	      <if test="map.updateTime != null" >
+	        update_time = #{map.updateTime},
+	      </if>
+	      <if test="map.updateBy != null" >
+	        update_by = #{map.updateBy}
+	      </if>
+	    </set>
+	    where id = #{map.id}
+    </update>
+
+</mapper>

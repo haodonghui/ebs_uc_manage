@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.RecordMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.Record">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="added_service_id" property="addedServiceId" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="stop" property="stop" />
+		<result column="invalid" property="invalid" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="added_service_id" property="addedServiceId" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="vas_name" property="vasName" />
+		<result column="vas_code" property="vasCode" />
+		<result column="stop" property="stop" />
+		<result column="invalid" property="invalid" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, added_service_id AS addedServiceId, begin_time AS beginTime, end_time AS endTime, stop, invalid, create_time AS createTime, update_time AS updateTime
+    </sql>
+    
+    <!-- 用户增值服务列表 -->
+    <select id="selectRecordList" parameterType="map" resultMap="ResultMap" >
+    select 
+     	r.id,r.user_id,r.added_service_id,r.begin_time,r.end_time,r.stop,r.invalid,r.create_time,r.update_time,
+     	v.id,v.vas_code,v.vas_name
+    from uc_vas_record r 
+		 join uc_m_vas v on 
+    		v.id=r.added_service_id
+    <where>
+	    <if test="map.userId != null and map.userId !=''">
+	    	and r.user_id = #{map.userId}
+	    </if>
+	   
+	    <if test="map.userIds != null">
+	    	and r.user_id in 
+	        <foreach collection="map.userIds" item="userId" index="index"
+              open="(" close=")" separator=",">
+		      #{userId}
+		    </foreach>
+	    </if>
+	   
+	    <if test="map.vasCode != null and map.vasCode !=''">
+	        and v.vas_code like CONCAT('%',#{map.vasCode},'%')
+	    </if>
+	    <if test="map.vasName != null and map.vasName !=''">
+	        and v.vas_name like CONCAT('%',#{map.vasName},'%')
+	    </if>
+	   
+	    <if test="map.stop != null and map.stop !=''">
+	        and r.stop like CONCAT('%',#{map.stop},'%')
+	    </if>
+	    
+	    <if test="map.invalid != null and map.invalid !=''">
+	        and r.invalid = #{map.invalid}
+	    </if>
+	    
+	    <if test="map.startTime != null and map.startTime !=''">
+		    and r.create_time &gt; #{map.startTime}
+		</if>
+        <if test="map.endTime != null and map.endTime !=''">
+		    and r.create_time &lt; #{map.endTime}
+		</if>
+	    
+    </where>
+    order by r.create_time desc
+    </select>
+    
+
+</mapper>

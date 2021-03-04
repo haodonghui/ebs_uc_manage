@@ -1,0 +1,75 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>推广人管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="name" name="推广人名称" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="推广人手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="recommendCode" name="推荐码" maxlength="6"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="channelName" name="推广渠道" maxlength="50"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="userMobile" name="关联用户手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="userName" name="关联用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="创建时间从" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="创建时间到" isTime="false" pattern="YYYY-MM-DD"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#SelectCon id="userType" name="用户业务类型">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="YestaeGeneralizeUser.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="YestaeGeneralizeUserTableToolbar" role="group">
+                            @if(shiro.hasPermission("/yestaeGeneralizeUser/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="YestaeGeneralizeUser.openAddYestaeGeneralizeUser()"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeGeneralizeUser/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="YestaeGeneralizeUser.openYestaeGeneralizeUserDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeGeneralizeUser/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="YestaeGeneralizeUser.delete()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/yestaeGeneralizeUser/export")){
+                                <#button name="导入" icon="fa-remove" clickFun="YestaeGeneralizeUser.doImport()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="YestaeGeneralizeUserTable"/>
+                    
+                    	<form id="excelForm" method="post" enctype="multipart/form-data" >
+							<input id="excelFile" name = "file" type="file" style="display: none;">
+						</form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/js/jquery-form.js"></script>
+<script src="${ctxPath}/static/modular/privilege/yestaeGeneralizeUser/yestaeGeneralizeUser.js"></script>
+@}

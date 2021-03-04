@@ -1,0 +1,143 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>实名认证管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#NameCon id="userId" name="用户ID" maxlength="50"/>
+                            </div>
+                        	<div class="col-sm-3">
+                                <#NameCon id="name" name="用户名" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="loginMobile" name="手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="realName" name="真实姓名" maxlength="50"/>
+                            </div>
+                            
+                        	
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#TimeCon id="startTime" name="申请时间从" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endTime" name="申请时间到" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                        	<div class="col-sm-3">
+                                <#NameCon id="verifyName" name="审核人" maxlength="50"/>
+                            </div>
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="verify" name="审核状态">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">待审核</option>
+			                        <option value="2">审核通过</option>
+                        			<option value="3">审核不通过</option>
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+                                <#TimeCon id="startRegistTime" name="注册时间从" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#TimeCon id="endRegistTime" name="注册时间到" isTime="true" pattern="YYYY-MM-DD hh:mm:ss"/>
+                            </div>
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="flag" name="是否有效">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="0">有效</option>
+			                        <option value="1">失效</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+			                    <#SelectCon id="type" name="等级">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1" >普通会员</option>
+			                        <option value="2">金卡会员</option>
+			                    </#SelectCon>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+			                    <#NameCon id="bankCardNo" name="银行卡号" maxlength="50"/>
+                            </div>
+                        	<div class="col-sm-3">
+			                    <#NameCon id="idNo" name="证件号" maxlength="50"/>
+                            </div>
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="dataSource" name="数据来源">
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="mobile" name="实名手机号" maxlength="11" onkeyup="Feng.validatePhone('mobile')" />
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col-sm-3">
+			                    <#SelectCon id="bankCardNoFlag" name="有无银行卡">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1">有</option>
+			                        <option value="2">无</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="UserRealNameAuthentication.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="UserRealNameAuthenticationTableToolbar" role="group">
+                            @if(shiro.hasPermission("/userRealNameAuthentication/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="UserRealNameAuthentication.openAddUserRealNameAuthentication()"/>
+                            @}
+                            @if(shiro.hasPermission("/userRealNameAuthentication/verify")){
+                                <#button name="编辑" icon="fa-edit" clickFun="UserRealNameAuthentication.openUserRealNameAuthenticationUpdate()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/userRealNameAuthentication/detail")){
+                                <#button name="查看" icon="fa-edit" clickFun="UserRealNameAuthentication.openUserRealNameAuthenticationDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/userRealNameAuthentication/commitCount")){
+                                <#button name="更改认证次数" icon="fa-edit" clickFun="UserRealNameAuthentication.openCommitCount()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="UserRealNameAuthenticationTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 认证提交次数修改弹窗 -->
+<div id="commitCountEdit" style="display: none;" >
+	<div class="ibox float-e-margins ibox-content form-horizontal row" >
+	    <div class="col-sm-12">
+			<div class="form-group">
+			    <label class="col-sm-3 control-label">原认证次数</label>
+			    <div class="col-sm-9">
+			        <input class="form-control" type="text" id="sourceCommitCount" readonly="readonly">
+			    </div>
+			</div>
+			<div class="form-group">
+			    <label class="col-sm-3 control-label">认证次数<font color="red"> * </font></label>
+			    <div class="col-sm-9">
+			        <input class="form-control" type="text" id="commitCount" maxlength="3" onkeyup="Feng.validateNumber('commitCount')" >
+			    </div>
+			</div>
+			<div class="row btn-group-m-t">
+		        <div class="col-sm-12 text-center">
+		            <#button btnCss="info" name="提交" icon="fa-check" clickFun="UserRealNameAuthentication.updateCommitCount()"/>
+		            <#button btnCss="danger" name="取消" icon="fa-eraser" clickFun="layer.close(UserRealNameAuthentication.layerIndex)"/>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/userRealNameAuthentication/userRealNameAuthentication.js"></script>
+@}

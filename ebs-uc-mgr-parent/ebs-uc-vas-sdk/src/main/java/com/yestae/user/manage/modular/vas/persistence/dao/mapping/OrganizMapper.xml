@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.OrganizMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.Organiz">
+		<id column="id" property="id" />
+		<result column="organiz_name" property="organizName" />
+		<result column="simple_name" property="simpleName" />
+		<result column="organiz_code" property="organizCode" />
+		<result column="simple_name" property="simpleName" />
+		<result column="access_token" property="accessToken" />
+		<result column="access_key_id" property="accessKeyId" />
+		<result column="access_key_secret" property="accessKeySecret" />
+		<result column="intro" property="intro" />
+		<result column="tel" property="tel" />
+		<result column="linkman" property="linkman" />
+		<result column="email" property="email" />
+		<result column="fax" property="fax" />
+		<result column="address" property="address" />
+		<result column="category" property="category" />
+		<result column="status" property="status" />
+		<result column="del_flag" property="delFlag" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, organiz_name AS organizName, organiz_code AS organizCode, simple_name AS simpleName, access_token AS accessToken, access_key_id AS accessKeyId, access_key_secret AS accessKeySecret, intro, tel, linkman, email, fax, address, category, status, del_flag AS delFlag, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+
+</mapper>

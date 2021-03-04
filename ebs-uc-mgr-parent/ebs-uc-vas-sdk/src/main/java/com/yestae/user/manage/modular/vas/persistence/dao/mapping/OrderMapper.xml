@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.OrderMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.Order">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="added_service_id" property="addedServiceId" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="order_no" property="orderNo" />
+		<result column="pay_no" property="payNo" />
+		<result column="pay_amount" property="payAmount" />
+		<result column="pay_pt" property="payPt" />
+		<result column="pay_order_no" property="payOrderNo" />
+		<result column="pay_type" property="payType" />
+		<result column="currency" property="currency" />
+		<result column="cur_rate" property="curRate" />
+		<result column="init_pay_time" property="initPayTime" />
+		<result column="finish_pay_time" property="finishPayTime" />
+		<result column="notify_pay_time" property="notifyPayTime" />
+		<result column="pay_state" property="payState" />
+		<result column="create_year" property="createYear" />
+		<result column="create_month" property="createMonth" />
+		<result column="order_state" property="orderState" />
+		<result column="order_type" property="orderType" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="vas_name" property="vasName" />
+		<result column="vas_code" property="vasCode" />
+		<result column="added_service_id" property="addedServiceId" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="order_no" property="orderNo" />
+		<result column="pay_no" property="payNo" />
+		<result column="pay_amount" property="payAmount" />
+		<result column="pay_pt" property="payPt" />
+		<result column="pay_order_no" property="payOrderNo" />
+		<result column="pay_type" property="payType" />
+		<result column="currency" property="currency" />
+		<result column="cur_rate" property="curRate" />
+		<result column="init_pay_time" property="initPayTime" />
+		<result column="finish_pay_time" property="finishPayTime" />
+		<result column="notify_pay_time" property="notifyPayTime" />
+		<result column="pay_state" property="payState" />
+		<result column="create_year" property="createYear" />
+		<result column="create_month" property="createMonth" />
+		<result column="order_state" property="orderState" />
+		<result column="order_type" property="orderType" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, added_service_id AS addedServiceId, name, mobile, order_no AS orderNo, pay_no AS payNo, pay_amount AS payAmount, pay_pt AS payPt, pay_order_no AS payOrderNo, pay_type AS payType, currency, cur_rate AS curRate, init_pay_time AS initPayTime, finish_pay_time AS finishPayTime, notify_pay_time AS notifyPayTime, pay_state AS payState, create_year AS createYear, create_month AS createMonth, order_state AS orderState, order_type AS orderType, create_time AS createTime, update_time AS updateTime
+    </sql>
+    
+    <select id="selectOrderList" parameterType="map" resultMap="ResultMap" >
+     select 
+	     o.id,o.user_id,o.added_service_id,o.name,o.mobile,o.order_no,o.pay_no,o.pay_amount,o.pay_pt,o.pay_order_no,
+	    	o.pay_type,o.currency,o.cur_rate,o.init_pay_time,o.finish_pay_time,o.notify_pay_time,
+	    	o.pay_state,o.create_year,o.create_month,o.order_state,o.order_type,o.create_time,o.update_time,
+	    	v.vas_name, v.vas_code
+	    from 
+		     uc_vas_order o 
+		join uc_m_vas v on v.id=o.added_service_id
+    <!-- select 
+    	o.id user_id,added_service_id,o.order_no,o.pay_no,o.pay_amount,o.pay_pt,o.pay_order_no,
+    	o.pay_type,o.currency,o.cur_rate,o.init_pay_time,o.finish_pay_time,o.notify_pay_time,
+    	o.pay_state,o.create_year,o.create_month,o.order_state,o.order_type,o.create_time,o.update_time,
+    	u.id user_id,u.name,u.mobile
+    from 
+	     uc_vas_order o join
+	     uc_user u on 
+	     u.user_id = o.user_id -->
+    <where>
+	  
+	    <if test="map.userId != null and map.userId !=''">
+    		and o.user_id like CONCAT('%',#{map.userId},'%')
+	    </if>
+	    
+	    <if test="map.userIds != null">
+	    	and o.user_id in 
+	        <foreach collection="map.userIds" item="userId" index="index"
+              open="(" close=")" separator=",">
+		      #{userId}
+		    </foreach>
+	    </if>
+	    
+	    <!-- <if test="map.name != null and map.name !=''">
+    		and u.name like CONCAT('%',#{map.name},'%')
+	    </if>
+	   
+	    <if test="map.mobile != null and map.mobile !=''">
+	        and u.mobile like CONCAT('%',#{map.mobile},'%')
+	    </if> -->
+	    
+	    <if test="map.vasCode != null and map.vasCode !=''">
+	        and v.vas_code like CONCAT('%',#{map.vasCode},'%')
+	    </if>
+	    <if test="map.vasName != null and map.vasName !=''">
+	        and v.vas_name like CONCAT('%',#{map.vasName},'%')
+	    </if>
+	    
+	    <if test="map.orderNo != null and map.orderNo !=''">
+	        and o.order_no like CONCAT('%',#{map.orderNo},'%')
+	    </if>
+	    
+	    <if test="map.payAmount != null and map.payAmount !=''">
+	        and o.pay_amount like CONCAT('%',#{map.payAmount},'%')
+	    </if>
+	   
+	    <if test="map.payPt != null and map.payPt !=''">
+	        and o.pay_pt like CONCAT('%',#{map.payPt},'%')
+	    </if>
+	    
+	    <if test="map.payOrderNo != null and map.payOrderNo !=''">
+	        and o.pay_order_no like CONCAT('%',#{map.payOrderNo},'%')
+	    </if>
+	    
+	    <if test="map.payType != null and map.payType !=''">
+	        and o.pay_type like CONCAT('%',#{map.payType},'%')
+	    </if>
+	    
+	    <if test="map.payState != null and map.payState !=  ''">
+	    	and o.pay_state like CONCAT('%',#{map.payState},'%') 
+	    </if>
+	    
+        <if test="map.startTime != null and map.startTime !=''">
+		        and o.create_time &gt; #{map.startTime}
+		    </if>
+        <if test="map.endTime != null and map.endTime !=''">
+		        and o.create_time &lt; #{map.endTime}
+		</if>
+	    
+	    
+    </where>
+     order by o.create_time desc 
+    </select>
+    
+    
+
+</mapper>

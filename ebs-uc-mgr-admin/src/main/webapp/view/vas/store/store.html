@@ -1,0 +1,67 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>门店管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            
+                            <div class="col-sm-3">
+                                <#NameCon id="storeName" name="门店名称" maxlength="50"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="storeCode" name="门店编码" maxlength="50"/>
+                            </div>
+                            
+                            <div class="col-sm-3">
+                                <#NameCon id="organizCode" name="机构编码" maxlength="50"/>
+                            </div>
+                            
+                            <div class="col-sm-3">
+                                <#SelectCon id="recommendFlag" name="推荐标识">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1" >推荐</option>
+			                        <option value="2">不推荐</option>
+			                    </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="status" name="状态">
+			                        <option value="" selected="selected">请选择</option>
+			                        <option value="1" >启用</option>
+			                        <option value="2">停用</option>
+			                    </#SelectCon>
+			                 </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="Store.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="StoreTableToolbar" role="group">
+                            @if(shiro.hasPermission("/store/add")){
+                                <#button name="添加" icon="fa-plus" clickFun="Store.openAddStore()"/>
+                            @}
+                            @if(shiro.hasPermission("/store/update")){
+                                <#button name="修改" icon="fa-edit" clickFun="Store.openStoreDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/store/delete")){
+                                <#button name="删除" icon="fa-remove" clickFun="Store.delete()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/store/online")){
+                                <#button name="启用" icon="fa-long-arrow-up" clickFun="Store.online()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/store/offline")){
+                                <#button name="停用" icon="fa-long-arrow-down" clickFun="Store.offline()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="StoreTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/vas/store/store.js"></script>
+@}

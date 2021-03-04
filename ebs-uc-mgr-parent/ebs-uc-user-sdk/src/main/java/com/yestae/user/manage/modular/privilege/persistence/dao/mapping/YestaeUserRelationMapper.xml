@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserRelationMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserRelation">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="inviter_id" property="inviterId" />
+		<result column="inviter_path" property="inviterPath" />
+		<result column="inviter_is_f_code" property="inviterIsFCode" />
+		<result column="upgrade_id" property="upgradeId" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="YestaeUserRelationResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="mobile" property="mobile" />
+		<result column="name" property="name" />
+		<result column="inviter_mobile" property="inviterMobile" />
+		<result column="inviter_name" property="inviterName" />
+		<result column="upgrade_mobile" property="upgradeMobile" />
+		<result column="upgrade_name" property="upgradeName" />
+		<result column="inviter_is_f_code" property="inviterIsFCode" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, inviter_id AS inviterId, inviter_path AS inviterPath, inviter_is_f_code AS inviterIsFCode, upgrade_id AS upgradeId, create_time AS createTime, update_time AS updateTime
+    </sql>
+    
+    <select id="selectYestaeUserRelationList" parameterType="map" resultMap="YestaeUserRelationResultMap" >
+        select r.id, r.inviter_is_f_code, u1.mobile, u1.name, u2.mobile inviter_mobile, u2.name inviter_name, u3.mobile upgrade_mobile, u3.name upgrade_name
+        from uc_m_user_relation r
+        join uc_user u1 on r.user_id = u1.user_id
+        left join uc_user u2 on r.inviter_id = u2.user_id
+        	<if test="map.ifDel != null and map.ifDel !=''">
+		        and u2.if_del = #{map.ifDel}
+		    </if>
+        left join uc_user u3 on r.upgrade_id = u3.user_id
+       		<if test="map.ifDel != null and map.ifDel !=''">
+		        and u3.if_del = #{map.ifDel}
+		    </if>
+        <where>
+	        <if test="map.mobile != null and map.mobile !=''">
+	            and u1.mobile like CONCAT('%',#{map.mobile},'%')
+	        </if>
+	         <if test="map.name != null and map.name !=''">
+	            and u1.name like CONCAT('%',#{map.name},'%')
+	        </if>
+	        <if test="map.inviterMobile != null and map.inviterMobile !=''">
+	            and u2.mobile like CONCAT('%',#{map.inviterMobile},'%')
+	        </if>
+	        <if test="map.inviterName != null and map.inviterName !=''">
+	            and u2.name like CONCAT('%',#{map.inviterName},'%')
+	        </if>
+	        <if test="map.upgradeMobile != null and map.upgradeMobile !=''">
+	            and u3.mobile like CONCAT('%',#{map.upgradeMobile},'%')
+	        </if>
+	        <if test="map.upgradeName != null and map.upgradeName !=''">
+	            and u3.name like CONCAT('%',#{map.upgradeName},'%')
+	        </if> 
+	        <if test="map.ifDel != null and map.ifDel !=''">
+		        and u1.if_del = #{map.ifDel}
+		        and u2.if_del = #{map.ifDel}
+		        and u3.if_del = #{map.ifDel}
+		    </if>  
+        </where> 
+        
+        order by r.create_time desc
+    </select>
+
+</mapper>

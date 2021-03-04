@@ -1,0 +1,102 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <input type="hidden" id="id" value="${yestaeUser.id}">
+            <input type="hidden" id="status" value="${yestaeUser.status}">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+					<#input id="name" name="用户名" underline="false" value="${yestaeUser.name}" maxlength="50" disabled="disabled"/>
+					<#input id="mobile" name="手机号" underline="false" value="${yestaeUser.mobile}" disabled="disabled" />
+					<#select id="source" name="来源渠道" underline="false" hidden="sourceValue" hiddenValue="${yestaeUser.source}" disabled="disabled">
+                        <option value="0" >未知</option>
+                        <option value="1">益友会APP</option>
+                        <option value="2">益友会微信公众号</option>
+                        <option value="3">益友会WEB</option>
+                        <option value="4">总裁茶室APP</option>
+                        <option value="5">益购APP</option>
+                        <option value="6">益购WEB</option>
+                        <option value="9">益购微信小程序</option>
+                    </#select>
+					<#select id="gender" name="性别" underline="false" hidden="genderValue" hiddenValue="${yestaeUser.gender}" disabled="disabled">
+                        <option value="0">保密</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </#select>
+					<#input id="createTime" name="注册时间" underline="false" value="${yestaeUser.createTime}" disabled="disabled" />
+                    <#input id="birthday" name="生日" underline="false" type="date" disabled="disabled"
+                        value="${yestaeUser.birthday}"
+                        />
+					<#input id="cardNo" name="实体卡号" underline="false" value="${yestaeUser.cardNo}" maxlength="50"/>
+					<#select id="type" name="会员等级" underline="false" hidden="typeValue" hiddenValue="${yestaeUser.type}" disabled="disabled">
+                        <option value="1">普通会员</option>
+                        <option value="2">金卡会员</option>
+                    </#select>
+					<#input id="upgradeTime" name="升级时间" underline="false" value="${yestaeUser.upgradeTime}" disabled="disabled" />
+                    
+                </div>
+
+                <div class="col-sm-6">
+                
+                	<#userImage id="avatar" name="头像" underline="false" upload="false" avatarImg="${yestaeUser.avatar}"/>
+                	<div class="form-group">
+					    <label class="col-sm-3 control-label">收货人</label>
+					    <div class="col-sm-9">
+					        <input class="form-control" type="text" id="consignee" value="${yestaeUserAddress.consignee!}" maxlength="50" disabled="disabled">
+					    </div>
+					</div>
+                	<div class="form-group">
+					    <label class="col-sm-3 control-label">收货人电话</label>
+					    <div class="col-sm-9">
+					        <input  class="form-control" type="text" id="consigneePhone" value="${yestaeUserAddress.consigneePhone!}" disabled="disabled">
+					    </div>
+					</div>
+                	<div class="form-group">
+					    <label class="col-sm-3 control-label">默认区域</label>
+					    <div class="col-sm-9">
+					        <select class="form-control" id="privince" name="privince" disabled="disabled">
+					        </select>
+					        <input class="form-control" type="hidden" id="privinceCode" value="${yestaeUserAddress.consigneePrivinceCode!}">
+					        <input class="form-control" type="hidden" id="addressId" value="${yestaeUserAddress.id!}">
+					    </div>
+					</div>
+                	<div class="form-group">
+					    <label class="col-sm-3 control-label"></label>
+					    <div class="col-sm-9">
+					        <select class="form-control" id="city" name="city" disabled="disabled">
+					        </select>
+					        <input class="form-control" type="hidden" id="cityCode" value="${yestaeUserAddress.consigneeCityCode!}">
+					    </div>
+					</div>
+                	<div class="form-group">
+					    <label class="col-sm-3 control-label"></label>
+					    <div class="col-sm-9">
+					        <select class="form-control" id="area" name="area" disabled="disabled">
+					        </select>
+					        <input class="form-control" type="hidden" id="areaCode" value="${yestaeUserAddress.consigneeAreaCode!}" >
+					    </div>
+					</div>
+                	<div class="form-group">
+					    <label class="col-sm-3 control-label">默认地址</label>
+					    <div class="col-sm-9">
+					        <textarea class="form-control" id="fullAddress" rows="3" maxlength="100" disabled="disabled">${yestaeUserAddress.consigneeFullAddress!}</textarea>
+					    </div>
+					</div>
+                </div>
+            </div>
+            @//if(yestaeUser.status == 0){
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="YestaeUserInfoDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="YestaeUserInfoDlg.close()"/>
+                </div>
+            </div>
+            @//}
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/privilege/yestaeUser/yestaeUser_info.js"></script>
+@}

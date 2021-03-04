@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeGeneralizeChannelMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeChannel">
+		<id column="id" property="id" />
+		<result column="channel_code" property="channelCode" />
+		<result column="name" property="name" />
+		<result column="pid" property="pid" />
+		<result column="if_end" property="ifEnd" />
+		<result column="if_del" property="ifDel" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	
+	<!-- 列表查询映射结果 -->
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="channel_code" property="channelCode" />
+		<result column="name" property="name" />
+		<result column="pname" property="pname" />
+		<result column="pcode" property="pcode" />
+		<result column="pid" property="pid" />
+		<result column="if_end" property="ifEnd" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, channel_code AS channelCode, name, pid, if_end AS ifEnd, if_del AS ifDel, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="selectYestaeGeneralizeChannelList" parameterType="map" resultMap="ResultMap">
+		select c.id, c.channel_code, c.name, pc.name pname, pc.channel_code pcode
+			, c.pid, c.if_end, c.create_time
+		from uc_m_generalize_channel c
+		left join uc_m_generalize_channel pc on c.pid = pc.id
+			<if test="map.ifDel != null and map.ifDel !=''">
+		        and pc.if_del = #{map.ifDel}
+		    </if> 
+	    <where>
+		    <if test="map.pid != null and map.pid !=''">
+		        c.pid = #{map.pid}
+		    </if>  
+			<if test="map.name != null and map.name != ''">
+			    and c.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.pname != null and map.pname != ''">
+			    and pc.name like CONCAT('%',#{map.pname},'%')
+			</if>  
+			<if test="map.channelCode != null and map.channelCode != ''">
+			    and c.channel_code like CONCAT('%',#{map.channelCode},'%')
+			</if>  
+			<if test="map.pcode != null and map.pcode != ''">
+			    and pc.channel_code like CONCAT('%',#{map.pcode},'%')
+			</if>  
+		    <if test="map.ifEnd != null and map.ifEnd !=''">
+		        and c.if_end = #{map.ifEnd}
+		    </if>  
+			<if test="map.startTime != null and map.startTime !=''">
+		        and c.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and c.create_time &lt; #{map.endTime}
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and c.if_del = #{map.ifDel}
+		    </if>  
+		    
+	    </where> 
+	    order by c.create_time desc
+	</select>
+	
+	<select id="tree" resultType="com.yestae.user.common.node.ZTreeNode">
+		select id, pid as pId, name,
+		(
+		CASE
+		WHEN (pId = '0' OR pId IS NULL) THEN
+			'true'
+		ELSE
+			'false'
+		END
+		) as isOpen from uc_m_generalize_channel
+		<where>
+		    <if test="ifDel != null and ifDel !=''">
+		        if_del = #{ifDel}
+		    </if>  
+		    <if test="pid != null and pid !=''">
+		        and pid = #{pid}
+		    </if>  
+	    </where>
+	</select>
+
+</mapper>

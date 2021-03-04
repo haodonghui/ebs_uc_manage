@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.vas.persistence.dao.EquityMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.vas.persistence.model.Equity">
+		<id column="id" property="id" />
+		<result column="equity_code" property="equityCode" />
+		<result column="equity_name" property="equityName" />
+		<result column="intro" property="intro" />
+		<result column="status" property="status" />
+		<result column="type" property="type" />
+		<result column="del_flag" property="delFlag" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, equity_code AS equityCode, equity_name AS equityName, intro, status, type, del_flag AS delFlag, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    
+    <select id="findEquityListByMap" parameterType="map" resultMap="BaseResultMap">
+    
+    select 
+    	e.id, e.equity_code, e.equity_name, e.intro, e.status, e.type, e.del_flag, e.create_time, e.create_by, e.update_time, e.update_by
+    from 
+    uc_m_vas v
+    join uc_m_vas_vas_equity ve on ve.vas_id = v.id
+    join uc_m_vas_equity e on e.id = ve.equity_id
+    <where>
+	    <if test="map.vasId != null and map.vasId !=  ''">
+	    	and v.id = #{map.vasId}
+	    </if>
+	    <if test="map.delFlag != null and map.delFlag !=  ''">
+	    	and e.del_flag = #{map.delFlag}
+	    </if>
+	    <if test="map.status != null and map.status !=  ''">
+	    	and e.status = #{map.status}
+	    </if>
+    </where>
+    order by ve.sort asc
+    </select>
+
+</mapper>

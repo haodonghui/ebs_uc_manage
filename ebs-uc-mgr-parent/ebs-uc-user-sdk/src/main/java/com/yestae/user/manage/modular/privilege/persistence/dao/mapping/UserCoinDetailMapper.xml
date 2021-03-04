@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.CoinDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.CoinDetail">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="flow_no" property="flowNo" />
+        <result column="order_no" property="orderNo" />
+        <result column="product" property="product" />
+        <result column="source" property="source" />
+        <result column="direction" property="direction" />
+        <result column="type" property="type" />
+        <result column="amount" property="amount" />
+        <result column="pre_amount" property="preAmount" />
+        <result column="later_amount" property="laterAmount" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="invalid_time" property="invalidTime" />
+    </resultMap>
+
+    <resultMap id="ResultMap" type="map">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="flow_no" property="flowNo" />
+        <result column="order_no" property="orderNo" />
+        <result column="product" property="product" />
+        <result column="source" property="source" />
+        <result column="direction" property="direction" />
+        <result column="type" property="type" />
+        <result column="amount" property="amount" />
+        <result column="pre_amount" property="preAmount" />
+        <result column="later_amount" property="laterAmount" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="invalid_time" property="invalidTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, flow_no, order_no, product, source, direction, type, amount, pre_amount, later_amount, remark, create_time, invalid_time
+    </sql>
+
+    <select id="selectCoinDetail" parameterType="map" resultMap="ResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from yestae_coin_detail
+        <where>
+            <if test="map.userId != null and map.userId !=''">
+                and user_id = #{map.userId}
+            </if>
+            <if test="map.orderNo != null and map.orderNo !=''">
+                and order_no = #{map.orderNo}
+            </if>
+            <if test="map.type != null and map.type !=''">
+                and type = #{map.type}
+            </if>
+            <if test="map.product != null and map.product !=''">
+                and product = #{map.product}
+            </if>
+            <if test="map.direction != null and map.direction !=''">
+                and direction = #{map.direction}
+            </if>
+            <if test="map.source != null and map.source !=''">
+                and source = #{map.source}
+            </if>
+            <if test="map.amount != null and map.amount !=''">
+                and amount = #{map.amount}
+            </if>
+            <if test="map.amountEgt != null and map.amountEgt !=''">
+                and amount &gt;= #{map.amountEgt}
+            </if>
+            <if test="map.amountElt != null and map.amountElt !=''">
+                and amount &lt;= #{map.amountElt}
+            </if>
+            <if test="map.startTime != null and map.startTime !=''">
+                and create_time &gt; #{map.startTime}
+            </if>
+            <if test="map.endTime != null and map.endTime !=''">
+                and create_time &lt; #{map.endTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+</mapper>

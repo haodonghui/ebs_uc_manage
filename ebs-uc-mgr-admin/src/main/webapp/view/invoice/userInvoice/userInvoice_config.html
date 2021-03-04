@@ -1,0 +1,32 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <label>授权委托书模版:</label>
+                    <input type="file" name="file" id="btnFile" style="border:none;display:inline">
+                    <#button btnCss="info" name="上传" id="uploadBtn" icon="fa-check" clickFun="UserInvoiceInfoDlg.upload()"/>
+                    <#button btnCss="info" name="下载" id="downloadBtn" icon="fa-check" clickFun="UserInvoiceInfoDlg.download()"/>
+                </div>
+
+                <div class="col-sm-6">
+                    <#input id="validQuantity" name="增票有效资质数量" value="${validQuantity}" maxlength="50" underline="false" />
+                </div>
+
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-12 text-center">
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="UserInvoiceInfoDlg.close()"/>
+                    <#button btnCss="info" name="确定" id="ensure" icon="fa-check" clickFun="UserInvoiceInfoDlg.config()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/invoice/userInvoice/userInvoice_info.js"></script>
+@}

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.yestae.bugu.mongo:yestae-bugu-mongo:1.14">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/yestae/bugu/mongo/yestae-bugu-mongo/1.14/yestae-bugu-mongo-1.14.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/yestae/bugu/mongo/yestae-bugu-mongo/1.14/yestae-bugu-mongo-1.14-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/yestae/bugu/mongo/yestae-bugu-mongo/1.14/yestae-bugu-mongo-1.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

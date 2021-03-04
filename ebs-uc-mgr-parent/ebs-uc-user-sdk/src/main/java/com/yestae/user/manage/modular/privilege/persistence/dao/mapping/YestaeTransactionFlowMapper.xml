@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.YestaeTransactionFlowMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.YestaeTransactionFlow">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="flow_number" property="flowNumber" />
+		<result column="order_number" property="orderNumber" />
+		<result column="trade_number" property="tradeNumber" />
+		<result column="pay_method" property="payMethod" />
+		<result column="amount_money" property="amountMoney" />
+		<result column="flow_type" property="flowType" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="flow_number" property="flowNumber" />
+		<result column="order_number" property="orderNumber" />
+		<result column="trade_number" property="tradeNumber" />
+		<result column="pay_method" property="payMethod" />
+		<result column="amount_money" property="amountMoney" />
+		<result column="flow_type" property="flowType" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, flow_number AS flowNumber, order_number AS orderNumber, trade_number AS tradeNumber, pay_method AS payMethod, amount_money AS amountMoney, flow_type AS flowType, create_time AS createTime, update_time AS updateTime
+    </sql>
+
+	<select id="selectYestaeTransactionFlowList" parameterType="map" resultMap="ResultMap">
+		select f.id, f.user_id, u.name, u.mobile, f.flow_number, f.order_number, f.trade_number, f.pay_method, f.amount_money, f.flow_type, f.create_time
+		from uc_transaction_flow f
+		join uc_user u on f.user_id = u.user_id
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.mobile != null and map.mobile !=''">
+		        and u.mobile like CONCAT('%',#{map.mobile},'%')
+		    </if>  
+		    <if test="map.amountMoneyEgt != null and map.amountMoneyEgt !=''">
+		        and f.amount_money &gt;= #{map.amountMoneyEgt}
+		    </if>  
+			<if test="map.amountMoneyElt != null and map.amountMoneyElt !=''">
+		        and f.amount_money &lt;= #{map.amountMoneyElt}
+		    </if> 
+			<if test="map.startTime != null and map.startTime !=''">
+		        and f.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and f.create_time &lt; #{map.endTime}
+		    </if>  
+		    <if test="map.ifDel != null and map.ifDel !=''">
+		        and u.if_del = #{map.ifDel}
+		    </if>  
+		    <if test="map.payMethod != null and map.payMethod !=''">
+		        and f.pay_method = #{map.payMethod}
+		    </if>  
+		    <if test="map.flowType != null and map.flowType !=''">
+		        and f.flow_type = #{map.flowType}
+		    </if>  
+		    <if test="map.flowNumber != null and map.flowNumber !=''">
+		        and f.flow_number = #{map.flowNumber}
+		    </if>  
+		    <if test="map.orderNumber != null and map.orderNumber !=''">
+		        and f.order_number = #{map.orderNumber}
+		    </if>  
+		    <if test="map.tradeNumber != null and map.tradeNumber !=''">
+		        and f.trade_number = #{map.tradeNumber}
+		    </if>  
+		    <if test="map.userId != null and map.userId !=''">
+		        and f.user_id = #{map.userId}
+		    </if>
+	    </where> 
+	    order by f.create_time desc
+	</select>
+
+</mapper>

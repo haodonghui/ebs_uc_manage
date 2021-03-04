@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yestae.user.manage.modular.privilege.persistence.dao.UserAccountFlowMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.yestae.user.manage.modular.privilege.persistence.model.UserAccountFlow">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="account_id" property="accountId" />
+		<result column="trade_no" property="tradeNo" />
+		<result column="type" property="type" />
+		<result column="amount" property="amount" />
+		<result column="pre_amount" property="preAmount" />
+		<result column="later_amount" property="laterAmount" />
+		<result column="remark" property="remark" />
+		<result column="create_year" property="createYear" />
+		<result column="create_month" property="createMonth" />
+		<result column="create_time" property="createTime" />
+		<result column="create_by" property="createBy" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="ResultMap" type="map">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="name" property="name" />
+		<result column="mobile" property="mobile" />
+		<result column="account_no" property="accountNo" />
+		<result column="trade_no" property="tradeNo" />
+		<result column="type" property="type" />
+		<result column="amount" property="amount" />
+		<result column="pre_amount" property="preAmount" />
+		<result column="later_amount" property="laterAmount" />
+		<result column="remark" property="remark" />
+		<result column="trade_type" property="tradeType" />
+		<result column="pay_type" property="payType" />
+		<result column="thirdparty_trade_no" property="thirdpartyTradeNo" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, account_id AS accountId, trade_no AS tradeNo, type, amount, pre_amount AS preAmount, later_amount AS laterAmount, remark, create_year AS createYear, create_month AS createMonth, create_time AS createTime, create_by AS createBy, update_time AS updateTime
+    </sql>
+    
+    <select id="selectUserAccountFlowList" parameterType="map" resultMap="ResultMap">
+		select f.id, f.user_id, u.name, u.mobile, a.account_no, f.trade_no, f.type, f.amount
+		, f.pre_amount, f.later_amount, f.remark, f.create_time,
+		t.trade_type, t.pay_type, t.thirdparty_trade_no
+		from uc_account_flow f
+		join uc_account a on f.account_id = a.id
+		join uc_user u on f.user_id = u.user_id
+			<if test="map.ifDel != null and map.ifDel !=''">
+		        and u.if_del = #{map.ifDel}
+		    </if> 
+		left join uc_account_trade t on f.trade_no = t.trade_no
+	    <where>
+			<if test="map.name != null and map.name != ''">
+			    u.name like CONCAT('%',#{map.name},'%')
+			</if>  
+			<if test="map.mobile != null and map.mobile !=''">
+		        and u.mobile like CONCAT('%',#{map.mobile},'%')
+		    </if>  
+			<if test="map.accountNo != null and map.accountNo !=''">
+		        and a.account_no like CONCAT('%',#{map.accountNo},'%')
+		    </if>  
+			<if test="map.type != null and map.type !=''">
+		        and f.type = #{map.type}
+		    </if>  
+		    <if test="map.userId != null and map.userId !=''">
+		        and f.user_id = #{map.userId}
+		    </if>
+		    <if test="map.tradeNo != null and map.tradeNo !=''">
+		        and f.trade_no = #{map.tradeNo}
+		    </if>
+		    <if test="map.tradeType != null and map.tradeType !=''">
+		        and t.trade_type = #{map.tradeType}
+		    </if>
+			<if test="map.payType != null and map.payType !=''">
+		        and t.pay_type = #{map.payType}
+		    </if>  
+			<if test="map.thirdpartyTradeNo != null and map.thirdpartyTradeNo !=''">
+		        and t.thirdparty_trade_no = #{map.thirdpartyTradeNo}
+		    </if>  
+		    <if test="map.amountEgt != null and map.amountEgt !=''">
+		        and f.amount &gt;= #{map.amountEgt}
+		    </if>  
+			<if test="map.amountElt != null and map.amountElt !=''">
+		        and f.amount &lt;= #{map.amountElt}
+		    </if> 
+			<if test="map.startTime != null and map.startTime !=''">
+		        and f.create_time &gt; #{map.startTime}
+		    </if>  
+			<if test="map.endTime != null and map.endTime !=''">
+		        and f.create_time &lt; #{map.endTime}
+		    </if>  
+			 
+		    
+	    </where> 
+	    order by f.create_time desc
+	</select>
+
+</mapper>
