@@ -1,43 +1,34 @@
 package com.yestae.user.manage.modular.vas.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.constant.UcConstant;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.core.shiro.ShiroKit;
 import com.yestae.user.manage.core.util.DateUtils;
-import com.yestae.user.manage.core.util.IdGenerator;
-
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.yestae.user.manage.modular.vas.common.constant.VasConstants;
 import com.yestae.user.manage.modular.vas.persistence.model.Equity;
-import com.yestae.user.manage.modular.vas.persistence.model.Organiz;
 import com.yestae.user.manage.modular.vas.persistence.model.VasImage;
 import com.yestae.user.manage.modular.vas.service.IEquityService;
 import com.yestae.user.manage.modular.vas.service.IVasImageService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 权益控制器
@@ -45,6 +36,7 @@ import com.yestae.user.manage.modular.vas.service.IVasImageService;
  * @author fengshuonan
  * @Date 2018-07-10 15:39:21
  */
+
 @Controller
 @RequestMapping("/equity")
 public class EquityController extends BaseController {
@@ -80,7 +72,7 @@ public class EquityController extends BaseController {
     @RequestMapping("/equity_update/{equityId}")
     @DataSource(name="dataSourceUc")
     public String equityUpdate(@PathVariable String equityId, Model model) {
-        Equity equity = equityService.selectById(equityId);
+        Equity equity = equityService.getById(equityId);
         
         VasImage equityImage = vasImageService.findOneVasImage(equityId, VasConstants.VI_BIZ_TYPE_EQUITY);
         if(equityImage != null){
@@ -101,8 +93,8 @@ public class EquityController extends BaseController {
     @ResponseBody
     public Object list(@RequestParam(required=false)String equityCode,@RequestParam(required=false)String equityName,
     		@RequestParam(required=false)Integer status,@RequestParam(required=false)Integer type) {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>> ().defaultPage();
-    	Wrapper<Equity> wrapper = new EntityWrapper<>();
+    	Page<Map<String, Object>> page = new Page();
+        QueryWrapper<Equity> wrapper = new QueryWrapper<>();
     	
     	if(StringUtils.isNotEmpty(equityCode)){
     		wrapper.like("equity_code", equityCode);
@@ -117,8 +109,8 @@ public class EquityController extends BaseController {
     		wrapper.eq("type", type);
     	}
     	wrapper.eq("del_flag", VasConstants.YES);
-    	wrapper.orderBy("create_time", false);
-    	page = equityService.selectMapsPage(page, wrapper);
+    	wrapper.orderBy(false,false,"create_time");
+    	page = equityService.pageMaps(page, wrapper);
     	List<Map<String, Object>> list = page.getRecords();
     	for(Map<String, Object> map: list){
     		map.put("createTime", DateUtils.toDatetimeString(MapUtils.getLong(map, "createTime")));
@@ -151,7 +143,7 @@ public class EquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object delete(@RequestParam String equityId) {
-    	Equity equity = equityService.selectById(equityId);
+    	Equity equity = equityService.getById(equityId);
         if(equity != null){
         	equity.setUpdateBy(ShiroKit.getUser().getId());
     		equity.setUpdateTime(new Date().getTime());
@@ -185,7 +177,7 @@ public class EquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object online(@RequestParam String equityId) {
-    	Equity equity = equityService.selectById(equityId);
+    	Equity equity = equityService.getById(equityId);
     	if(equity != null){
     		equity.setUpdateBy(ShiroKit.getUser().getId());
     		equity.setUpdateTime(new Date().getTime());
@@ -201,7 +193,7 @@ public class EquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object offline(@RequestParam String equityId) {
-    	Equity equity = equityService.selectById(equityId);
+    	Equity equity = equityService.getById(equityId);
     	if(equity != null){
     		equity.setUpdateBy(ShiroKit.getUser().getId());
     		equity.setUpdateTime(new Date().getTime());
@@ -218,6 +210,6 @@ public class EquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object detail(@PathVariable("equityId") String equityId) {
-        return equityService.selectById(equityId);
+        return equityService.getById(equityId);
     }
 }

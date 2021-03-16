@@ -1,11 +1,11 @@
 package com.yestae.user.manage.modular.privilege.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyPhoneLog;
+
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.IService;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyPhoneLog;
 
 /**
  * <p>
@@ -24,7 +24,7 @@ public interface IYestaeUserModifyPhoneLogService extends IService<YestaeUserMod
 	 * @return
 	 */
 	List<Map<String, Object>> selectYestaeUserModifyPhoneLogList(Page<Map<String, Object>> page,
-			Map<String, String> map);
+																 Map<String, String> map);
 	
 	void dealList(List<Map<String, Object>> list);
 }

@@ -1,11 +1,17 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.user.common.cache.CacheKit;
+import com.yestae.user.common.util.DateUtil;
+import com.yestae.user.manage.common.constant.cache.Cache;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.support.HttpKit;
+import com.yestae.user.manage.core.util.ExcelUtil;
+import com.yestae.user.manage.core.util.PrivacyHideUtil;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeTransactionFlow;
+import com.yestae.user.manage.modular.privilege.service.IYestaeTransactionFlowService;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,20 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.user.common.cache.CacheKit;
-import com.yestae.user.common.util.DateUtil;
-import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.support.HttpKit;
-import com.yestae.user.manage.core.util.ExcelUtil;
-import com.yestae.user.manage.core.util.PrivacyHideUtil;
-import com.yestae.user.manage.modular.privilege.common.enums.FlowTypeEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeTransactionFlow;
-import com.yestae.user.manage.modular.privilege.service.IYestaeTransactionFlowService;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户消费流水控制器
@@ -70,7 +66,7 @@ public class YestaeTransactionFlowController extends BaseController {
     @RequestMapping("/yestaeTransactionFlow_update/{yestaeTransactionFlowId}")
     @DataSource(name="dataSourceUc")
     public String yestaeTransactionFlowUpdate(@PathVariable String yestaeTransactionFlowId, Model model) {
-        YestaeTransactionFlow yestaeTransactionFlow = yestaeTransactionFlowService.selectById(yestaeTransactionFlowId);
+        YestaeTransactionFlow yestaeTransactionFlow = yestaeTransactionFlowService.getById(yestaeTransactionFlowId);
         model.addAttribute("item",yestaeTransactionFlow);
         LogObjectHolder.me().set(yestaeTransactionFlow);
         return PREFIX + "yestaeTransactionFlow_edit.html";
@@ -83,7 +79,7 @@ public class YestaeTransactionFlowController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeTransactionFlowService.selectYestaeTransactionFlowList(page, map);
         
@@ -145,7 +141,7 @@ public class YestaeTransactionFlowController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object add(YestaeTransactionFlow yestaeTransactionFlow) {
-        yestaeTransactionFlowService.insert(yestaeTransactionFlow);
+        yestaeTransactionFlowService.save(yestaeTransactionFlow);
         return SUCCESS_TIP;
     }
 
@@ -156,7 +152,7 @@ public class YestaeTransactionFlowController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object delete(@RequestParam String yestaeTransactionFlowId) {
-        yestaeTransactionFlowService.deleteById(yestaeTransactionFlowId);
+        yestaeTransactionFlowService.removeById(yestaeTransactionFlowId);
         return SUCCESS_TIP;
     }
 
@@ -178,6 +174,6 @@ public class YestaeTransactionFlowController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object detail(@PathVariable("yestaeTransactionFlowId") String yestaeTransactionFlowId) {
-        return yestaeTransactionFlowService.selectById(yestaeTransactionFlowId);
+        return yestaeTransactionFlowService.getById(yestaeTransactionFlowId);
     }
 }

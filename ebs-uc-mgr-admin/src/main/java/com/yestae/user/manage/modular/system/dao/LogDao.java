@@ -1,8 +1,7 @@
 package com.yestae.user.manage.modular.system.dao;
 
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.manage.modular.system.persistence.model.OperationLog;
-
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,24 +1,9 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.common.util.ToolUtil;
@@ -27,10 +12,22 @@ import com.yestae.user.manage.modular.privilege.common.enums.InviterIsFCodeEnum;
 import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeGeneralizeUserMapper;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeQrcodeMapper;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeChannel;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeUser;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeChannelService;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeUserService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -56,7 +53,7 @@ public class YestaeGeneralizeUserServiceImpl extends ServiceImpl<YestaeGeneraliz
 	
 	@Override
 	public List<Map<String, Object>> selectYestaeGeneralizeUserList(Page<Map<String, Object>> page,
-			Map<String, Object> map) {
+																	Map<String, Object> map) {
 		map.put("ifDel", SysEnum.NO.getCode() + "");
 		if(!StringUtils.isEmpty(MapUtils.getString(map, "generalizeUserIds"))){
 			map.put("generalizeUserIds", MapUtils.getString(map, "generalizeUserIds").split(","));
@@ -110,7 +107,7 @@ public class YestaeGeneralizeUserServiceImpl extends ServiceImpl<YestaeGeneraliz
 		
 		BeanUtils.copyProperties(yestaeGeneralizeUser, yestaeGeneralizeUserDb, new String[] {"createBy", "createTime", "ifDel", "inviterIsFCode", "recommendCode"});
 		
-		int result = yestaeGeneralizeUserMapper.updateAllColumnById(yestaeGeneralizeUserDb);
+		int result = yestaeGeneralizeUserMapper.updateById(yestaeGeneralizeUserDb);
 		
 		logger.info("updateYestaeGeneralizeUser->result:" + result + " yestaeGeneralizeUser[source]:" + JSONObject.toJSONString(yestaeGeneralizeUser));
 		logger.info("updateYestaeGeneralizeUser->result:" + result + " yestaeGeneralizeUser[target]:" + JSONObject.toJSONString(yestaeGeneralizeUserDb));
@@ -129,7 +126,7 @@ public class YestaeGeneralizeUserServiceImpl extends ServiceImpl<YestaeGeneraliz
 			return true;
 		}
 		
-		EntityWrapper<YestaeGeneralizeUser> wrapper = new EntityWrapper<YestaeGeneralizeUser>();
+		QueryWrapper<YestaeGeneralizeUser> wrapper = new QueryWrapper<YestaeGeneralizeUser>();
 		wrapper.eq("if_del", SysEnum.NO.getCode());
 		wrapper.eq("user_id", yestaeGeneralizeUser.getUserId());
 		if(!StringUtils.isEmpty(yestaeGeneralizeUser.getId())){

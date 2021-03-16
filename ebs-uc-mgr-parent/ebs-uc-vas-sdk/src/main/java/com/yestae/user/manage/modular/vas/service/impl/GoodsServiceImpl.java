@@ -1,9 +1,9 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import com.yestae.user.manage.modular.vas.persistence.model.Goods;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.vas.persistence.dao.GoodsMapper;
+import com.yestae.user.manage.modular.vas.persistence.model.Goods;
 import com.yestae.user.manage.modular.vas.service.IGoodsService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

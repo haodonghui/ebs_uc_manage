@@ -1,17 +1,6 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.modular.privilege.common.Constants.UserConstant;
@@ -22,6 +11,15 @@ import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeQrcodeMapp
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeQrcodeSceneMapper;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeQrcodeScene;
 import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeSceneService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -106,7 +104,7 @@ public class YestaeQrcodeSceneServiceImpl extends ServiceImpl<YestaeQrcodeSceneM
 	    	yestaeQrcodeScene.setStatus(UserStatusEnum.STATUS_ON.getCode());
 	    	yestaeQrcodeScene.setType(QrcodeSceneTypeEnum.WEIXIN_A_REGIST.getCode());
 	    	yestaeQrcodeScene.setName(UserConstant.DCARD_SCENE_NAME);
-	    	this.insert(yestaeQrcodeScene);
+	    	this.save(yestaeQrcodeScene);
 			return yestaeQrcodeScene;
 		}
 	}
@@ -131,7 +129,7 @@ public class YestaeQrcodeSceneServiceImpl extends ServiceImpl<YestaeQrcodeSceneM
 	    	yestaeQrcodeScene.setName(UserConstant.TAE_TICKET_SCENE_NAME);
 	    	yestaeQrcodeScene.setApplyScope(UserConstant.APPLY_SCOPE_COMMON);
 	    	yestaeQrcodeScene.setJumpType(UserConstant.JUMP_TYPE_ORIGINAL);
-	    	this.insert(yestaeQrcodeScene);
+	    	this.save(yestaeQrcodeScene);
 			return yestaeQrcodeScene;
 		}
 	}

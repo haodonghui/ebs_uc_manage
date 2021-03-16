@@ -7,8 +7,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.yestae.user.center.dubbo.entity.UserRealNameAuthenticationDubbo;
@@ -38,7 +39,6 @@ import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.common.util.Convert;
 import com.yestae.user.manage.common.annotion.BussinessLog;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.base.tips.ErrorTip;
 import com.yestae.user.manage.core.constant.UcConstant;
@@ -79,7 +79,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     @Autowired
     private IUserRealNameAuthenticationService userRealNameAuthenticationService;
     
-    @Autowired
+    @DubboReference
 	private IUserCenterRealNameAuthenticationService userCenterRealNameAuthenticationService;
     
     //日志
@@ -108,7 +108,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/userRealNameAuthentication_update/{userRealNameAuthenticationId}")
     public String userRealNameAuthenticationUpdate(@PathVariable String userRealNameAuthenticationId, Model model) {
-        UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.selectById(userRealNameAuthenticationId);
+        UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.getById(userRealNameAuthenticationId);
         
         if(userRealNameAuthentication == null){
     		throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
@@ -164,7 +164,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     @ResponseBody
     public Object list() {
         
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	
     	Map<String, String> paramMap = HttpKit.getRequestParameters();
         
@@ -202,15 +202,15 @@ public class UserRealNameAuthenticationController extends BaseController {
     		, @RequestParam(required = false) String flag, @RequestParam(required = false) String realName
     		, @RequestParam(required = false) String verify, @RequestParam(required = false) String verifyName
     		, @RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime) {
+
+		Page<Map<String, Object>> page = new Page<>();
     	
-    	Page<UserRealNameAuthentication> page = new PageFactory<UserRealNameAuthentication>().defaultPage();
+    	QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
     	
-    	EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
-    	
-    	wrapper.setSqlSelect(new String[]{"id", "name", "real_name", "mobile", "verify", "born", "flag", "create_time", 
-    			"verify_name", "verify_time", "id1_type", "id1_no", "id2_type", "id2_no", "bank_card_no", "data_source"});
-    	wrapper.orderBy("verify", true);
-    	wrapper.orderBy("create_time", true);
+    	/*wrapper.setSqlSelect(new String[]{"id", "name", "real_name", "mobile", "verify", "born", "flag", "create_time",
+    			"verify_name", "verify_time", "id1_type", "id1_no", "id2_type", "id2_no", "bank_card_no", "data_source"});*/
+    	wrapper.orderBy(true ,true,"verify");
+    	wrapper.orderBy(true ,true,"create_time");
     	if(StringUtils.isNotEmpty(name)){
     		wrapper.like("name", name);
     	}
@@ -227,7 +227,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     		wrapper.like("mobile", mobile);
     	}
     	if(StringUtils.isNotEmpty(idNo)){
-    		wrapper.and().like("id1_no", idNo)
+    		wrapper.like("id1_no", idNo)
     		.or().like("id2_no", idNo)
     		.like("id3_no", idNo);
     	}
@@ -244,7 +244,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     		wrapper.lt("create_time", endTime);
     	}
     	
-    	Page<Map<String, Object>> pageMap = userRealNameAuthenticationService.selectMapsPage(page, wrapper);
+    	Page<Map<String, Object>> pageMap = userRealNameAuthenticationService.pageMaps(page, wrapper);
     	
     	List<Map<String, Object>> list = pageMap.getRecords();
     	for (Map<String, Object> map: list) {
@@ -294,9 +294,9 @@ public class UserRealNameAuthenticationController extends BaseController {
     		}
     		
     		//校验身份证是否被其他用户占用
-    		EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
+    		QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
         	wrapper.eq("id1_no", id1No);
-        	List<UserRealNameAuthentication> id1NoList = userRealNameAuthenticationService.selectList(wrapper);
+        	List<UserRealNameAuthentication> id1NoList = userRealNameAuthenticationService.list(wrapper);
         	if(!CollectionUtils.isEmpty(id1NoList)){
         		UserRealNameAuthentication realNameAuthentication = id1NoList.get(0);
         		return new ErrorTip(0, "该身份证已经被["+realNameAuthentication.getRealName()+"] 实名过");
@@ -317,9 +317,9 @@ public class UserRealNameAuthenticationController extends BaseController {
     		}
     		
     		//校验身份证是否被其他用户占用
-    		EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
+    		QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
         	wrapper.eq("id2_no", id2No);
-        	List<UserRealNameAuthentication> id2NoList = userRealNameAuthenticationService.selectList(wrapper);
+        	List<UserRealNameAuthentication> id2NoList = userRealNameAuthenticationService.list(wrapper);
         	if(!CollectionUtils.isEmpty(id2NoList)){
         		UserRealNameAuthentication realNameAuthentication = id2NoList.get(0);
         		return new ErrorTip(0, "该身份证已经被["+realNameAuthentication.getRealName()+"] 实名过");
@@ -332,9 +332,9 @@ public class UserRealNameAuthenticationController extends BaseController {
     	}
     	
     	//校验当前手机号和身份证是否被其他用户绑定
-    	EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
+    	QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
     	wrapper.eq("mobile", userRealNameAuthenticationDubbo.getMobile());
-    	List<UserRealNameAuthentication> mobileList = userRealNameAuthenticationService.selectList(wrapper);
+    	List<UserRealNameAuthentication> mobileList = userRealNameAuthenticationService.list(wrapper);
     	
     	if(!CollectionUtils.isEmpty(mobileList)){
     		UserRealNameAuthentication realNameAuthentication = mobileList.get(0);
@@ -364,7 +364,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     public Object edit(UserRealNameAuthentication userRealNameAuthentication) {
     	//通过id查询出原始数据，记录日志,TODO 后期记录到表中
     	String id = userRealNameAuthentication.getId();
-    	UserRealNameAuthentication oldRealNameAuthentication = userRealNameAuthenticationService.selectById(id);
+    	UserRealNameAuthentication oldRealNameAuthentication = userRealNameAuthenticationService.getById(id);
     	log.info("method#[{}], userRealNameAuthentication.id#[{}], oldRealNameAuthentication#[{}]",
     				"UserRealNameAuthenticationController.edit", id, JSON.toJSONString(oldRealNameAuthentication));
     	//相关信息校验
@@ -387,9 +387,9 @@ public class UserRealNameAuthenticationController extends BaseController {
     		}
     		
     		//校验身份证是否被其他用户占用
-    		EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
+    		QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
         	wrapper.eq("id1_no", id1No).notIn("id", id);
-        	List<UserRealNameAuthentication> id1NoList = userRealNameAuthenticationService.selectList(wrapper);
+        	List<UserRealNameAuthentication> id1NoList = userRealNameAuthenticationService.list(wrapper);
         	if(!CollectionUtils.isEmpty(id1NoList)){
         		UserRealNameAuthentication realNameAuthentication = id1NoList.get(0);
         		return new ErrorTip(0, "该身份证已经被 ["+realNameAuthentication.getRealName()+"] 实名过");
@@ -410,9 +410,9 @@ public class UserRealNameAuthenticationController extends BaseController {
     		}
     		
     		//校验身份证是否被其他用户占用
-    		EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
+    		QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
         	wrapper.eq("id2_no", id2No).notIn("id", id);
-        	List<UserRealNameAuthentication> id2NoList = userRealNameAuthenticationService.selectList(wrapper);
+        	List<UserRealNameAuthentication> id2NoList = userRealNameAuthenticationService.list(wrapper);
         	if(!CollectionUtils.isEmpty(id2NoList)){
         		UserRealNameAuthentication realNameAuthentication = id2NoList.get(0);
         		return new ErrorTip(0, "该身份证已经被[ "+realNameAuthentication.getRealName()+"] 实名过");
@@ -424,10 +424,10 @@ public class UserRealNameAuthenticationController extends BaseController {
     		return new ErrorTip(0, "银行卡只能填写5到25位数字");
     	}
     	
-    	EntityWrapper<UserRealNameAuthentication> wrapper = new EntityWrapper<UserRealNameAuthentication>();
+    	QueryWrapper<UserRealNameAuthentication> wrapper = new QueryWrapper<UserRealNameAuthentication>();
     	//手机号相同，实名id不相同
     	wrapper.eq("mobile", userRealNameAuthentication.getMobile()).notIn("id", id);
-    	List<UserRealNameAuthentication> mobileList = userRealNameAuthenticationService.selectList(wrapper);
+    	List<UserRealNameAuthentication> mobileList = userRealNameAuthenticationService.list(wrapper);
     	
     	if(!CollectionUtils.isEmpty(mobileList)){
     		UserRealNameAuthentication realNameAuthentication = mobileList.get(0);
@@ -476,7 +476,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String userRealNameAuthenticationId) {
-        userRealNameAuthenticationService.deleteById(userRealNameAuthenticationId);
+        userRealNameAuthenticationService.removeById(userRealNameAuthenticationId);
         return SUCCESS_TIP;
     }
 
@@ -501,7 +501,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     public Object verify(@RequestParam(required = true) String userRealNameAuthenticationId,
     		@RequestParam(required = true) String verify, @RequestParam(required = false) String verifyDesc) {
     	
-    	UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.selectById(userRealNameAuthenticationId);
+    	UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.getById(userRealNameAuthenticationId);
     	
     	if(userRealNameAuthentication == null){
     		throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
@@ -532,7 +532,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     @ResponseBody
     public Object disabled(@RequestParam(required = true) String userRealNameAuthenticationId) {
     	
-    	UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.selectById(userRealNameAuthenticationId);
+    	UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.getById(userRealNameAuthenticationId);
     	
     	if(userRealNameAuthentication == null){
     		throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
@@ -552,7 +552,7 @@ public class UserRealNameAuthenticationController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping(value = "/detail/{userRealNameAuthenticationId}")
     public Object detail(@PathVariable("userRealNameAuthenticationId") String userRealNameAuthenticationId, Model model) {
-    	UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.selectById(userRealNameAuthenticationId);
+    	UserRealNameAuthentication userRealNameAuthentication = userRealNameAuthenticationService.getById(userRealNameAuthenticationId);
     	if(userRealNameAuthentication == null){
     		throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
     	}

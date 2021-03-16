@@ -1,9 +1,11 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.yestae.user.common.cache.CacheKit;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.modular.privilege.persistence.model.IbeaconConnectLog;
+import com.yestae.user.manage.modular.privilege.service.IIbeaconConnectLogService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.yestae.user.common.cache.CacheKit;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.modular.privilege.persistence.model.IbeaconConnectLog;
-import com.yestae.user.manage.modular.privilege.service.IIbeaconConnectLogService;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ibeacon连接记录控制器
@@ -57,7 +56,7 @@ public class IbeaconConnectLogController extends BaseController {
     @RequestMapping("/ibeaconConnectLog_update/{ibeaconConnectLogId}")
     @DataSource(name="dataSourceUc")
     public String ibeaconConnectLogUpdate(@PathVariable String ibeaconConnectLogId, Model model) {
-        IbeaconConnectLog ibeaconConnectLog = ibeaconConnectLogService.selectById(ibeaconConnectLogId);
+        IbeaconConnectLog ibeaconConnectLog = ibeaconConnectLogService.getById(ibeaconConnectLogId);
         model.addAttribute("ibeaconConnectLog",ibeaconConnectLog);
         LogObjectHolder.me().set(ibeaconConnectLog);
         return PREFIX + "ibeaconConnectLog_edit.html";
@@ -70,7 +69,7 @@ public class IbeaconConnectLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object list(String condition) {
-        return ibeaconConnectLogService.selectList(null);
+        return ibeaconConnectLogService.list(null);
     }
 
     /**
@@ -80,7 +79,7 @@ public class IbeaconConnectLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object add(IbeaconConnectLog ibeaconConnectLog) {
-        ibeaconConnectLogService.insert(ibeaconConnectLog);
+        ibeaconConnectLogService.save(ibeaconConnectLog);
         return SUCCESS_TIP;
     }
 
@@ -91,7 +90,7 @@ public class IbeaconConnectLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object delete(@RequestParam String ibeaconConnectLogId) {
-        ibeaconConnectLogService.deleteById(ibeaconConnectLogId);
+        ibeaconConnectLogService.removeById(ibeaconConnectLogId);
         return SUCCESS_TIP;
     }
 
@@ -147,7 +146,7 @@ public class IbeaconConnectLogController extends BaseController {
     	ibeaconConnectLog.setMac(mac);
     	ibeaconConnectLog.setStatus(status);
     	ibeaconConnectLog.setUuid(uuid);
-		ibeaconConnectLogService.insert(ibeaconConnectLog);
+		ibeaconConnectLogService.save(ibeaconConnectLog);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("returnCode", status);
@@ -174,6 +173,6 @@ public class IbeaconConnectLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object detail(@PathVariable("ibeaconConnectLogId") String ibeaconConnectLogId) {
-        return ibeaconConnectLogService.selectById(ibeaconConnectLogId);
+        return ibeaconConnectLogService.getById(ibeaconConnectLogId);
     }
 }

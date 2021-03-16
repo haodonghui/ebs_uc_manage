@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.privilege.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.privilege.persistence.model.PlatformUser;
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>

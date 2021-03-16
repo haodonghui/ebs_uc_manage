@@ -1,12 +1,10 @@
 package com.yestae.user.manage.modular.weixin.persistence.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yestae.user.manage.modular.weixin.persistence.model.WeiXin;
-
-import java.util.Map;
-
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import java.util.Map;
 
 /**
  * <p>

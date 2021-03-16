@@ -1,9 +1,13 @@
 package com.yestae.user.manage.modular.vas.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.yestae.user.common.cache.CacheKit;
+import com.yestae.user.manage.common.constant.cache.Cache;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.support.HttpKit;
+import com.yestae.user.manage.modular.vas.persistence.model.VasEquity;
+import com.yestae.user.manage.modular.vas.service.IVasEquityService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.yestae.user.common.cache.CacheKit;
-import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.support.HttpKit;
-import com.yestae.user.manage.modular.vas.persistence.model.VasEquity;
-import com.yestae.user.manage.modular.vas.service.IVasEquityService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 增值服务权益控制器
@@ -60,7 +59,7 @@ public class VasEquityController extends BaseController {
     @RequestMapping("/vasEquity_update/{vasEquityId}")
     @DataSource(name="dataSourceUc")
     public String vasEquityUpdate(@PathVariable String vasEquityId, Model model) {
-        VasEquity vasEquity = vasEquityService.selectById(vasEquityId);
+        VasEquity vasEquity = vasEquityService.getById(vasEquityId);
         model.addAttribute("vasEquity",vasEquity);
         LogObjectHolder.me().set(vasEquity);
         return PREFIX + "vasEquity_edit.html";
@@ -92,7 +91,7 @@ public class VasEquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object add(VasEquity vasEquity) {
-        vasEquityService.insert(vasEquity);
+        vasEquityService.save(vasEquity);
         return SUCCESS_TIP;
     }
 
@@ -103,7 +102,7 @@ public class VasEquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object delete(@RequestParam String vasEquityId) {
-        vasEquityService.deleteById(vasEquityId);
+        vasEquityService.removeById(vasEquityId);
         return SUCCESS_TIP;
     }
 
@@ -125,6 +124,6 @@ public class VasEquityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object detail(@PathVariable("vasEquityId") String vasEquityId) {
-        return vasEquityService.selectById(vasEquityId);
+        return vasEquityService.getById(vasEquityId);
     }
 }

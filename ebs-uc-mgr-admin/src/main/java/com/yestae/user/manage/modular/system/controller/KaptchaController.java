@@ -32,8 +32,8 @@ public class KaptchaController {
     @Resource
     private GunsProperties gunsProperties;
 
-    @Autowired
-    Producer producer;
+    @Resource
+    private Producer producer;
 
     /**
      * 生成验证码

@@ -1,37 +1,25 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.modular.vas.common.constant.VasConstants;
 import com.yestae.user.manage.modular.vas.common.enums.PageContentBizTypeEnum;
 import com.yestae.user.manage.modular.vas.persistence.dao.VasMapper;
-import com.yestae.user.manage.modular.vas.persistence.model.Organiz;
-import com.yestae.user.manage.modular.vas.persistence.model.OrganizVas;
-import com.yestae.user.manage.modular.vas.persistence.model.PageContent;
-import com.yestae.user.manage.modular.vas.persistence.model.Store;
-import com.yestae.user.manage.modular.vas.persistence.model.Vas;
-import com.yestae.user.manage.modular.vas.persistence.model.VasEquity;
-import com.yestae.user.manage.modular.vas.service.IOrganizService;
-import com.yestae.user.manage.modular.vas.service.IPageContentService;
-import com.yestae.user.manage.modular.vas.service.IVasEquityService;
-import com.yestae.user.manage.modular.vas.service.IVasImageService;
-import com.yestae.user.manage.modular.vas.service.IVasService;
+import com.yestae.user.manage.modular.vas.persistence.model.*;
+import com.yestae.user.manage.modular.vas.service.*;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -71,11 +59,11 @@ public class VasServiceImpl extends ServiceImpl<VasMapper, Vas> implements IVasS
 	public void insertVas(Vas vas) {
 		if(vas != null){
 			//校验服务名称
-			Wrapper<Vas> wrapper1 = new EntityWrapper<>();
+			QueryWrapper<Vas> wrapper1 = new QueryWrapper<>();
 			wrapper1.eq("vas_name", vas.getVasName());
 			wrapper1.eq("organiz_id", vas.getOrganizId());
 			wrapper1.eq("del_flag", VasConstants.YES);
-			int count1 = this.selectCount(wrapper1);
+			int count1 = this.count(wrapper1);
 			if(count1 > 0){
 				throw new BussinessException(BizExceptionEnum.ORGANIZ_VAS_NAME_EXISTED);
 			}
@@ -85,14 +73,14 @@ public class VasServiceImpl extends ServiceImpl<VasMapper, Vas> implements IVasS
 			
 			//添加机构编码
 			if(!StringUtils.isEmpty(vas.getOrganizId())){
-				Organiz organiz = organizService.selectById(vas.getOrganizId());
+				Organiz organiz = organizService.getById(vas.getOrganizId());
 				if(organiz != null){
 					vas.setOrganizCode(organiz.getOrganizCode());
 				}
 			}
 			
 			//添加增值服务
-			this.insert(vas);
+			this.save(vas);
 			
 			//添加增值服务图片
 			vasImageService.updateVasImage(vas.getSurfaceId(), vas.getId());
@@ -141,24 +129,24 @@ public class VasServiceImpl extends ServiceImpl<VasMapper, Vas> implements IVasS
 	public void updateVas(Vas vas) {
 		if(vas != null){
 			//校验服务名称
-			Wrapper<Vas> wrapper2 = new EntityWrapper<>();
+			QueryWrapper<Vas> wrapper2 = new QueryWrapper<>();
 			wrapper2.eq("vas_name", vas.getVasName());
 			wrapper2.eq("organiz_id", vas.getOrganizId());
 			wrapper2.eq("del_flag", VasConstants.YES);
 			wrapper2.ne("id", vas.getId());
-			int count2 = this.selectCount(wrapper2);
+			int count2 = this.count(wrapper2);
 			if(count2 > 0){
 				throw new BussinessException(BizExceptionEnum.ORGANIZ_VAS_NAME_EXISTED);
 			}
 			
-			Vas vasDb = this.selectById(vas.getId());
+			Vas vasDb = this.getById(vas.getId());
 			if(vasDb == null){
 				throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
 			}
 			
 			//添加机构编码
 			if(vas.getOrganizId() != null && !vas.getOrganizId().equals(vasDb.getOrganizId())){
-				Organiz organiz = organizService.selectById(vas.getOrganizId());
+				Organiz organiz = organizService.getById(vas.getOrganizId());
 				if(organiz != null){
 					vas.setOrganizCode(organiz.getOrganizCode());
 				}
@@ -173,9 +161,9 @@ public class VasServiceImpl extends ServiceImpl<VasMapper, Vas> implements IVasS
 			vasImageService.updateVasImage(vas.getSurfaceId(), vas.getId());
 			
 			//删除关联权益
-			Wrapper<VasEquity> wrapper = new EntityWrapper<>();
+			QueryWrapper<VasEquity> wrapper = new QueryWrapper<>();
 			wrapper.eq("vas_id", vas.getId());
-			vasEquityService.delete(wrapper);
+			vasEquityService.remove(wrapper);
 			
 			//添加关联权益
 			this.insertVasEquity(vas);
@@ -226,7 +214,7 @@ public class VasServiceImpl extends ServiceImpl<VasMapper, Vas> implements IVasS
 				vasEquity.setVasCode(vas.getVasCode());
 				vasEquity.setVasId(vas.getId());
 			}
-			vasEquityService.insertBatch(vasEquityList);
+			vasEquityService.saveBatch(vasEquityList);
 		}
 	}
 }

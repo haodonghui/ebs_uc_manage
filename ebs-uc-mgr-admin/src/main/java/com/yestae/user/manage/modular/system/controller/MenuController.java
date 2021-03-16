@@ -1,19 +1,6 @@
 package com.yestae.user.manage.modular.system.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.common.node.ZTreeNode;
@@ -34,6 +21,18 @@ import com.yestae.user.manage.modular.system.persistence.dao.MenuMapper;
 import com.yestae.user.manage.modular.system.persistence.model.Menu;
 import com.yestae.user.manage.modular.system.service.IMenuService;
 import com.yestae.user.manage.modular.system.warpper.MenuWarpper;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 菜单控制器
@@ -85,9 +84,11 @@ public class MenuController extends BaseController {
         Menu menu = this.menuMapper.selectById(menuId);
 
         //获取父级菜单的id
-        Menu temp = new Menu();
-        temp.setCode(menu.getPcode());
-        Menu pMenu = this.menuMapper.selectOne(temp);
+        /*Menu temp = new Menu();
+        temp.setCode(menu.getPcode());*/
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("code", menu.getPcode());
+        Menu pMenu = this.menuMapper.selectOne(queryWrapper);
 
         //如果父级是顶级菜单
         if (pMenu == null) {
@@ -98,7 +99,7 @@ public class MenuController extends BaseController {
         }
 
         Map<String, Object> menuMap = BeanKit.beanToMap(menu);
-        menuMap.put("pcodeName", ConstantFactory.me().getMenuNameByCode(temp.getCode()));
+        menuMap.put("pcodeName", ConstantFactory.me().getMenuNameByCode(menu.getPcode()));
         model.addAttribute("menu", menuMap);
         LogObjectHolder.me().set(menu);
         return PREFIX + "menu_edit.html";

@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.vas.persistence.dao.UserInvoiceMapper;
 import com.yestae.user.manage.modular.vas.persistence.model.UserInvoice;
 import com.yestae.user.manage.modular.vas.service.IUserInvoiceService;

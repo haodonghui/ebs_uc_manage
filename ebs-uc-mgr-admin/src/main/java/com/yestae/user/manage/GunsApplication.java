@@ -1,16 +1,19 @@
 package com.yestae.user.manage;
 
+import com.yestae.user.manage.config.properties.GunsProperties;
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.yestae.user.manage.config.properties.GunsProperties;
+import javax.annotation.Resource;
 
 /**
  * SpringBoot方式启动类
@@ -18,10 +21,12 @@ import com.yestae.user.manage.config.properties.GunsProperties;
  * @author stylefeng
  * @Date 2017/5/21 12:06
  */
-@SpringBootApplication
-@ImportResource(locations = {"dubbo-config.xml"}) 
+@SpringBootApplication(scanBasePackages = "com")
 @Configuration
-public class GunsApplication extends WebMvcConfigurerAdapter{
+@MapperScan("com.baomidou.mybatisplus.samples.quickstart.mapper")
+@ComponentScan(basePackages ={"com.yestae"})
+//@EnableDiscoveryClient
+public class GunsApplication extends WebMvcConfigurerAdapter {
 
     protected final static Logger logger = LoggerFactory.getLogger(GunsApplication.class);
 

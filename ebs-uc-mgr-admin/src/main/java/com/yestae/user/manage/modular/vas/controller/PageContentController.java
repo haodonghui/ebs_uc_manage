@@ -1,16 +1,16 @@
 package com.yestae.user.manage.modular.vas.controller;
 
 import com.yestae.user.manage.core.base.controller.BaseController;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.yestae.user.manage.core.log.LogObjectHolder;
-import org.springframework.web.bind.annotation.RequestParam;
 import com.yestae.user.manage.modular.vas.persistence.model.PageContent;
 import com.yestae.user.manage.modular.vas.service.IPageContentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 页面内容控制器
@@ -48,7 +48,7 @@ public class PageContentController extends BaseController {
      */
     @RequestMapping("/pageContent_update/{pageContentId}")
     public String pageContentUpdate(@PathVariable String pageContentId, Model model) {
-        PageContent pageContent = pageContentService.selectById(pageContentId);
+        PageContent pageContent = pageContentService.getById(pageContentId);
         model.addAttribute("pageContent",pageContent);
         LogObjectHolder.me().set(pageContent);
         return PREFIX + "pageContent_edit.html";
@@ -60,7 +60,7 @@ public class PageContentController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(String condition) {
-        return pageContentService.selectList(null);
+        return pageContentService.list(null);
     }
 
     /**
@@ -69,7 +69,7 @@ public class PageContentController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(PageContent pageContent) {
-        pageContentService.insert(pageContent);
+        pageContentService.save(pageContent);
         return SUCCESS_TIP;
     }
 
@@ -79,7 +79,7 @@ public class PageContentController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String pageContentId) {
-        pageContentService.deleteById(pageContentId);
+        pageContentService.removeById(pageContentId);
         return SUCCESS_TIP;
     }
 
@@ -99,6 +99,6 @@ public class PageContentController extends BaseController {
     @RequestMapping(value = "/detail/{pageContentId}")
     @ResponseBody
     public Object detail(@PathVariable("pageContentId") String pageContentId) {
-        return pageContentService.selectById(pageContentId);
+        return pageContentService.getById(pageContentId);
     }
 }

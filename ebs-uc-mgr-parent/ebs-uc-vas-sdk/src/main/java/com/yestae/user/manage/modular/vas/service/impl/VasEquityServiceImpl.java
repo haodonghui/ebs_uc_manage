@@ -1,17 +1,15 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import com.yestae.user.manage.modular.vas.persistence.model.VasEquity;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.vas.common.constant.VasConstants;
 import com.yestae.user.manage.modular.vas.persistence.dao.VasEquityMapper;
+import com.yestae.user.manage.modular.vas.persistence.model.VasEquity;
 import com.yestae.user.manage.modular.vas.service.IVasEquityService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>

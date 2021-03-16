@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.system.persistence.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yestae.user.manage.modular.system.persistence.model.Dict;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>

@@ -1,26 +1,10 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.center.dubbo.entity.UserResult;
 import com.yestae.user.center.dubbo.service.IUserCenterService;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.manage.common.annotion.BussinessLog;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.base.tips.ErrorTip;
 import com.yestae.user.manage.core.log.LogObjectHolder;
@@ -31,6 +15,20 @@ import com.yestae.user.manage.core.util.PrivacyHideUtil;
 import com.yestae.user.manage.modular.privilege.common.enums.AccountStateEnum;
 import com.yestae.user.manage.modular.privilege.persistence.model.UserAccount;
 import com.yestae.user.manage.modular.privilege.service.IUserAccountService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户账户控制器
@@ -47,7 +45,7 @@ public class UserAccountController extends BaseController {
     @Autowired
     private IUserAccountService userAccountService;
     
-    @Resource
+    @DubboReference
    	private IUserCenterService userCenterService;
     
     @Resource
@@ -75,7 +73,7 @@ public class UserAccountController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/userAccount_update/{userAccountId}")
     public String userAccountUpdate(@PathVariable String userAccountId, Model model) {
-        UserAccount userAccount = userAccountService.selectById(userAccountId);
+        UserAccount userAccount = userAccountService.getById(userAccountId);
         model.addAttribute("userAccount",userAccount);
         LogObjectHolder.me().set(userAccount);
         return PREFIX + "userAccount_edit.html";
@@ -89,7 +87,7 @@ public class UserAccountController extends BaseController {
     @ResponseBody
     public Object list(String condition) {
     	
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = userAccountService.selectUserAccountList(page, map);
         
@@ -143,7 +141,7 @@ public class UserAccountController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(UserAccount userAccount) {
-        userAccountService.insert(userAccount);
+        userAccountService.save(userAccount);
         return SUCCESS_TIP;
     }
 
@@ -154,7 +152,7 @@ public class UserAccountController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String userAccountId) {
-        userAccountService.deleteById(userAccountId);
+        userAccountService.removeById(userAccountId);
         return SUCCESS_TIP;
     }
 
@@ -179,7 +177,7 @@ public class UserAccountController extends BaseController {
     @ResponseBody
     public Object freeze(@RequestParam String userAccountId) {
     	
-    	UserAccount userAccount = userAccountService.selectById(userAccountId);
+    	UserAccount userAccount = userAccountService.getById(userAccountId);
     	
     	UserResult<Boolean> flag = userCenterService.modifyAccountState(userAccount.getUserId(), AccountStateEnum.FREEZE.getCode() + "");
     	
@@ -198,7 +196,7 @@ public class UserAccountController extends BaseController {
     @ResponseBody
     public Object unfreeze(@RequestParam String userAccountId) {
     	
-    	UserAccount userAccount = userAccountService.selectById(userAccountId);
+    	UserAccount userAccount = userAccountService.getById(userAccountId);
     	
     	UserResult<Boolean> flag = userCenterService.modifyAccountState(userAccount.getUserId(), AccountStateEnum.NORMAL.getCode() + "");
     	
@@ -215,6 +213,6 @@ public class UserAccountController extends BaseController {
     @RequestMapping(value = "/detail/{userAccountId}")
     @ResponseBody
     public Object detail(@PathVariable("userAccountId") String userAccountId) {
-        return userAccountService.selectById(userAccountId);
+        return userAccountService.getById(userAccountId);
     }
 }

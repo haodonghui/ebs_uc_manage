@@ -48,7 +48,7 @@ public class GoodsController extends BaseController {
      */
     @RequestMapping("/goods_update/{goodsId}")
     public String goodsUpdate(@PathVariable String goodsId, Model model) {
-        Goods goods = goodsService.selectById(goodsId);
+        Goods goods = goodsService.getById(goodsId);
         model.addAttribute("goods",goods);
         LogObjectHolder.me().set(goods);
         return PREFIX + "goods_edit.html";
@@ -60,7 +60,7 @@ public class GoodsController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(String condition) {
-        return goodsService.selectList(null);
+        return goodsService.list(null);
     }
 
     /**
@@ -69,7 +69,7 @@ public class GoodsController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(Goods goods) {
-        goodsService.insert(goods);
+        goodsService.save(goods);
         return SUCCESS_TIP;
     }
 
@@ -79,7 +79,7 @@ public class GoodsController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String goodsId) {
-        goodsService.deleteById(goodsId);
+        goodsService.removeById(goodsId);
         return SUCCESS_TIP;
     }
 
@@ -99,6 +99,6 @@ public class GoodsController extends BaseController {
     @RequestMapping(value = "/detail/{goodsId}")
     @ResponseBody
     public Object detail(@PathVariable("goodsId") String goodsId) {
-        return goodsService.selectById(goodsId);
+        return goodsService.getById(goodsId);
     }
 }

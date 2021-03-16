@@ -1,29 +1,9 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.common.qr.ImgQrTool;
@@ -41,8 +21,25 @@ import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeSceneServic
 import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeService;
 import com.yestae.user.manage.modular.weixin.service.IWeiXinService;
 import com.yestae.user.manage.modular.weixin.util.Constant;
-
 import jp.sourceforge.qrcode.QRCodeDecoder;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -126,7 +123,7 @@ public class YestaeQrcodeServiceImpl extends ServiceImpl<YestaeQrcodeMapper, Yes
 		
 		BeanUtils.copyProperties(yestaeQrcode, yestaeQrcodeDb, new String[]{"createBy", "createTime", "ifDel", "codeUrl", "qrcodeId"} );
 		
-		return yestaeQrcodeMapper.updateAllColumnById(yestaeQrcodeDb);
+		return yestaeQrcodeMapper.updateById(yestaeQrcodeDb);
 	}
 	
 	/**
@@ -136,7 +133,7 @@ public class YestaeQrcodeServiceImpl extends ServiceImpl<YestaeQrcodeMapper, Yes
 	 */
 	private boolean checkYestaeQrcode(YestaeQrcode yestaeQrcode){
 		
-		EntityWrapper<YestaeQrcode> wrapper = new EntityWrapper<YestaeQrcode>();
+		QueryWrapper<YestaeQrcode> wrapper = new QueryWrapper<YestaeQrcode>();
 		wrapper.eq("if_del", SysEnum.NO.getCode());
 		wrapper.eq("generalize_user_id", yestaeQrcode.getGeneralizeUserId());
 		wrapper.eq("scene_id", yestaeQrcode.getSceneId());

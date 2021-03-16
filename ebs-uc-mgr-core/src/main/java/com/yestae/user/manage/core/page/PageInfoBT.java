@@ -1,6 +1,6 @@
 package com.yestae.user.manage.core.page;
 
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
 

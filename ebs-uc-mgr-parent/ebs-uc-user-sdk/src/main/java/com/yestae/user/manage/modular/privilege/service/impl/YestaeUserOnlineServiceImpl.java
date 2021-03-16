@@ -1,18 +1,16 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserOnlineMapper;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserOnline;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserOnlineService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,7 +28,7 @@ public class YestaeUserOnlineServiceImpl extends ServiceImpl<YestaeUserOnlineMap
 	
 	@Override
 	public List<Map<String, Object>> selectYestaeUserOnlineList(Page<Map<String, Object>> page,
-			Map<String, String> map) {
+																Map<String, String> map) {
 		map.put("ifDel", SysEnum.NO.getCode() + "");
 		return yestaeUserOnlineMapper.selectYestaeUserOnlineList(page, map);
 	}

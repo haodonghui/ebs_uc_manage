@@ -1,24 +1,22 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralize;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.common.Constants.UserConstant;
 import com.yestae.user.manage.modular.privilege.common.enums.FlowTypeEnum;
 import com.yestae.user.manage.modular.privilege.common.enums.GeneralizeType;
 import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeGeneralizeMapper;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralize;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeService;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -36,7 +34,7 @@ public class YestaeGeneralizeServiceImpl extends ServiceImpl<YestaeGeneralizeMap
 	
 	@Override
 	public List<Map<String, Object>> selectYestaeGeneralizeList(Page<Map<String, Object>> page,
-			Map<String, String> map) {
+																Map<String, String> map) {
 		map.put("ifDel", SysEnum.NO.getCode() + "");
 		map.put("ifEndNo", SysEnum.NO.getCode() + "");
 		map.put("ifEndYes", SysEnum.YES.getCode() + "");
@@ -45,7 +43,7 @@ public class YestaeGeneralizeServiceImpl extends ServiceImpl<YestaeGeneralizeMap
 		if(page != null){
 			int total = yestaeGeneralizeMapper.selectYestaeGeneralizeListCount(map);
 			page.setTotal(total);
-			return yestaeGeneralizeMapper.selectYestaeGeneralizeList(new RowBounds(page.getOffset(), page.getLimit()), map);
+			return yestaeGeneralizeMapper.selectYestaeGeneralizeList(new RowBounds((int)page.getCurrent(), (int)page.getSize()), map);
 		}
 		return yestaeGeneralizeMapper.selectYestaeGeneralizeList(map);
 	}
@@ -74,7 +72,7 @@ public class YestaeGeneralizeServiceImpl extends ServiceImpl<YestaeGeneralizeMap
 		if(page != null){
 			int total = yestaeGeneralizeMapper.selectSaleListCount(map);
 			page.setTotal(total);
-			return yestaeGeneralizeMapper.selectSaleList(new RowBounds(page.getOffset(), page.getLimit()), map);
+			return yestaeGeneralizeMapper.selectSaleList(new RowBounds((int)page.getCurrent(), (int)page.getSize()), map);
 		}
 		return yestaeGeneralizeMapper.selectSaleList(map);
 	}

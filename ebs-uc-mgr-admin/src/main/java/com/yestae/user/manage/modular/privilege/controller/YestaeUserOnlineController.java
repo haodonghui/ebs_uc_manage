@@ -1,19 +1,8 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.center.dubbo.entity.UserQuitSystemDubbo;
 import com.yestae.user.center.dubbo.entity.UserResult;
 import com.yestae.user.center.dubbo.service.IUserCenterService;
@@ -21,13 +10,22 @@ import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.manage.common.annotion.BussinessLog;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.base.tips.ErrorTip;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.core.support.HttpKit;
 import com.yestae.user.manage.core.util.PrivacyHideUtil;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserOnlineService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 登录用户控制器
@@ -44,7 +42,7 @@ public class YestaeUserOnlineController extends BaseController {
     @Autowired
     private IYestaeUserOnlineService yestaeUserOnlineService;
 
-    @Resource
+    @DubboReference
    	private IUserCenterService userCenterService;
     
     /**
@@ -62,7 +60,7 @@ public class YestaeUserOnlineController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeUserOnlineService.selectYestaeUserOnlineList(page, map);
         

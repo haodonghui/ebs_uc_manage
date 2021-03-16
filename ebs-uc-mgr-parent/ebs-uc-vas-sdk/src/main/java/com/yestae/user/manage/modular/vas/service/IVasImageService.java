@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.vas.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.vas.persistence.model.VasImage;
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ public interface IVasImageService extends IService<VasImage> {
 	/**
 	 * 查询图片
 	 * @param bizId
-	 * @param BizType
+	 * @param bizType
 	 * @return
 	 */
 	public VasImage findOneVasImage(String bizId, Integer bizType);

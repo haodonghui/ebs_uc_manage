@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: ebs-uc-manager-service
+  cloud:
+    nacos:
+      config:
+        shared-configs[0]:
+          data-id: redis.yaml
+        shared-configs[1]:
+          data-id: actuator.yaml
+        shared-configs[2]:
+          data-id: rabbitmq.yaml
+        group: EBS_GROUP
+        file-extension: yaml
+  jackson:
+    default-property-inclusion: non_null
+  profiles:
+    active: dev
+logging:
+  config: classpath:log4j2.xml
+
+
+---
+spring:
+  profiles: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos-headless.mall.svc.cluster.local:8848
+        namespace: 61e806a7-9c45-41f0-8018-af9fc5240c3e
+---
+spring:
+  profiles: test
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos-headless.mall.svc.cluster.local:8848
+        namespace: 4623c061-7380-4ce0-a805-1fd9bfdc1839
+---
+spring:
+  profiles: pre
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos-headless.mall.svc.cluster.local:8848
+        namespace: ed3e4270-58f1-495e-829d-32f0c1f7114d
+
+---
+spring:
+  profiles: pro
+  cloud:
+    nacos:
+      config:
+        server-addr: mse-9602bfd2-nacos-ans.mse.aliyuncs.com:8848
+        namespace: 31bcc147-5009-4205-99f6-c33691bc44d8

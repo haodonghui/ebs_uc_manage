@@ -1,9 +1,9 @@
 package com.yestae.user.manage.modular.system.service.impl;
 
-import com.yestae.user.manage.modular.system.persistence.model.Dict;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.system.persistence.dao.DictMapper;
+import com.yestae.user.manage.modular.system.persistence.model.Dict;
 import com.yestae.user.manage.modular.system.service.IDictService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

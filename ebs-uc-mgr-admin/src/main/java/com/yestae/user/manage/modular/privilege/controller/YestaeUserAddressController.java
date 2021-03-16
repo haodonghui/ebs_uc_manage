@@ -5,14 +5,13 @@ import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserAddress;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserAddressService;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 用户地址控制器
@@ -52,7 +51,7 @@ public class YestaeUserAddressController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeUserAddress_update/{yestaeUserAddressId}")
     public String yestaeUserAddressUpdate(@PathVariable Integer yestaeUserAddressId, Model model) {
-        YestaeUserAddress yestaeUserAddress = yestaeUserAddressService.selectById(yestaeUserAddressId);
+        YestaeUserAddress yestaeUserAddress = yestaeUserAddressService.getById(yestaeUserAddressId);
         model.addAttribute("item",yestaeUserAddress);
         LogObjectHolder.me().set(yestaeUserAddress);
         return PREFIX + "yestaeUserAddress_edit.html";
@@ -65,7 +64,7 @@ public class YestaeUserAddressController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(String condition) {
-        return yestaeUserAddressService.selectList(null);
+        return yestaeUserAddressService.list(null);
     }
 
     /**
@@ -75,7 +74,7 @@ public class YestaeUserAddressController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(YestaeUserAddress yestaeUserAddress) {
-        yestaeUserAddressService.insert(yestaeUserAddress);
+        yestaeUserAddressService.save(yestaeUserAddress);
         return SUCCESS_TIP;
     }
 
@@ -86,7 +85,7 @@ public class YestaeUserAddressController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam Integer yestaeUserAddressId) {
-        yestaeUserAddressService.deleteById(yestaeUserAddressId);
+        yestaeUserAddressService.removeById(yestaeUserAddressId);
         return SUCCESS_TIP;
     }
 
@@ -108,6 +107,6 @@ public class YestaeUserAddressController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeUserAddressId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeUserAddressId") Integer yestaeUserAddressId) {
-        return yestaeUserAddressService.selectById(yestaeUserAddressId);
+        return yestaeUserAddressService.getById(yestaeUserAddressId);
     }
 }

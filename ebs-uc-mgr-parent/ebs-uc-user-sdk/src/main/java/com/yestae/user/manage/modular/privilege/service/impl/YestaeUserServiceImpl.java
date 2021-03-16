@@ -1,16 +1,8 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
@@ -21,6 +13,11 @@ import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUser;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyPhoneLog;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserService;
 import com.yestae.user.manage.modular.privilege.vo.YestaeUserVo;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * <p>
@@ -45,7 +42,7 @@ public class YestaeUserServiceImpl extends ServiceImpl<YestaeUserMapper, YestaeU
 			return -1;
 		}
 		String id = yestaeUserVo.getId();
-		YestaeUser yestaeUser = super.selectById(id);
+		YestaeUser yestaeUser = super.getById(id);
 		if(yestaeUser == null){
 			throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
 		}
@@ -64,7 +61,7 @@ public class YestaeUserServiceImpl extends ServiceImpl<YestaeUserMapper, YestaeU
 		}
 //		ShiroUser shiroUser = (ShiroUser) HttpKit.getRequest().getSession().getAttribute("shiroUser");
 		String id = yestaeUserVo.getId();
-		YestaeUser yestaeUser = super.selectById(id);
+		YestaeUser yestaeUser = super.getById(id);
 		if(yestaeUser == null){
 			throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
 		}
@@ -75,10 +72,10 @@ public class YestaeUserServiceImpl extends ServiceImpl<YestaeUserMapper, YestaeU
 		if(targetMobile!= null && !targetMobile.equals(sourceMobile)){
 			
 			//查询手机号是否存在
-			Wrapper<YestaeUser> wrapper = new EntityWrapper<>();
+			QueryWrapper<YestaeUser> wrapper = new QueryWrapper<>();
 			wrapper.eq("if_del", SysEnum.NO.getCode());
 			wrapper.eq("mobile", targetMobile);
-			int total = this.selectCount(wrapper );
+			int total = this.count(wrapper );
 			if(total > 0){
 				throw new BussinessException(BizExceptionEnum.MOBILE_EXISTED);
 			}
@@ -108,10 +105,10 @@ public class YestaeUserServiceImpl extends ServiceImpl<YestaeUserMapper, YestaeU
 		if(StringUtils.isEmpty(userId)){
 			return null;
 		}
-		EntityWrapper<YestaeUser> wrapper = new EntityWrapper<>();
+		QueryWrapper<YestaeUser> wrapper = new QueryWrapper<>();
 		wrapper.eq("if_del", SysEnum.NO.getCode());
 		wrapper.eq("user_id", userId);
-		return this.selectOne(wrapper);
+		return this.getOne(wrapper);
 	}
 	
 }

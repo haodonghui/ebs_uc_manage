@@ -1,34 +1,28 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import com.yestae.user.manage.modular.vas.persistence.model.Equity;
-import com.yestae.user.manage.modular.vas.persistence.model.Organiz;
-import com.yestae.user.manage.modular.vas.persistence.model.Store;
-import com.yestae.user.manage.modular.vas.persistence.model.Vas;
+import org.apache.commons.lang3.StringUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.modular.vas.common.constant.VasConstants;
 import com.yestae.user.manage.modular.vas.persistence.dao.StoreMapper;
-import com.yestae.user.manage.modular.vas.persistence.dao.VasMapper;
+import com.yestae.user.manage.modular.vas.persistence.model.Organiz;
+import com.yestae.user.manage.modular.vas.persistence.model.Store;
 import com.yestae.user.manage.modular.vas.service.IOrganizService;
 import com.yestae.user.manage.modular.vas.service.IStoreService;
 import com.yestae.user.manage.modular.vas.service.IVasImageService;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -63,23 +57,23 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store> implements
 			store.setDelFlag(VasConstants.YES);
 			store.setStatus(VasConstants.STATUS_OFF);
 			//校验门店名称
-			Wrapper<Store> wrapper1 = new EntityWrapper<>();
+			QueryWrapper<Store> wrapper1 = new QueryWrapper<>();
 			wrapper1.eq("store_name", store.getStoreName());
 			wrapper1.eq("organiz_id", store.getOrganizId());
-			int count1 = this.selectCount(wrapper1);
+			int count1 = this.count(wrapper1);
 			if(count1 > 0){
 				throw new BussinessException(BizExceptionEnum.ORGANIZ_STORE_NAME_EXISTED);
 			}
 			
 			//添加机构编码
 			if(!StringUtils.isEmpty(store.getOrganizId())){
-				Organiz organiz = organizService.selectById(store.getOrganizId());
+				Organiz organiz = organizService.getById(store.getOrganizId());
 				if(organiz != null){
 					store.setOrganizCode(organiz.getOrganizCode());
 				}
 			}
 			//添加门店
-			this.insert(store);
+			this.save(store);
 			//添加增值服务图片
 			vasImageService.updateVasImage(store.getSurfaceId(), store.getId());
 		}
@@ -91,22 +85,22 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store> implements
 		logger.info("StoreServiceImpl->updateStore->store:{}", JSONObject.toJSON(store));
 		if(store != null){
 			//校验门店名称
-			Wrapper<Store> wrapper2 = new EntityWrapper<>();
+			QueryWrapper<Store> wrapper2 = new QueryWrapper<>();
 			wrapper2.eq("store_name", store.getStoreName());
 			wrapper2.eq("organiz_id", store.getOrganizId());
 			wrapper2.ne("id", store.getId());
-			int count2 = this.selectCount(wrapper2);
+			int count2 = this.count(wrapper2);
 			if(count2 > 0){
 				throw new BussinessException(BizExceptionEnum.ORGANIZ_STORE_NAME_EXISTED);
 			}
 			
-			Store storeDb = this.selectById(store.getId());
+			Store storeDb = this.getById(store.getId());
 			if(storeDb == null){
 				throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
 			}
 			//添加机构编码
 			if(store.getOrganizId() != null && !store.getOrganizId().equals(storeDb.getOrganizId())){
-				Organiz organiz = organizService.selectById(store.getOrganizId());
+				Organiz organiz = organizService.getById(store.getOrganizId());
 				if(organiz != null){
 					store.setOrganizCode(organiz.getOrganizCode());
 				}

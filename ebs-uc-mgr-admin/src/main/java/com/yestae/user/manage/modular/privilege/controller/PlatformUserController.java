@@ -1,32 +1,28 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.alibaba.nacos.common.utils.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.core.support.HttpKit;
-
-import org.springframework.web.bind.annotation.RequestParam;
 import com.yestae.user.manage.modular.privilege.persistence.model.PlatformUser;
 import com.yestae.user.manage.modular.privilege.service.IPlatformUserService;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 平台用户控制器
@@ -72,7 +68,7 @@ public class PlatformUserController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/platformUser_update/{platformUserId}")
     public String platformUserUpdate(@PathVariable String platformUserId, Model model) {
-        PlatformUser platformUser = platformUserService.selectById(platformUserId);
+        PlatformUser platformUser = platformUserService.getById(platformUserId);
         model.addAttribute("platformUser",platformUser);
         LogObjectHolder.me().set(platformUser);
         return PREFIX + "platformUser_edit.html";
@@ -86,13 +82,13 @@ public class PlatformUserController extends BaseController {
     @ResponseBody
     public Object list(String condition) {
         
-        Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+        Page<Map<String, Object>> page = new Page<>();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	String userId = MapUtils.getString(map, "userId");
     	String name = MapUtils.getString(map, "name");
     	String mobile = MapUtils.getString(map, "mobile");
     	String userType = MapUtils.getString(map, "userType");
-    	Wrapper<PlatformUser> wrapper = new EntityWrapper<>();
+    	QueryWrapper<PlatformUser> wrapper = new QueryWrapper<>();
     	if(!StringUtils.isEmpty(userId)){
     		wrapper.eq("user_id", userId);
     	}
@@ -105,7 +101,7 @@ public class PlatformUserController extends BaseController {
     	if(!StringUtils.isEmpty(mobile)){
     		wrapper.like("mobile", mobile);
     	}
-    	page = platformUserService.selectMapsPage(page, wrapper);
+    	page = platformUserService.pageMaps(page, wrapper);
         
         List<Map<String, Object>> list = page.getRecords();
 		for(Map<String, Object> m: list ){
@@ -125,7 +121,7 @@ public class PlatformUserController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(PlatformUser platformUser) {
-        platformUserService.insert(platformUser);
+        platformUserService.save(platformUser);
         return SUCCESS_TIP;
     }
 
@@ -136,7 +132,7 @@ public class PlatformUserController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String platformUserId) {
-        platformUserService.deleteById(platformUserId);
+        platformUserService.removeById(platformUserId);
         return SUCCESS_TIP;
     }
 
@@ -158,6 +154,6 @@ public class PlatformUserController extends BaseController {
     @RequestMapping(value = "/detail/{platformUserId}")
     @ResponseBody
     public Object detail(@PathVariable("platformUserId") String platformUserId) {
-        return platformUserService.selectById(platformUserId);
+        return platformUserService.getById(platformUserId);
     }
 }

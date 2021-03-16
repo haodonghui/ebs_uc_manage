@@ -1,9 +1,16 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.user.common.node.ZTreeNode;
+import com.yestae.user.common.util.DateUtil;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.support.HttpKit;
+import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeChannel;
+import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeChannelService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.user.common.node.ZTreeNode;
-import com.yestae.user.common.util.DateUtil;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.support.HttpKit;
-import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeChannel;
-import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeChannelService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 推广渠道控制器
@@ -67,9 +63,9 @@ public class YestaeGeneralizeChannelController extends BaseController {
     @RequestMapping("/yestaeGeneralizeChannel_update/{yestaeGeneralizeChannelId}")
     public String yestaeGeneralizeChannelUpdate(@PathVariable String yestaeGeneralizeChannelId, Model model) {
         
-    	YestaeGeneralizeChannel yestaeGeneralizeChannel = yestaeGeneralizeChannelService.selectById(yestaeGeneralizeChannelId);
+    	YestaeGeneralizeChannel yestaeGeneralizeChannel = yestaeGeneralizeChannelService.getById(yestaeGeneralizeChannelId);
     	model.addAttribute("pname", "0".equals(yestaeGeneralizeChannel.getPid())? "顶级": "");
-        YestaeGeneralizeChannel parentChannel = yestaeGeneralizeChannelService.selectById(yestaeGeneralizeChannel.getPid());
+        YestaeGeneralizeChannel parentChannel = yestaeGeneralizeChannelService.getById(yestaeGeneralizeChannel.getPid());
         if(parentChannel != null){
         	//父级渠道名称
         	model.addAttribute("pname",parentChannel.getName());
@@ -86,7 +82,7 @@ public class YestaeGeneralizeChannelController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page<>();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeGeneralizeChannelService.selectYestaeGeneralizeChannelList(page, map);
         
@@ -124,10 +120,10 @@ public class YestaeGeneralizeChannelController extends BaseController {
         	if(StringUtils.isEmpty(code)){
         		tree.add(ZTreeNode.createParent());
         	}else{
-        		Wrapper<YestaeGeneralizeChannel> wrapper = new EntityWrapper<>();
+                QueryWrapper<YestaeGeneralizeChannel> wrapper = new QueryWrapper<>();
         		wrapper.eq("channel_code", code);
         		wrapper.eq("if_del", SysEnum.NO.getCode());
-        		YestaeGeneralizeChannel yestaeGeneralizeChannel =this.yestaeGeneralizeChannelService.selectOne(wrapper);
+        		YestaeGeneralizeChannel yestaeGeneralizeChannel =this.yestaeGeneralizeChannelService.getOne(wrapper);
         		if(yestaeGeneralizeChannel != null){
         			tree = this.dealYestaeGeneralizeChannelList(tree, yestaeGeneralizeChannel.getId());
         		}else{
@@ -193,6 +189,6 @@ public class YestaeGeneralizeChannelController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeGeneralizeChannelId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeGeneralizeChannelId") String yestaeGeneralizeChannelId) {
-        return yestaeGeneralizeChannelService.selectById(yestaeGeneralizeChannelId);
+        return yestaeGeneralizeChannelService.getById(yestaeGeneralizeChannelId);
     }
 }

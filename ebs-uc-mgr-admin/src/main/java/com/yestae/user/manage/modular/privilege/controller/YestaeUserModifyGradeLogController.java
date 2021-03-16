@@ -1,8 +1,16 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.druid.util.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.user.common.util.DateUtil;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.support.HttpKit;
+import com.yestae.user.manage.core.util.PrivacyHideUtil;
+import com.yestae.user.manage.modular.privilege.common.enums.UserTypeEnum;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyGradeLog;
+import com.yestae.user.manage.modular.privilege.service.IYestaeUserModifyGradeLogService;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,18 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.druid.util.StringUtils;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.user.common.util.DateUtil;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.support.HttpKit;
-import com.yestae.user.manage.core.util.PrivacyHideUtil;
-import com.yestae.user.manage.modular.privilege.common.enums.UserTypeEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyGradeLog;
-import com.yestae.user.manage.modular.privilege.service.IYestaeUserModifyGradeLogService;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户等级变动明细控制器
@@ -62,7 +60,7 @@ public class YestaeUserModifyGradeLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeUserModifyGradeLog_update/{yestaeUserModifyGradeLogId}")
     public String yestaeUserModifyGradeLogUpdate(@PathVariable String yestaeUserModifyGradeLogId, Model model) {
-        YestaeUserModifyGradeLog yestaeUserModifyGradeLog = yestaeUserModifyGradeLogService.selectById(yestaeUserModifyGradeLogId);
+        YestaeUserModifyGradeLog yestaeUserModifyGradeLog = yestaeUserModifyGradeLogService.getById(yestaeUserModifyGradeLogId);
         model.addAttribute("yestaeUserModifyGradeLog",yestaeUserModifyGradeLog);
         LogObjectHolder.me().set(yestaeUserModifyGradeLog);
         return PREFIX + "yestaeUserModifyGradeLog_edit.html";
@@ -76,7 +74,7 @@ public class YestaeUserModifyGradeLogController extends BaseController {
     @ResponseBody
     public Object list() {
     	
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeUserModifyGradeLogService.selectYestaeUserModifyGradeLogList(page, map);
         
@@ -108,7 +106,7 @@ public class YestaeUserModifyGradeLogController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(YestaeUserModifyGradeLog yestaeUserModifyGradeLog) {
-        yestaeUserModifyGradeLogService.insert(yestaeUserModifyGradeLog);
+        yestaeUserModifyGradeLogService.save(yestaeUserModifyGradeLog);
         return SUCCESS_TIP;
     }
 
@@ -119,7 +117,7 @@ public class YestaeUserModifyGradeLogController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String yestaeUserModifyGradeLogId) {
-        yestaeUserModifyGradeLogService.deleteById(yestaeUserModifyGradeLogId);
+        yestaeUserModifyGradeLogService.removeById(yestaeUserModifyGradeLogId);
         return SUCCESS_TIP;
     }
 
@@ -141,6 +139,6 @@ public class YestaeUserModifyGradeLogController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeUserModifyGradeLogId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeUserModifyGradeLogId") String yestaeUserModifyGradeLogId) {
-        return yestaeUserModifyGradeLogService.selectById(yestaeUserModifyGradeLogId);
+        return yestaeUserModifyGradeLogService.getById(yestaeUserModifyGradeLogId);
     }
 }

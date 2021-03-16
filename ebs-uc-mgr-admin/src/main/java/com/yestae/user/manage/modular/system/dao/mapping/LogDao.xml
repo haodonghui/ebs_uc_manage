@@ -30,7 +30,7 @@
         </choose>
     </select>
 
-    <select id="getLoginLogs" resultType="map" parameterType="com.baomidou.mybatisplus.plugins.Page">
+    <select id="getLoginLogs" resultType="map" parameterType="com.baomidou.mybatisplus.extension.plugins.pagination.Page">
         select * from sys_login_log where 1 = 1
         <if test="beginTime != null and beginTime != ''" > 
 			and createTime &gt; CONCAT(#{beginTime},' 00:00:00')

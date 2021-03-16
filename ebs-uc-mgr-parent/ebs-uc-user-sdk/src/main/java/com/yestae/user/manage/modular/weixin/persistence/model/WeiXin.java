@@ -1,13 +1,13 @@
 package com.yestae.user.manage.modular.weixin.persistence.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableName;
-
 @TableName("uc_m_weixin")
-public class WeiXin extends Model<WeiXin>{
+public class WeiXin extends Model<WeiXin> {
 
 	/**
 	 * 

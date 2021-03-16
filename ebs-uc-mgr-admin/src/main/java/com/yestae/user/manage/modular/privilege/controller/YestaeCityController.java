@@ -1,5 +1,12 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.modular.privilege.common.enums.YestaeCityStateEnum;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeCity;
+import com.yestae.user.manage.modular.privilege.service.IYestaeCityService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,14 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.modular.privilege.common.enums.YestaeCityStateEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeCity;
-import com.yestae.user.manage.modular.privilege.service.IYestaeCityService;
 
 /**
  * 地址控制器
@@ -54,7 +53,7 @@ public class YestaeCityController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeCity_update/{yestaeCityId}")
     public String yestaeCityUpdate(@PathVariable Integer yestaeCityId, Model model) {
-        YestaeCity yestaeCity = yestaeCityService.selectById(yestaeCityId);
+        YestaeCity yestaeCity = yestaeCityService.getById(yestaeCityId);
         model.addAttribute("item",yestaeCity);
         LogObjectHolder.me().set(yestaeCity);
         return PREFIX + "yestaeCity_edit.html";
@@ -67,13 +66,13 @@ public class YestaeCityController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	EntityWrapper<YestaeCity> wrapper = new EntityWrapper<>();
+    	QueryWrapper<YestaeCity> wrapper = new QueryWrapper<>();
     	wrapper.eq("state", YestaeCityStateEnum.YES.getCode() + "");
     	String pid = getHttpServletRequest().getParameter("pid");
     	if(StringUtils.isNotEmpty(pid)){
     		wrapper.eq("pid", Integer.parseInt(pid));
     	}
-        return yestaeCityService.selectList(wrapper);
+        return yestaeCityService.list(wrapper);
     }
 
     /**
@@ -83,7 +82,7 @@ public class YestaeCityController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(YestaeCity yestaeCity) {
-        yestaeCityService.insert(yestaeCity);
+        yestaeCityService.save(yestaeCity);
         return SUCCESS_TIP;
     }
 
@@ -94,7 +93,7 @@ public class YestaeCityController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam Integer yestaeCityId) {
-        yestaeCityService.deleteById(yestaeCityId);
+        yestaeCityService.removeById(yestaeCityId);
         return SUCCESS_TIP;
     }
 
@@ -116,6 +115,6 @@ public class YestaeCityController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeCityId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeCityId") Integer yestaeCityId) {
-        return yestaeCityService.selectById(yestaeCityId);
+        return yestaeCityService.getById(yestaeCityId);
     }
 }

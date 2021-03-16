@@ -22,7 +22,7 @@ public class DictConfig implements ServletContextListener{
 	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		List<Dict> list = dictService.selectList(null);
+		List<Dict> list = dictService.list(null);
 		for(Dict d: list){
 			if(!StringUtils.isEmpty(d.getPcode()) && !StringUtils.isEmpty(d.getCode())){
 				

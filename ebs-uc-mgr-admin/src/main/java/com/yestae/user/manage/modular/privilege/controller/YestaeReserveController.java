@@ -1,15 +1,6 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.common.annotion.BussinessLog;
@@ -18,6 +9,14 @@ import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeReserve;
 import com.yestae.user.manage.modular.privilege.service.IYestaeReserveService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 保留词控制器
@@ -56,7 +55,7 @@ public class YestaeReserveController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeReserve_update/{yestaeReserveId}")
     public String yestaeReserveUpdate(@PathVariable String yestaeReserveId, Model model) {
-        YestaeReserve yestaeReserve = yestaeReserveService.selectById(yestaeReserveId);
+        YestaeReserve yestaeReserve = yestaeReserveService.getById(yestaeReserveId);
         model.addAttribute("yestaeReserve",yestaeReserve);
         LogObjectHolder.me().set(yestaeReserve);
         return PREFIX + "yestaeReserve_edit.html";
@@ -69,14 +68,14 @@ public class YestaeReserveController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(String code, String name) {
-    	EntityWrapper<YestaeReserve> wrapper = new EntityWrapper<>();
+    	QueryWrapper<YestaeReserve> wrapper = new QueryWrapper<>();
     	if(StringUtils.isNotEmpty(name)){
     		wrapper.like("name", name);
     	}
     	if(StringUtils.isNotEmpty(code)){
     		wrapper.eq("code", code);
     	}
-        return yestaeReserveService.selectList(wrapper);
+        return yestaeReserveService.list(wrapper);
     }
 
     /**
@@ -88,20 +87,20 @@ public class YestaeReserveController extends BaseController {
     @ResponseBody
     public Object add(YestaeReserve yestaeReserve) {
     	
-    	EntityWrapper<YestaeReserve> wrapper = new EntityWrapper<>();
+    	QueryWrapper<YestaeReserve> wrapper = new QueryWrapper<>();
     	wrapper.eq("name", yestaeReserve.getName());
-    	int i = yestaeReserveService.selectCount(wrapper);
+    	int i = yestaeReserveService.count(wrapper);
     	if(i > 0){
     		throw new BussinessException(BizExceptionEnum.RESERVE_NAME_EXISTED);
     	}
     	
-    	wrapper = new EntityWrapper<>();
+    	wrapper = new QueryWrapper<>();
     	wrapper.eq("code", yestaeReserve.getCode());
-    	i = yestaeReserveService.selectCount(wrapper);
+    	i = yestaeReserveService.count(wrapper);
     	if(i > 0){
     		throw new BussinessException(BizExceptionEnum.RESERVE_CODE_EXISTED);
     	}
-        yestaeReserveService.insert(yestaeReserve);
+        yestaeReserveService.save(yestaeReserve);
         return SUCCESS_TIP;
     }
 
@@ -113,7 +112,7 @@ public class YestaeReserveController extends BaseController {
     @BussinessLog(value = "删除保留词", json = "true")
     @ResponseBody
     public Object delete(@RequestParam String yestaeReserveId) {
-        yestaeReserveService.deleteById(yestaeReserveId);
+        yestaeReserveService.removeById(yestaeReserveId);
         return SUCCESS_TIP;
     }
 
@@ -126,18 +125,18 @@ public class YestaeReserveController extends BaseController {
     @ResponseBody
     public Object update(YestaeReserve yestaeReserve) {
     	
-    	EntityWrapper<YestaeReserve> wrapper = new EntityWrapper<>();
+    	QueryWrapper<YestaeReserve> wrapper = new QueryWrapper<>();
     	wrapper.eq("name", yestaeReserve.getName());
     	wrapper.ne("id", yestaeReserve.getId());
-    	int i = yestaeReserveService.selectCount(wrapper);
+    	int i = yestaeReserveService.count(wrapper);
     	if(i > 0){
     		throw new BussinessException(BizExceptionEnum.RESERVE_NAME_EXISTED);
     	}
     	
-    	wrapper = new EntityWrapper<>();
+    	wrapper = new QueryWrapper<>();
     	wrapper.eq("code", yestaeReserve.getCode());
     	wrapper.ne("id", yestaeReserve.getId());
-    	i = yestaeReserveService.selectCount(wrapper);
+    	i = yestaeReserveService.count(wrapper);
     	if(i > 0){
     		throw new BussinessException(BizExceptionEnum.RESERVE_CODE_EXISTED);
     	}
@@ -152,6 +151,6 @@ public class YestaeReserveController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeReserveId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeReserveId") String yestaeReserveId) {
-        return yestaeReserveService.selectById(yestaeReserveId);
+        return yestaeReserveService.getById(yestaeReserveId);
     }
 }

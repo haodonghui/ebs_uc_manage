@@ -1,13 +1,11 @@
 package com.yestae.user.manage.modular.system.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.modular.system.dao.MenuDao;
 import com.yestae.user.manage.modular.system.persistence.dao.MenuMapper;
 import com.yestae.user.manage.modular.system.persistence.model.Menu;
 import com.yestae.user.manage.modular.system.service.IMenuService;
-
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,7 +47,7 @@ public class MenuServiceImpl implements IMenuService {
         delMenu(menuId);
 
         //删除所有子菜单
-        Wrapper<Menu> wrapper = new EntityWrapper<>();
+        QueryWrapper<Menu> wrapper = new QueryWrapper<>();
         wrapper = wrapper.like("pcodes", "%[" + menu.getCode() + "]%");
         List<Menu> menus = menuMapper.selectList(wrapper);
         for (Menu temp : menus) {

@@ -1,10 +1,9 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserImageMapper;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserImage;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserImageService;
-
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,10 +1,9 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeCityMapper;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeCity;
 import com.yestae.user.manage.modular.privilege.service.IYestaeCityService;
-
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,10 +1,15 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.user.common.util.DateUtil;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.support.HttpKit;
+import com.yestae.user.manage.core.util.PrivacyHideUtil;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyPhoneLog;
+import com.yestae.user.manage.modular.privilege.service.IYestaeUserModifyPhoneLogService;
+import com.yestae.user.manage.modular.system.persistence.model.User;
+import com.yestae.user.manage.modular.system.service.IUserService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.user.common.util.DateUtil;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.support.HttpKit;
-import com.yestae.user.manage.core.util.PrivacyHideUtil;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserModifyPhoneLog;
-import com.yestae.user.manage.modular.privilege.service.IYestaeUserModifyPhoneLogService;
-import com.yestae.user.manage.modular.system.persistence.model.User;
-import com.yestae.user.manage.modular.system.service.IUserService;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户手机号变更日志控制器
@@ -66,7 +63,7 @@ public class YestaeUserModifyPhoneLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeUserModifyPhoneLog_update/{yestaeUserModifyPhoneLogId}")
     public String yestaeUserModifyPhoneLogUpdate(@PathVariable String yestaeUserModifyPhoneLogId, Model model) {
-        YestaeUserModifyPhoneLog yestaeUserModifyPhoneLog = yestaeUserModifyPhoneLogService.selectById(yestaeUserModifyPhoneLogId);
+        YestaeUserModifyPhoneLog yestaeUserModifyPhoneLog = yestaeUserModifyPhoneLogService.getById(yestaeUserModifyPhoneLogId);
         model.addAttribute("item",yestaeUserModifyPhoneLog);
         return PREFIX + "yestaeUserModifyPhoneLog_edit.html";
     }
@@ -78,7 +75,7 @@ public class YestaeUserModifyPhoneLogController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeUserModifyPhoneLogService.selectYestaeUserModifyPhoneLogList(page, map);
     	this.dealList(list);

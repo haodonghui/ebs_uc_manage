@@ -3,13 +3,12 @@ package com.yestae.user.manage.common.constant.factory;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.druid.util.StringUtils;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.yestae.user.common.support.StrKit;
 import com.yestae.user.common.util.ToolUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
@@ -189,9 +188,11 @@ public class ConstantFactory implements IConstantFactory {
         } else if("0".equals(code)){
         	return "顶级";
         } else {
-            Menu param = new Menu();
-            param.setCode(code);
-            Menu menu = menuMapper.selectOne(param);
+            /*Menu param = new Menu();
+            param.setCode(code);*/
+            QueryWrapper<Menu> wrapper = new QueryWrapper<>();
+            wrapper.eq("code",code);
+            Menu menu = menuMapper.selectOne(wrapper);
             if (menu == null) {
                 return "";
             } else {
@@ -232,7 +233,7 @@ public class ConstantFactory implements IConstantFactory {
     @SuppressWarnings("null")
 	@Override
     public List<String> getSubDeptId(String deptid) {
-        Wrapper<Dept> wrapper = new EntityWrapper<>();
+        QueryWrapper<Dept> wrapper = new QueryWrapper<>();
         wrapper = wrapper.like("pids", "%[" + deptid + "]%");
         List<Dept> depts = this.deptMapper.selectList(wrapper);
 

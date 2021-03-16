@@ -1,26 +1,23 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.modular.vas.common.constant.VasConstants;
 import com.yestae.user.manage.modular.vas.persistence.dao.OrganizMapper;
-import com.yestae.user.manage.modular.vas.persistence.model.Equity;
 import com.yestae.user.manage.modular.vas.persistence.model.Organiz;
 import com.yestae.user.manage.modular.vas.persistence.model.PageContent;
 import com.yestae.user.manage.modular.vas.service.IOrganizService;
 import com.yestae.user.manage.modular.vas.service.IPageContentService;
 import com.yestae.user.manage.modular.vas.service.IVasImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -45,16 +42,16 @@ public class OrganizServiceImpl extends ServiceImpl<OrganizMapper, Organiz> impl
 		logger.info("OrganizServiceImpl->insertOrganiz->organiz:{}", JSONObject.toJSON(organiz));
 		if(organiz != null){
 			//名称校验
-			Wrapper<Organiz> wrapper1 = new EntityWrapper<>();
+			QueryWrapper<Organiz> wrapper1 = new QueryWrapper<>();
 			wrapper1.eq("organiz_name", organiz.getOrganizName());
-			int count1 = this.selectCount(wrapper1);
+			int count1 = this.count(wrapper1);
 			if(count1 > 0){
 				throw new BussinessException(BizExceptionEnum.ORGANIZ_NAME_EXISTED);
 			}
 			
 			organiz.setDelFlag(VasConstants.YES);
 			organiz.setStatus(VasConstants.STATUS_ON);
-			this.insert(organiz);
+			this.save(organiz);
 			
 			vasImageService.updateVasImage(organiz.getLogo(), organiz.getId());
 			vasImageService.updateVasImage(organiz.getSurfaceId(), organiz.getId());
@@ -78,15 +75,15 @@ public class OrganizServiceImpl extends ServiceImpl<OrganizMapper, Organiz> impl
 		logger.info("OrganizServiceImpl->updateOrganiz->organiz:{}", JSONObject.toJSON(organiz));
 		if(organiz != null){
 			//名称校验
-			Wrapper<Organiz> wrapper2 = new EntityWrapper<>();
+			QueryWrapper<Organiz> wrapper2 = new QueryWrapper<>();
 			wrapper2.eq("organiz_name", organiz.getOrganizName());
 			wrapper2.ne("id", organiz.getId());
-			int count2 = this.selectCount(wrapper2);
+			int count2 = this.count(wrapper2);
 			if(count2 > 0){
 				throw new BussinessException(BizExceptionEnum.ORGANIZ_NAME_EXISTED);
 			}
 			
-			Organiz organizDb = this.selectById(organiz.getId());
+			Organiz organizDb = this.getById(organiz.getId());
 			if(organizDb == null){
 				throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
 			}

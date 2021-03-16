@@ -2,7 +2,7 @@ package com.yestae.user.manage.modular.system.persistence.dao;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yestae.user.manage.modular.system.persistence.model.Role;
 
 /**

@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.privilege.persistence.dao;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.manage.modular.privilege.persistence.model.CoinDetail;
 import org.apache.ibatis.annotations.Param;
 

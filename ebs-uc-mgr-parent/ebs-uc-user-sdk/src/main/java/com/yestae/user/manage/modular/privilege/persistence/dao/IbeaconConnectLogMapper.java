@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.privilege.persistence.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yestae.user.manage.modular.privilege.persistence.model.IbeaconConnectLog;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>

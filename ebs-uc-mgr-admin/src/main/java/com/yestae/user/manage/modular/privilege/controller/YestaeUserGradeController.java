@@ -1,9 +1,14 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.shiro.ShiroUser;
+import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserGrade;
+import com.yestae.user.manage.modular.privilege.service.IYestaeUserGradeService;
+import com.yestae.user.manage.modular.privilege.vo.YestaeUserGradeVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.shiro.ShiroUser;
-import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserGrade;
-import com.yestae.user.manage.modular.privilege.service.IYestaeUserGradeService;
-import com.yestae.user.manage.modular.privilege.vo.YestaeUserGradeVo;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户会员等级控制器
@@ -61,7 +60,7 @@ public class YestaeUserGradeController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeUserGrade_update/{yestaeUserGradeId}")
     public String yestaeUserGradeUpdate(@PathVariable String yestaeUserGradeId, Model model) {
-        YestaeUserGrade yestaeUserGrade = yestaeUserGradeService.selectById(yestaeUserGradeId);
+        YestaeUserGrade yestaeUserGrade = yestaeUserGradeService.getById(yestaeUserGradeId);
         model.addAttribute("yestaeUserGrade",yestaeUserGrade);
         LogObjectHolder.me().set(yestaeUserGrade);
         return PREFIX + "yestaeUserGrade_edit.html";
@@ -75,14 +74,14 @@ public class YestaeUserGradeController extends BaseController {
     @ResponseBody
     public Object list(@RequestParam(required = false) String name) {
     	
-    	EntityWrapper<YestaeUserGrade> wrapper = new EntityWrapper<>();
-    	wrapper.setSqlSelect(new String[] {"id", "name", "type", "money", "discount", "if_default"});
+    	QueryWrapper<YestaeUserGrade> wrapper = new QueryWrapper<>();
+//    	wrapper.setSqlSelect(new String[] {"id", "name", "type", "money", "discount", "if_default"});
     	wrapper.eq("if_del", SysEnum.NO.getCode());
-    	wrapper.orderBy("create_time", false);
+    	wrapper.orderBy(false,false,"create_time");
     	if(StringUtils.isNotEmpty(name)){
     		wrapper.like("name", name);
     	}
-    	List<YestaeUserGrade> list = yestaeUserGradeService.selectList(wrapper);
+    	List<YestaeUserGrade> list = yestaeUserGradeService.list(wrapper);
     	List<YestaeUserGradeVo> voList = new ArrayList<>();
     	for(YestaeUserGrade g: list){
     		YestaeUserGradeVo yestaeUserGradeVo = new YestaeUserGradeVo();
@@ -104,7 +103,7 @@ public class YestaeUserGradeController extends BaseController {
     	yestaeUserGrade.setCreateBy(((ShiroUser)getSession().getAttribute("shiroUser")).getId());
     	yestaeUserGrade.setCreateTime(new Date().getTime());
     	yestaeUserGrade.setIfDel(SysEnum.NO.getCode());
-    	yestaeUserGradeService.insert(yestaeUserGrade);
+    	yestaeUserGradeService.save(yestaeUserGrade);
         return SUCCESS_TIP;
     }
 
@@ -115,7 +114,7 @@ public class YestaeUserGradeController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String yestaeUserGradeId) {
-    	YestaeUserGrade yestaeUserGrade = yestaeUserGradeService.selectById(yestaeUserGradeId);
+    	YestaeUserGrade yestaeUserGrade = yestaeUserGradeService.getById(yestaeUserGradeId);
     	yestaeUserGrade.setUpdateTime(new Date().getTime());
     	yestaeUserGrade.setIfDel(SysEnum.YES.getCode());
         yestaeUserGradeService.updateById(yestaeUserGrade);
@@ -142,6 +141,6 @@ public class YestaeUserGradeController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeUserGradeId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeUserGradeId") String yestaeUserGradeId) {
-        return yestaeUserGradeService.selectById(yestaeUserGradeId);
+        return yestaeUserGradeService.getById(yestaeUserGradeId);
     }
 }

@@ -1,16 +1,15 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
 import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeUserGradeMapper;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserGrade;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserGradeService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -26,19 +25,19 @@ public class YestaeUserGradeServiceImpl extends ServiceImpl<YestaeUserGradeMappe
 	@Override
 	public int updateYestaeUserGrade(YestaeUserGrade yestaeUserGrade) {
 		
-		YestaeUserGrade yestaeUserGradeDb = this.selectById(yestaeUserGrade.getId());
+		YestaeUserGrade yestaeUserGradeDb = this.getById(yestaeUserGrade.getId());
 		//如果设置为默认则自动设置其他用户等级为非默认
 		if(SysEnum.YES.getCode() == yestaeUserGrade.getIfDefault() 
 				&& SysEnum.YES.getCode() != yestaeUserGradeDb.getIfDefault()){
-			EntityWrapper<YestaeUserGrade> wrapper = new EntityWrapper<>();
+			QueryWrapper<YestaeUserGrade> wrapper = new QueryWrapper<>();
 	    	wrapper.eq("if_del", SysEnum.NO.getCode());
 	    	wrapper.eq("if_default", SysEnum.YES.getCode());
-			List<YestaeUserGrade> list = this.selectList(wrapper);
+			List<YestaeUserGrade> list = this.list(wrapper);
 			if(list != null && list.size() > 0){
 				for(YestaeUserGrade g: list){
 					g.setIfDefault(SysEnum.NO.getCode());
 				}
-				this.updateAllColumnBatchById(list);
+				this.updateBatchById(list);
 			}
 		}
 		

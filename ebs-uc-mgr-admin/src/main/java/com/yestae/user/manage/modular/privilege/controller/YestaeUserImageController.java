@@ -1,20 +1,5 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.core.base.controller.BaseController;
@@ -24,6 +9,14 @@ import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.core.util.ImageUtil;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserImage;
 import com.yestae.user.manage.modular.privilege.service.IYestaeUserImageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 用户图片控制器
@@ -68,7 +61,7 @@ public class YestaeUserImageController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeUserImage_update/{yestaeUserImageId}")
     public String yestaeUserImageUpdate(@PathVariable String yestaeUserImageId, Model model) {
-        YestaeUserImage yestaeUserImage = yestaeUserImageService.selectById(yestaeUserImageId);
+        YestaeUserImage yestaeUserImage = yestaeUserImageService.getById(yestaeUserImageId);
         model.addAttribute("item",yestaeUserImage);
         LogObjectHolder.me().set(yestaeUserImage);
         return PREFIX + "yestaeUserImage_edit.html";
@@ -81,7 +74,7 @@ public class YestaeUserImageController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(String condition) {
-        return yestaeUserImageService.selectList(null);
+        return yestaeUserImageService.list(null);
     }
 
     /**
@@ -91,7 +84,7 @@ public class YestaeUserImageController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(YestaeUserImage yestaeUserImage) {
-        yestaeUserImageService.insert(yestaeUserImage);
+        yestaeUserImageService.save(yestaeUserImage);
         return SUCCESS_TIP;
     }
 
@@ -102,7 +95,7 @@ public class YestaeUserImageController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String yestaeUserImageId) {
-        yestaeUserImageService.deleteById(yestaeUserImageId);
+        yestaeUserImageService.removeById(yestaeUserImageId);
         return SUCCESS_TIP;
     }
 
@@ -124,7 +117,7 @@ public class YestaeUserImageController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeUserImageId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeUserImageId") String yestaeUserImageId) {
-        return yestaeUserImageService.selectById(yestaeUserImageId);
+        return yestaeUserImageService.getById(yestaeUserImageId);
     }
     
     /**
@@ -159,7 +152,7 @@ public class YestaeUserImageController extends BaseController {
         	String size = getPara("size");
         	yestaeUserImage.setSize(Integer.parseInt(size));
         	yestaeUserImage.setCreateTime(new Date().getTime());
-        	yestaeUserImageService.insert(yestaeUserImage);
+        	yestaeUserImageService.save(yestaeUserImage);
         } catch (Exception e) {
         	e.printStackTrace();
             throw new BussinessException(BizExceptionEnum.UPLOAD_ERROR);

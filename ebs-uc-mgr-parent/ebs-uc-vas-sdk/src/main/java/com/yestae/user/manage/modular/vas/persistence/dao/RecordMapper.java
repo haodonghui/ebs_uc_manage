@@ -1,14 +1,12 @@
 package com.yestae.user.manage.modular.vas.persistence.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.manage.modular.vas.persistence.model.Record;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
@@ -20,6 +18,6 @@ import com.baomidou.mybatisplus.plugins.Page;
  */
 public interface RecordMapper extends BaseMapper<Record> {
 
-	List<Map<String, Object>> selectRecordList(@Param("page")Page<Map<String, Object>> page, @Param("map") Map<String, Object> map);
+	List<Map<String, Object>> selectRecordList(@Param("page") Page<Map<String, Object>> page, @Param("map") Map<String, Object> map);
 
 }

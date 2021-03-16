@@ -1,19 +1,17 @@
 package com.yestae.user.manage.modular.vas.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yestae.user.manage.modular.vas.persistence.dao.VasImageMapper;
+import com.yestae.user.manage.modular.vas.persistence.model.VasImage;
+import com.yestae.user.manage.modular.vas.service.IVasImageService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.yestae.user.manage.modular.vas.persistence.dao.VasImageMapper;
-import com.yestae.user.manage.modular.vas.persistence.model.VasImage;
-import com.yestae.user.manage.modular.vas.service.IVasImageService;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -32,12 +30,12 @@ public class VasImageServiceImpl extends ServiceImpl<VasImageMapper, VasImage> i
 	public void updateVasImage(String vasImageId, String bizId) {
 		logger.info("VasImageServiceImpl->updateVasImage->vasImageId:{}, bizId:{}", vasImageId, bizId);
 		if(!StringUtils.isEmpty(vasImageId) && !StringUtils.isEmpty(bizId)){
-			VasImage vasImage = this.selectById(vasImageId);
+			VasImage vasImage = this.getById(vasImageId);
 			if(vasImage != null && !bizId.equals(vasImage.getBizId())){
 				
 				VasImage vasImageDb = findOneVasImage(bizId, vasImage.getBizType());
 				if(vasImageDb != null){
-					this.deleteById(vasImageDb.getId());
+					this.removeById(vasImageDb.getId());
 				}
 				
 				vasImage.setBizId(bizId);
@@ -53,10 +51,10 @@ public class VasImageServiceImpl extends ServiceImpl<VasImageMapper, VasImage> i
 		if(StringUtils.isEmpty(bizId) || bizType == null){
 			return null;
 		}
-		Wrapper<VasImage> wrapper = new EntityWrapper<>();
+		QueryWrapper<VasImage> wrapper = new QueryWrapper<>();
 		wrapper.eq("biz_id", bizId);
 		wrapper.eq("biz_type", bizType);
-		List<VasImage> list = this.selectList(wrapper);
+		List<VasImage> list = this.list(wrapper);
 		if(list != null && list.size() > 0){
 			return list.get(0);
 		}

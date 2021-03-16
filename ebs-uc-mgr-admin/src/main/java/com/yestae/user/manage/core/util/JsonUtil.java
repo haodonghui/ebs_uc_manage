@@ -1,7 +1,7 @@
 package com.yestae.user.manage.core.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class JsonUtil {
 

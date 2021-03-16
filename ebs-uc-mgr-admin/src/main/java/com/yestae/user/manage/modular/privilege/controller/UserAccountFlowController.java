@@ -1,25 +1,9 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
@@ -29,6 +13,19 @@ import com.yestae.user.manage.core.util.PrivacyHideUtil;
 import com.yestae.user.manage.modular.privilege.common.enums.AccountFlowTypeEnum;
 import com.yestae.user.manage.modular.privilege.persistence.model.UserAccountFlow;
 import com.yestae.user.manage.modular.privilege.service.IUserAccountFlowService;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户账户流水控制器
@@ -70,7 +67,7 @@ public class UserAccountFlowController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/userAccountFlow_update/{userAccountFlowId}")
     public String userAccountFlowUpdate(@PathVariable String userAccountFlowId, Model model) {
-        UserAccountFlow userAccountFlow = userAccountFlowService.selectById(userAccountFlowId);
+        UserAccountFlow userAccountFlow = userAccountFlowService.getById(userAccountFlowId);
         model.addAttribute("item",userAccountFlow);
         LogObjectHolder.me().set(userAccountFlow);
         return PREFIX + "userAccountFlow_edit.html";
@@ -83,7 +80,7 @@ public class UserAccountFlowController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = userAccountFlowService.selectUserAccountFlowList(page, map);
         
@@ -150,7 +147,7 @@ public class UserAccountFlowController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(UserAccountFlow userAccountFlow) {
-        userAccountFlowService.insert(userAccountFlow);
+        userAccountFlowService.save(userAccountFlow);
         return SUCCESS_TIP;
     }
 
@@ -161,7 +158,7 @@ public class UserAccountFlowController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String userAccountFlowId) {
-        userAccountFlowService.deleteById(userAccountFlowId);
+        userAccountFlowService.removeById(userAccountFlowId);
         return SUCCESS_TIP;
     }
 
@@ -183,6 +180,6 @@ public class UserAccountFlowController extends BaseController {
     @RequestMapping(value = "/detail/{userAccountFlowId}")
     @ResponseBody
     public Object detail(@PathVariable("userAccountFlowId") String userAccountFlowId) {
-        return userAccountFlowService.selectById(userAccountFlowId);
+        return userAccountFlowService.getById(userAccountFlowId);
     }
 }

@@ -1,9 +1,17 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.user.common.cache.CacheKit;
+import com.yestae.user.common.util.DateUtil;
+import com.yestae.user.manage.common.constant.cache.Cache;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.shiro.ShiroUser;
+import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
+import com.yestae.user.manage.modular.privilege.common.enums.UserStatusEnum;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeQrcodeScene;
+import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeSceneService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.user.common.cache.CacheKit;
-import com.yestae.user.common.util.DateUtil;
-import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.shiro.ShiroUser;
-import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
-import com.yestae.user.manage.modular.privilege.common.enums.UserStatusEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeQrcodeScene;
-import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeSceneService;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 二维码场景控制器
@@ -73,7 +71,7 @@ public class YestaeQrcodeSceneController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeQrcodeScene_update/{yestaeQrcodeSceneId}")
     public String yestaeQrcodeSceneUpdate(@PathVariable String yestaeQrcodeSceneId, Model model) {
-        YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.selectById(yestaeQrcodeSceneId);
+        YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.getById(yestaeQrcodeSceneId);
         model.addAttribute("yestaeQrcodeScene", yestaeQrcodeScene);
         return PREFIX + "yestaeQrcodeScene_edit.html";
     }
@@ -89,11 +87,11 @@ public class YestaeQrcodeSceneController extends BaseController {
     		, @RequestParam(required = false) Integer applyScope
     		, @RequestParam(required = false) Integer jumpType
     		, @RequestParam(required = false) Integer status) {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
-    	EntityWrapper<YestaeQrcodeScene> wrapper = new EntityWrapper<>();
+    	Page<Map<String, Object>> page = new Page();
+    	QueryWrapper<YestaeQrcodeScene> wrapper = new QueryWrapper<>();
 //    	wrapper.setSqlSelect(new String[] {"id", "name", "type", "status", "description", "create_time"});
     	wrapper.eq("if_del", SysEnum.NO.getCode());
-    	wrapper.orderBy("create_time", false);
+    	wrapper.orderBy(false,false,"create_time");
     	if(StringUtils.isNotEmpty(name)){
     		wrapper.like("name", name);
     	}
@@ -109,7 +107,7 @@ public class YestaeQrcodeSceneController extends BaseController {
     	if(jumpType != null){
     		wrapper.eq("jump_type", jumpType);
     	}
-    	page = yestaeQrcodeSceneService.selectMapsPage(page, wrapper);
+    	page = yestaeQrcodeSceneService.pageMaps(page, wrapper);
     	List<Map<String, Object>> list = page.getRecords();
     	for(Map<String, Object> map: list){
     		
@@ -133,7 +131,7 @@ public class YestaeQrcodeSceneController extends BaseController {
     	yestaeQrcodeScene.setCreateTime(new Date().getTime());
     	yestaeQrcodeScene.setIfDel(SysEnum.NO.getCode());
     	yestaeQrcodeScene.setStatus(UserStatusEnum.STATUS_OFF.getCode());
-    	yestaeQrcodeSceneService.insert(yestaeQrcodeScene);
+    	yestaeQrcodeSceneService.save(yestaeQrcodeScene);
         return SUCCESS_TIP;
     }
 
@@ -168,7 +166,7 @@ public class YestaeQrcodeSceneController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeQrcodeSceneId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeQrcodeSceneId") String yestaeQrcodeSceneId) {
-        return yestaeQrcodeSceneService.selectById(yestaeQrcodeSceneId);
+        return yestaeQrcodeSceneService.getById(yestaeQrcodeSceneId);
     }
     
     /**
@@ -178,7 +176,7 @@ public class YestaeQrcodeSceneController extends BaseController {
     @RequestMapping(value = "/online")
     @ResponseBody
     public Object online(@RequestParam(required = true) String yestaeQrcodeSceneId) {
-    	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.selectById(yestaeQrcodeSceneId);
+    	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.getById(yestaeQrcodeSceneId);
     	yestaeQrcodeScene.setUpdateTime(new Date().getTime());
     	yestaeQrcodeScene.setStatus(UserStatusEnum.STATUS_ON.getCode());
     	yestaeQrcodeSceneService.updateById(yestaeQrcodeScene);
@@ -192,7 +190,7 @@ public class YestaeQrcodeSceneController extends BaseController {
     @RequestMapping(value = "/offline")
     @ResponseBody
     public Object offline(@RequestParam(required = true) String yestaeQrcodeSceneId) {
-    	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.selectById(yestaeQrcodeSceneId);
+    	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.getById(yestaeQrcodeSceneId);
     	yestaeQrcodeScene.setUpdateTime(new Date().getTime());
     	yestaeQrcodeScene.setStatus(UserStatusEnum.STATUS_OFF.getCode());
     	yestaeQrcodeSceneService.updateById(yestaeQrcodeScene);

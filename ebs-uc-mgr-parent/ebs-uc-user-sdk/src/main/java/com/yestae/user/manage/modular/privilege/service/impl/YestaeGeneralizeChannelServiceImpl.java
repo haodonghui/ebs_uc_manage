@@ -1,20 +1,8 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.common.node.ZTreeNode;
@@ -27,6 +15,16 @@ import com.yestae.user.manage.modular.privilege.persistence.dao.YestaeQrcodeMapp
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeChannel;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeUser;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeChannelService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -50,7 +48,7 @@ public class YestaeGeneralizeChannelServiceImpl extends ServiceImpl<YestaeGenera
 	
 	@Override
 	public List<Map<String, Object>> selectYestaeGeneralizeChannelList(Page<Map<String, Object>> page,
-			Map<String, String> map) {
+																	   Map<String, String> map) {
 		map.put("ifDel", SysEnum.NO.getCode() + "");
 		return yestaeGeneralizeChannelMapper.selectYestaeGeneralizeChannelList(page, map);
 	}
@@ -116,8 +114,8 @@ public class YestaeGeneralizeChannelServiceImpl extends ServiceImpl<YestaeGenera
 	 * @return
 	 */
 	private boolean checkChannelCode(String channelCode, String id){
-		
-		EntityWrapper<YestaeGeneralizeChannel> wrapper = new EntityWrapper<>();
+
+		QueryWrapper<YestaeGeneralizeChannel> wrapper = new QueryWrapper<>();
 		wrapper.eq("if_del", SysEnum.NO.getCode());
 		wrapper.eq("channel_code", channelCode);
 		if(StringUtils.isNotEmpty(id)){
@@ -133,7 +131,6 @@ public class YestaeGeneralizeChannelServiceImpl extends ServiceImpl<YestaeGenera
 	/**
 	 * 查询渠道编码是否存在
 	 * @param channelCode
-	 * @param id
 	 * @return
 	 */
 	public boolean checkChannelCode(String channelCode){
@@ -145,7 +142,7 @@ public class YestaeGeneralizeChannelServiceImpl extends ServiceImpl<YestaeGenera
 	public int deleteByYestaeGeneralizeChannelId(String yestaeGeneralizeChannelId) {
 		
 		//查询是否有关联的下级渠道，如果存在则不能删除
-		EntityWrapper<YestaeGeneralizeChannel> wrapper = new EntityWrapper<>();
+		QueryWrapper<YestaeGeneralizeChannel> wrapper = new QueryWrapper<>();
 		wrapper.eq("if_del", SysEnum.NO.getCode());
 		wrapper.eq("pid", yestaeGeneralizeChannelId);
 		int num = yestaeGeneralizeChannelMapper.selectCount(wrapper);
@@ -176,8 +173,8 @@ public class YestaeGeneralizeChannelServiceImpl extends ServiceImpl<YestaeGenera
 //			map.put("updateBy", shiroUser.getId());
 			
 			//查询与推广渠道关联的推广人
-			EntityWrapper<YestaeGeneralizeUser> YestaeGeneralizeUserWrapper = new EntityWrapper<>();
-			YestaeGeneralizeUserWrapper.setSqlSelect("id");
+			QueryWrapper<YestaeGeneralizeUser> YestaeGeneralizeUserWrapper = new QueryWrapper<>();
+//			YestaeGeneralizeUserWrapper.setSqlSelect("id");
 			YestaeGeneralizeUserWrapper.eq("if_del", SysEnum.NO.getCode());
 			YestaeGeneralizeUserWrapper.eq("channel_id", yestaeGeneralizeChannelId);
 			List<YestaeGeneralizeUser>  list = yestaeGeneralizeUserMapper.selectList(YestaeGeneralizeUserWrapper);

@@ -1,13 +1,12 @@
 package com.yestae.user.manage.modular.privilege.persistence.dao;
 
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeUser;
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeUser;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>

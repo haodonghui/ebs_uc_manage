@@ -1,28 +1,9 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.constant.UcConstant;
 import com.yestae.user.manage.core.log.LogObjectHolder;
@@ -37,6 +18,22 @@ import com.yestae.user.manage.modular.privilege.persistence.model.YestaeQrcodeSc
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeUserService;
 import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeSceneService;
 import com.yestae.user.manage.modular.privilege.service.IYestaeQrcodeService;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 二维码控制器
@@ -84,20 +81,20 @@ public class YestaeQrcodeController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeQrcode_update/{yestaeQrcodeId}")
     public String yestaeQrcodeUpdate(@PathVariable String yestaeQrcodeId, Model model) {
-        YestaeQrcode yestaeQrcode = yestaeQrcodeService.selectById(yestaeQrcodeId);
+        YestaeQrcode yestaeQrcode = yestaeQrcodeService.getById(yestaeQrcodeId);
         model.addAttribute("yestaeQrcode",yestaeQrcode);
         model.addAttribute("generalizeUserName","");
         model.addAttribute("sceneName","");
         if(yestaeQrcode != null){
-        	YestaeGeneralizeUser yestaeGeneralizeUser = yestaeGeneralizeUserService.selectById(yestaeQrcode.getGeneralizeUserId());
+        	YestaeGeneralizeUser yestaeGeneralizeUser = yestaeGeneralizeUserService.getById(yestaeQrcode.getGeneralizeUserId());
         	if(yestaeGeneralizeUser != null){
         		model.addAttribute("generalizeUserName", yestaeGeneralizeUser.getName());
         	}
-        	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.selectById(yestaeQrcode.getSceneId());
+        	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.getById(yestaeQrcode.getSceneId());
         	if(yestaeQrcodeScene != null){
         		model.addAttribute("sceneName", yestaeQrcodeScene.getName());
         	}
-        	YestaeQrcodeScene yestaeQrcodeSceneNext = yestaeQrcodeSceneService.selectById(yestaeQrcode.getNextSceneId());
+        	YestaeQrcodeScene yestaeQrcodeSceneNext = yestaeQrcodeSceneService.getById(yestaeQrcode.getNextSceneId());
         	if(yestaeQrcodeSceneNext != null){
         		model.addAttribute("nextSceneName", yestaeQrcodeSceneNext.getName());
         	}
@@ -113,7 +110,7 @@ public class YestaeQrcodeController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeQrcodeService.selectYestaeQrcodeList(page, map);
         
@@ -141,7 +138,7 @@ public class YestaeQrcodeController extends BaseController {
     	yestaeQrcode.setCreateBy(((ShiroUser)getSession().getAttribute("shiroUser")).getId());
     	yestaeQrcode.setCreateTime(new Date().getTime());
     	yestaeQrcode.setIfDel(SysEnum.NO.getCode());
-    	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.selectById(yestaeQrcode.getSceneId());
+    	YestaeQrcodeScene yestaeQrcodeScene = yestaeQrcodeSceneService.getById(yestaeQrcode.getSceneId());
     	String page = CacheKit.get(Cache.CONSTANT, "qrcodeSceneTypePage:" + yestaeQrcodeScene.getType());
         yestaeQrcodeService.insertYestaeQrcode(yestaeQrcode, ucConstant.getImageDir(), ucConstant.getWeixinQrCodeDir(), page);
         return SUCCESS_TIP;
@@ -154,7 +151,7 @@ public class YestaeQrcodeController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String yestaeQrcodeId) {
-    	YestaeQrcode yestaeQrcode = yestaeQrcodeService.selectById(yestaeQrcodeId);
+    	YestaeQrcode yestaeQrcode = yestaeQrcodeService.getById(yestaeQrcodeId);
     	yestaeQrcode.setUpdateBy(((ShiroUser)getSession().getAttribute("shiroUser")).getId());
     	yestaeQrcode.setUpdateTime(new Date().getTime());
     	yestaeQrcode.setIfDel(SysEnum.YES.getCode());
@@ -181,7 +178,7 @@ public class YestaeQrcodeController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping(value = "/download")
     public void download(@RequestParam String yestaeQrcodeId) {
-    	YestaeQrcode yestaeQrcode = yestaeQrcodeService.selectById(yestaeQrcodeId);
+    	YestaeQrcode yestaeQrcode = yestaeQrcodeService.getById(yestaeQrcodeId);
     	if(yestaeQrcode != null){
     		String path = yestaeQrcode.getCodeUrl();
     		if(!StringUtils.isEmpty(path)){
@@ -213,6 +210,6 @@ public class YestaeQrcodeController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeQrcodeId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeQrcodeId") String yestaeQrcodeId) {
-        return yestaeQrcodeService.selectById(yestaeQrcodeId);
+        return yestaeQrcodeService.getById(yestaeQrcodeId);
     }
 }

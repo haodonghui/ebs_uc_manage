@@ -1,37 +1,13 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.common.util.ToolUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
@@ -47,6 +23,26 @@ import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGenerali
 import com.yestae.user.manage.modular.privilege.service.IPlatformUserService;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeChannelService;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeUserService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 推广人控制器
@@ -104,15 +100,15 @@ public class YestaeGeneralizeUserController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeGeneralizeUser_update/{yestaeGeneralizeUserId}")
     public String yestaeGeneralizeUserUpdate(@PathVariable String yestaeGeneralizeUserId, Model model) {
-        YestaeGeneralizeUser yestaeGeneralizeUser = yestaeGeneralizeUserService.selectById(yestaeGeneralizeUserId);
-        YestaeGeneralizeChannel channel = yestaeGeneralizeChannelService.selectById(yestaeGeneralizeUser.getChannelId());
+        YestaeGeneralizeUser yestaeGeneralizeUser = yestaeGeneralizeUserService.getById(yestaeGeneralizeUserId);
+        YestaeGeneralizeChannel channel = yestaeGeneralizeChannelService.getById(yestaeGeneralizeUser.getChannelId());
         if(channel != null){
         	//渠道名称
         	model.addAttribute("channelName", channel.getName());
         }
         if(yestaeGeneralizeUser.getUserId() != null){
-        	Wrapper<PlatformUser> wrapper = new EntityWrapper<>();
-			List<PlatformUser> platformUserList = platformUserService.selectList(wrapper);
+            QueryWrapper<PlatformUser> wrapper = new QueryWrapper<>();
+			List<PlatformUser> platformUserList = platformUserService.list(wrapper);
 			if(platformUserList != null && platformUserList.size() > 0){
 				PlatformUser platformUser = platformUserList.get(0);
 				if(platformUser != null){
@@ -132,7 +128,7 @@ public class YestaeGeneralizeUserController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, Object> map = HttpKit.getRequestParametersMap();
     	List<Map<String, Object>> list = yestaeGeneralizeUserService.selectYestaeGeneralizeUserList(page, map);
         
@@ -208,7 +204,7 @@ public class YestaeGeneralizeUserController extends BaseController {
 				String name = l.get(1);
 				String channelId = l.get(3);
 				
-				YestaeGeneralizeUser yestaeGeneralizeUser = yestaeGeneralizeUserService.selectById(id);
+				YestaeGeneralizeUser yestaeGeneralizeUser = yestaeGeneralizeUserService.getById(id);
 				
 				if(yestaeGeneralizeUser == null){
 					
@@ -272,7 +268,7 @@ public class YestaeGeneralizeUserController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeGeneralizeUserId}")
     @ResponseBody
     public Object detail(@PathVariable("yestaeGeneralizeUserId") String yestaeGeneralizeUserId) {
-        return yestaeGeneralizeUserService.selectById(yestaeGeneralizeUserId);
+        return yestaeGeneralizeUserService.getById(yestaeGeneralizeUserId);
     }
     
 }

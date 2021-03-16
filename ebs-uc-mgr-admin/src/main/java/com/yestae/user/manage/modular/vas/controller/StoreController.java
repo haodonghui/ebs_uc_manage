@@ -1,26 +1,8 @@
 package com.yestae.user.manage.modular.vas.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.constant.UcConstant;
 import com.yestae.user.manage.core.log.LogObjectHolder;
@@ -37,6 +19,21 @@ import com.yestae.user.manage.modular.vas.persistence.model.VasImage;
 import com.yestae.user.manage.modular.vas.service.IOrganizService;
 import com.yestae.user.manage.modular.vas.service.IStoreService;
 import com.yestae.user.manage.modular.vas.service.IVasImageService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 门店控制器
@@ -81,9 +78,9 @@ public class StoreController extends BaseController {
     @RequestMapping("/store_update/{storeId}")
     @DataSource(name="dataSourceUc")
     public String storeUpdate(@PathVariable String storeId, Model model) {
-        Store store = storeService.selectById(storeId);
+        Store store = storeService.getById(storeId);
         if(store != null){
-        	Organiz organiz = organizService.selectById(store.getOrganizId());
+        	Organiz organiz = organizService.getById(store.getOrganizId());
         	if(organiz != null){
         		model.addAttribute("organizName", organiz.getOrganizName());
         	}
@@ -115,7 +112,7 @@ public class StoreController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object list(String condition) {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>> ().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, Object> paramMap = HttpKit.getRequestParametersMap();
     	List<Map<String, Object>> storeList = storeService.selectList(page, paramMap);
     	
@@ -169,7 +166,7 @@ public class StoreController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object delete(@RequestParam String storeId) {
-    	Store store = storeService.selectById(storeId);
+    	Store store = storeService.getById(storeId);
         if(store != null){
         	store.setUpdateBy(ShiroKit.getUser().getId());
         	store.setUpdateTime(new Date().getTime());
@@ -201,7 +198,7 @@ public class StoreController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object online(@RequestParam String storeId) {
-    	Store store = storeService.selectById(storeId);
+    	Store store = storeService.getById(storeId);
     	if(store != null){
     		store.setUpdateBy(ShiroKit.getUser().getId());
     		store.setUpdateTime(new Date().getTime());
@@ -217,7 +214,7 @@ public class StoreController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object offline(@RequestParam String storeId) {
-    	Store store = storeService.selectById(storeId);
+    	Store store = storeService.getById(storeId);
     	if(store != null){
     		store.setUpdateBy(ShiroKit.getUser().getId());
     		store.setUpdateTime(new Date().getTime());
@@ -233,6 +230,6 @@ public class StoreController extends BaseController {
     @RequestMapping(value = "/detail/{storeId}")
     @ResponseBody
     public Object detail(@PathVariable("storeId") String storeId) {
-        return storeService.selectById(storeId);
+        return storeService.getById(storeId);
     }
 }

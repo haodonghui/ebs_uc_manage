@@ -3,6 +3,7 @@ package com.yestae.user.manage.config;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.yestae.user.manage.core.mutidatasource.config.CoinDataSourceProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.yestae.user.manage.common.constant.DSEnum;
 import com.yestae.user.manage.core.datascope.DataScopeInterceptor;
 import com.yestae.user.manage.core.datasource.DruidProperties;

@@ -1,12 +1,12 @@
 package com.yestae.user.manage.modular.privilege.service;
 
-import java.util.List;
-import java.util.Map;
-
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.IService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.common.node.ZTreeNode;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeGeneralizeChannel;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -25,7 +25,7 @@ public interface IYestaeGeneralizeChannelService extends IService<YestaeGenerali
 	 * @return
 	 */
 	List<Map<String, Object>> selectYestaeGeneralizeChannelList(Page<Map<String, Object>> page,
-			Map<String, String> map);
+																Map<String, String> map);
 
 	/**
 	 * 获取推广渠道tree列表 

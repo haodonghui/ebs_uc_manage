@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.system.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.system.persistence.model.Dict;
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>

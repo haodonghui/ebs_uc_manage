@@ -1,6 +1,6 @@
 package com.yestae.user.manage.modular.vas.service;
 
-import com.baomidou.mybatisplus.service.IService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.vas.persistence.model.PageContent;
 
 /**
@@ -17,11 +17,11 @@ public interface IPageContentService extends IService<PageContent> {
 	 * 添加或修改页面内容
 	 * @param pageContent
 	 */
-	void saveOrUpdate(PageContent pageContent);
+	boolean saveOrUpdate(PageContent pageContent);
 	/**
 	 * 查询图片
 	 * @param bizId
-	 * @param BizType
+	 * @param bizType
 	 * @return
 	 */
 	public PageContent findOnePageContent(String bizId, Integer bizType);

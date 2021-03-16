@@ -1,7 +1,7 @@
 package com.yestae.user.manage.modular.vas.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.vas.persistence.model.Organiz;
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>

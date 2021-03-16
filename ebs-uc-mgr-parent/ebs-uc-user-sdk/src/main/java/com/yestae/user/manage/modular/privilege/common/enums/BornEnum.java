@@ -1,6 +1,7 @@
 package com.yestae.user.manage.modular.privilege.common.enums;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 public enum BornEnum {
 

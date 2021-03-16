@@ -1,11 +1,10 @@
 package com.yestae.user.manage.modular.vas.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.vas.persistence.model.Equity;
 
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.service.IService;
 
 /**
  * <p>

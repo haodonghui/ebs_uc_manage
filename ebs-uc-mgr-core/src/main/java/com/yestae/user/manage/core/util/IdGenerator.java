@@ -1,6 +1,6 @@
 package com.yestae.user.manage.core.util;
 
-import com.baomidou.mybatisplus.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 
 /**
  * 唯一id生成器

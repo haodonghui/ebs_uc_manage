@@ -1,6 +1,6 @@
 package com.yestae.user.manage.modular.privilege.persistence.model;
 
-import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

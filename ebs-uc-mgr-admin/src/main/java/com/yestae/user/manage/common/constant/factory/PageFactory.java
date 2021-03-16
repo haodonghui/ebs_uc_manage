@@ -2,7 +2,7 @@ package com.yestae.user.manage.common.constant.factory;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.util.ToolUtil;
 import com.yestae.user.manage.common.constant.state.Order;
 import com.yestae.user.manage.core.support.HttpKit;
@@ -16,7 +16,7 @@ import com.yestae.user.manage.core.support.HttpKit;
 public class PageFactory<T> {
 
     public Page<T> defaultPage() {
-        HttpServletRequest request = HttpKit.getRequest();
+        /*HttpServletRequest request = HttpKit.getRequest();
         int limit = Integer.valueOf(request.getParameter("limit"));     //每页多少条数据
         int offset = Integer.valueOf(request.getParameter("offset"));   //每页的偏移量(本页当前有多少条)
         String sort = request.getParameter("sort");         //排序字段名称
@@ -33,6 +33,7 @@ public class PageFactory<T> {
                 page.setAsc(false);
             }
             return page;
-        }
+        }*/
+        return null;
     }
 }

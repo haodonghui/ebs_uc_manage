@@ -1,20 +1,8 @@
 package com.yestae.user.manage.modular.system.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.druid.util.StringUtils;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.manage.common.constant.cache.Cache;
 import com.yestae.user.manage.core.base.controller.BaseController;
@@ -23,6 +11,16 @@ import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.modular.system.common.constant.SysConstant;
 import com.yestae.user.manage.modular.system.persistence.model.Dict;
 import com.yestae.user.manage.modular.system.service.IDictService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 数据字典控制器
@@ -64,7 +62,7 @@ public class DictController extends BaseController {
     @DataSource(name="dataSourceUcMgr")
     @RequestMapping("/dict_update/{dictId}")
     public String dictUpdate(@PathVariable String dictId, Model model) {
-        Dict dict = dictService.selectById(dictId);
+        Dict dict = dictService.getById(dictId);
         model.addAttribute("dict",dict);
         return PREFIX + "dict_edit.html";
     }
@@ -78,7 +76,7 @@ public class DictController extends BaseController {
     public Object list(@RequestParam(required = false) String name
     		, @RequestParam(required = false) String code
     		, @RequestParam(required = false) String pcode) {
-        Wrapper<Dict> wrapper = new EntityWrapper<>();
+        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(name)){
         	wrapper.like("name", name);
         }
@@ -88,8 +86,8 @@ public class DictController extends BaseController {
         if(!StringUtils.isEmpty(pcode)){
     		wrapper.eq("pcode", pcode);
         }
-        wrapper.orderBy("code");
-		return dictService.selectList(wrapper);
+        wrapper.orderBy(true, true,"code");
+		return dictService.list(wrapper);
     }
 
     /**
@@ -103,11 +101,11 @@ public class DictController extends BaseController {
     		return new ErrorTip(0, "缺少参数");
     	}
     	Wrapper<Dict> wrapper = getWrapper(dict);
-    	int i = dictService.selectCount(wrapper );
+    	int i = dictService.count(wrapper );
     	if(i > 0){
     		return new ErrorTip(0, "编码重复");
     	}
-        boolean flag = dictService.insert(dict);
+        boolean flag = dictService.save(dict);
         if(flag){
         	if(sysConstant.getDictRoot().equals(dict.getPcode())){
         		CacheKit.put(Cache.CONSTANT, dict.getCode(), dict.getName());
@@ -125,15 +123,15 @@ public class DictController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam String dictId) {
-    	Dict dict = dictService.selectById(dictId);
+    	Dict dict = dictService.getById(dictId);
     	if(null != dict){
-    		Wrapper<Dict> wrapper = new EntityWrapper<>();
+            QueryWrapper<Dict> wrapper = new QueryWrapper<>();
     		wrapper.eq("pcode", dict.getCode());
-    		int i = dictService.selectCount(wrapper );
+    		int i = dictService.count(wrapper );
     		if(i > 0){
     			return new ErrorTip(0, "请先删除下级编码");
     		}
-    		boolean flag = dictService.deleteById(dictId);
+    		boolean flag = dictService.removeById(dictId);
     		if(flag){
             	if(sysConstant.getDictRoot().equals(dict.getPcode())){
             		CacheKit.remove(Cache.CONSTANT, dict.getCode());
@@ -155,13 +153,13 @@ public class DictController extends BaseController {
     	if(null == dict){
     		return new ErrorTip(0, "缺少参数");
     	}
-    	Wrapper<Dict> wrapper = getWrapper(dict);
+    	QueryWrapper<Dict> wrapper = getWrapper(dict);
     	wrapper.ne("id", dict.getId());
-    	int i = dictService.selectCount(wrapper );
+    	int i = dictService.count(wrapper );
     	if(i > 0){
     		return new ErrorTip(0, "编码重复");
     	}
-        boolean flag = dictService.updateAllColumnById(dict);
+        boolean flag = dictService.updateById(dict);
         if(flag){
         	if(sysConstant.getDictRoot().equals(dict.getPcode())){
         		CacheKit.put(Cache.CONSTANT, dict.getCode(), dict.getName());
@@ -180,7 +178,7 @@ public class DictController extends BaseController {
     @ResponseBody
     public Object refresh() {
     	
-    	List<Dict> list = dictService.selectList(null);
+    	List<Dict> list = dictService.list(null);
 		for(Dict d: list){
 			if(!StringUtils.isEmpty(d.getPcode()) && !StringUtils.isEmpty(d.getCode())){
 				
@@ -201,12 +199,12 @@ public class DictController extends BaseController {
     @RequestMapping(value = "/detail/{dictId}")
     @ResponseBody
     public Object detail(@PathVariable("dictId") String dictId) {
-        return dictService.selectById(dictId);
+        return dictService.getById(dictId);
     }
     
-    private Wrapper<Dict> getWrapper(Dict dict){
-    	
-    	Wrapper<Dict> wrapper = new EntityWrapper<>();
+    private QueryWrapper<Dict> getWrapper(Dict dict){
+
+        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
     	if(StringUtils.isEmpty(dict.getPcode())){
     		dict.setPcode(sysConstant.getDictRoot());
     	}

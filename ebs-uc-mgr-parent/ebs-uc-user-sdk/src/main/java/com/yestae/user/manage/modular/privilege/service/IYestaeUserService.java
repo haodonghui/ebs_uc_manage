@@ -1,6 +1,6 @@
 package com.yestae.user.manage.modular.privilege.service;
 
-import com.baomidou.mybatisplus.service.IService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUser;
 import com.yestae.user.manage.modular.privilege.vo.YestaeUserVo;
 

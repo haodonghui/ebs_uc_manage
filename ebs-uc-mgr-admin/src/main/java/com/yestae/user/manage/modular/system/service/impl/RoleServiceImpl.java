@@ -1,11 +1,6 @@
 package com.yestae.user.manage.modular.system.service.impl;
 
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
@@ -15,6 +10,10 @@ import com.yestae.user.manage.modular.system.persistence.dao.RoleMapper;
 import com.yestae.user.manage.modular.system.persistence.model.Relation;
 import com.yestae.user.manage.modular.system.persistence.model.Role;
 import com.yestae.user.manage.modular.system.service.IRoleService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 @Service
 public class RoleServiceImpl implements IRoleService {
@@ -51,7 +50,7 @@ public class RoleServiceImpl implements IRoleService {
     public void delRoleById(String roleId) {
     	
     	//查询是否有关联的下级角色，如果存在则不能删除
-  		EntityWrapper<Role> wrapperRole = new EntityWrapper<>();
+  		QueryWrapper<Role> wrapperRole = new QueryWrapper<>();
   		wrapperRole.eq("pid", roleId);
   		int num = roleMapper.selectCount(wrapperRole);
   		if(num > 0){

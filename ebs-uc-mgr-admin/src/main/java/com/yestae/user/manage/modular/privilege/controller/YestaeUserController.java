@@ -1,24 +1,44 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.security.auth.login.AccountException;
-
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.yestae.sms.sdk.enums.SmsTypeEnum;
 import com.yestae.user.center.dubbo.entity.UserRealNameCertificationDubbo;
+import com.yestae.user.center.dubbo.entity.UserResult;
 import com.yestae.user.center.dubbo.service.IUserCenterRealNameAuthenticationService;
+import com.yestae.user.center.dubbo.service.IUserCenterService;
+import com.yestae.user.common.cache.CacheKit;
+import com.yestae.user.common.exception.BizExceptionEnum;
+import com.yestae.user.common.exception.BussinessException;
+import com.yestae.user.common.util.DateUtil;
+import com.yestae.user.manage.common.annotion.BussinessLog;
+import com.yestae.user.manage.common.constant.cache.Cache;
 import com.yestae.user.manage.config.HttpSmsConfig;
+import com.yestae.user.manage.core.base.controller.BaseController;
+import com.yestae.user.manage.core.base.tips.ErrorTip;
+import com.yestae.user.manage.core.constant.UcConstant;
+import com.yestae.user.manage.core.log.LogObjectHolder;
+import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
+import com.yestae.user.manage.core.shiro.ShiroUser;
+import com.yestae.user.manage.core.util.DateUtils;
+import com.yestae.user.manage.core.util.PrivacyHideUtil;
+import com.yestae.user.manage.modular.privilege.common.enums.*;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUser;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserAddress;
+import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserImage;
+import com.yestae.user.manage.modular.privilege.service.IYestaeUserAddressService;
+import com.yestae.user.manage.modular.privilege.service.IYestaeUserImageService;
+import com.yestae.user.manage.modular.privilege.service.IYestaeUserService;
+import com.yestae.user.manage.modular.privilege.vo.YestaeUserVo;
 import com.yestae.user.manage.utils.HttpClientUtils;
 import com.yestae.user.manage.utils.ValidCodeDto;
 import com.yestae.user.manage.utils.WebUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.http.Consts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,41 +48,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.yestae.sms.api.dubbo.ISmsDubboService;
-import com.yestae.sms.api.dubbo.SmsResult;
-import com.yestae.sms.enums.SmsTypeEnum;
-import com.yestae.user.center.dubbo.entity.UserResult;
-import com.yestae.user.center.dubbo.service.IUserCenterService;
-import com.yestae.user.common.cache.CacheKit;
-import com.yestae.user.common.exception.BizExceptionEnum;
-import com.yestae.user.common.exception.BussinessException;
-import com.yestae.user.common.util.DateUtil;
-import com.yestae.user.manage.common.annotion.BussinessLog;
-import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
-import com.yestae.user.manage.core.base.controller.BaseController;
-import com.yestae.user.manage.core.base.tips.ErrorTip;
-import com.yestae.user.manage.core.constant.UcConstant;
-import com.yestae.user.manage.core.log.LogObjectHolder;
-import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
-import com.yestae.user.manage.core.shiro.ShiroUser;
-import com.yestae.user.manage.core.util.DateUtils;
-import com.yestae.user.manage.core.util.PrivacyHideUtil;
-import com.yestae.user.manage.modular.privilege.common.enums.DefaultAddressEnum;
-import com.yestae.user.manage.modular.privilege.common.enums.GenderEnum;
-import com.yestae.user.manage.modular.privilege.common.enums.SysEnum;
-import com.yestae.user.manage.modular.privilege.common.enums.UserStatusEnum;
-import com.yestae.user.manage.modular.privilege.common.enums.UserTypeEnum;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUser;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserAddress;
-import com.yestae.user.manage.modular.privilege.persistence.model.YestaeUserImage;
-import com.yestae.user.manage.modular.privilege.service.IYestaeUserAddressService;
-import com.yestae.user.manage.modular.privilege.service.IYestaeUserImageService;
-import com.yestae.user.manage.modular.privilege.service.IYestaeUserService;
-import com.yestae.user.manage.modular.privilege.vo.YestaeUserVo;
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户控制器
@@ -88,13 +78,13 @@ public class YestaeUserController extends BaseController {
     @Autowired
     private IYestaeUserImageService yestaeUserImageService;
 
-    @Resource
+    @DubboReference
 	private IUserCenterService userCenterService;
 
-    @Autowired
-	private ISmsDubboService smsDubboService;
+    /*@Autowired
+	private ISmsDubboService smsDubboService;*/
 
-	@Resource
+	@DubboReference
 	private IUserCenterRealNameAuthenticationService userCenterRealNameAuthenticationService;
 
 	@Resource
@@ -130,7 +120,7 @@ public class YestaeUserController extends BaseController {
     @DataSource(name="dataSourceUc")
     @RequestMapping("/yestaeUser_update/{yestaeUserId}")
     public String yestaeUserUpdate(@PathVariable String yestaeUserId, Model model) {
-        YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserId);
+        YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserId);
         YestaeUserVo yestaeUserVo = new YestaeUserVo();
         YestaeUserAddress yestaeUserAddress = new YestaeUserAddress();
         if(yestaeUser != null){
@@ -147,16 +137,16 @@ public class YestaeUserController extends BaseController {
         	yestaeUserVo.setType(yestaeUser.getType());
         	yestaeUserVo.setUpgradeTime(DateUtils.toDatetimeString(yestaeUser.getUpgradeTime()));
 
-        	EntityWrapper<YestaeUserAddress> yestaeUserAddressWrapper = new EntityWrapper<YestaeUserAddress>();
+        	QueryWrapper<YestaeUserAddress> yestaeUserAddressWrapper = new QueryWrapper<YestaeUserAddress>();
         	yestaeUserAddressWrapper.eq("if_del", SysEnum.NO.getCode());
         	yestaeUserAddressWrapper.eq("default_address", DefaultAddressEnum.YES.getCode() + "");
         	yestaeUserAddressWrapper.eq("user_id", yestaeUser.getUserId());
-        	yestaeUserAddress = yestaeUserAddressService.selectOne(yestaeUserAddressWrapper);
+        	yestaeUserAddress = yestaeUserAddressService.getOne(yestaeUserAddressWrapper);
 
-        	EntityWrapper<YestaeUserImage> yestaeUserImageWrapper = new EntityWrapper<YestaeUserImage>();
+        	QueryWrapper<YestaeUserImage> yestaeUserImageWrapper = new QueryWrapper<YestaeUserImage>();
         	yestaeUserImageWrapper.eq("user_id", yestaeUser.getUserId());
-        	yestaeUserImageWrapper.orderBy("create_time", false);
-        	YestaeUserImage yestaeUserImage = yestaeUserImageService.selectOne(yestaeUserImageWrapper);
+        	yestaeUserImageWrapper.orderBy(false,false,"create_time");
+        	YestaeUserImage yestaeUserImage = yestaeUserImageService.getOne(yestaeUserImageWrapper);
         	if(yestaeUserImage != null){
         		yestaeUserVo.setAvatar(yestaeUserImage.getLarge());
         	}
@@ -180,13 +170,13 @@ public class YestaeUserController extends BaseController {
     		, @RequestParam(required = false) Long startUpgradeTime, @RequestParam(required = false) Long endUpgradeTime
     		, @RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime) {
 
-    	Page<YestaeUser> page = new PageFactory<YestaeUser>().defaultPage();
+    	Page<Map<String,Object>> page = new Page();
 
-    	EntityWrapper<YestaeUser> wrapper = new EntityWrapper<YestaeUser>();
+    	QueryWrapper<YestaeUser> wrapper = new QueryWrapper<YestaeUser>();
 
-    	wrapper.setSqlSelect(new String[]{"id", "user_id", "name", "mobile", "status", "source", "gender", "create_time", "birthday", "type", "upgrade_time"});
+//    	wrapper.setSqlSelect(new String[]{"id", "user_id", "name", "mobile", "status", "source", "gender", "create_time", "birthday", "type", "upgrade_time"});
     	wrapper.eq("if_del", SysEnum.NO.getCode());
-    	wrapper.orderBy("create_time", false);
+    	wrapper.orderBy(false,false,"create_time");
     	if(StringUtils.isNotEmpty(name)){
     		wrapper.like("name", name);
     	}
@@ -215,7 +205,7 @@ public class YestaeUserController extends BaseController {
     		wrapper.lt("upgrade_time", endUpgradeTime);
     	}
 
-    	Page<Map<String, Object>> pageMap = yestaeUserService.selectMapsPage(page, wrapper);
+    	Page<Map<String, Object>> pageMap = yestaeUserService.pageMaps(page, wrapper);
 
         List<Map<String, Object>> list = pageMap.getRecords();
         for (Map<String, Object> map: list) {
@@ -230,12 +220,12 @@ public class YestaeUserController extends BaseController {
         	map.put("createTime", DateUtils.toDatetimeString(MapUtils.getLong(map, "create_time")));
         	map.put("upgradeTime", DateUtils.toDatetimeString(MapUtils.getLong(map, "upgrade_time")));
         	map.put("birthday", DateUtils.getTimeString(MapUtils.getLong(map, "birthday")));
-        	EntityWrapper<YestaeUserAddress> yestaeUserAddressWrapper = new EntityWrapper<YestaeUserAddress>();
-        	yestaeUserAddressWrapper.setSqlSelect(new String[] {"consignee_privince", "consignee_city", "consignee_area"});
+        	QueryWrapper<YestaeUserAddress> yestaeUserAddressWrapper = new QueryWrapper<YestaeUserAddress>();
+//        	yestaeUserAddressWrapper.setSqlSelect(new String[] {"consignee_privince", "consignee_city", "consignee_area"});
         	yestaeUserAddressWrapper.eq("if_del", SysEnum.NO.getCode());
         	yestaeUserAddressWrapper.eq("default_address", DefaultAddressEnum.YES.getCode() + "");
         	yestaeUserAddressWrapper.eq("user_id", MapUtils.getString(map, "user_id"));
-        	YestaeUserAddress yestaeUserAddress = yestaeUserAddressService.selectOne(yestaeUserAddressWrapper);
+        	YestaeUserAddress yestaeUserAddress = yestaeUserAddressService.getOne(yestaeUserAddressWrapper);
         	if(yestaeUserAddress == null) {
         		continue;
         	}
@@ -267,7 +257,7 @@ public class YestaeUserController extends BaseController {
     @BussinessLog(value = "删除用户", json = "true")
     @ResponseBody
     public Object delete(@RequestParam(required = true) String yestaeUserId) {
-    	YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserId);
+    	YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserId);
     	yestaeUser.setUpdateTime(new Date().getTime());
     	yestaeUser.setIfDel(SysEnum.YES.getCode());
         yestaeUserService.updateById(yestaeUser);
@@ -282,7 +272,7 @@ public class YestaeUserController extends BaseController {
     @BussinessLog(value = "启用用户", json = "true")
     @ResponseBody
     public Object online(@RequestParam(required = true) String yestaeUserId) {
-    	YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserId);
+    	YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserId);
     	yestaeUser.setUpdateTime(new Date().getTime());
     	yestaeUser.setStatus(UserStatusEnum.STATUS_ON.getCode());
     	yestaeUserService.updateById(yestaeUser);
@@ -297,7 +287,7 @@ public class YestaeUserController extends BaseController {
     @BussinessLog(value = "停用用户", json = "true")
     @ResponseBody
     public Object offline(@RequestParam(required = true) String yestaeUserId) {
-    	YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserId);
+    	YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserId);
     	yestaeUser.setUpdateTime(new Date().getTime());
     	yestaeUser.setStatus(UserStatusEnum.STATUS_OFF.getCode());
     	yestaeUserService.updateById(yestaeUser);
@@ -313,7 +303,7 @@ public class YestaeUserController extends BaseController {
     @ResponseBody
     public Object sendCode(@RequestParam(required = true) String yestaeUserId,
     		@RequestParam(required = true) Integer type) {
-    	YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserId);
+    	YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserId);
     	Map<String, Object> map = new HashMap<>();
     	map.put("code", "200");
     	map.put("message", "操作成功！");
@@ -367,18 +357,42 @@ public class YestaeUserController extends BaseController {
     @BussinessLog(value = "重置密码", json = "true")
     @ResponseBody
     public Object resetPassword(@RequestParam(required = true) String yestaeUserId) {
-    	YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserId);
+    	YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserId);
 
 
     	UserResult<Boolean> resultUc = userCenterService.findUserPassword(yestaeUser.getMobile(), ucConstant.getDefaultPassword(), null);
 
     	if(resultUc.isSucceed() && resultUc.getResult()){
 
-    		String messageInfo = "您的益友会账号密码已重置为：" + ucConstant.getDefaultPassword() + "，请尽快登录验证，并设置新密码。";	//发送短信内容
+    		/*String messageInfo = "您的益友会账号密码已重置为：" + ucConstant.getDefaultPassword() + "，请尽快登录验证，并设置新密码。";	//发送短信内容
     		SmsResult<Boolean> result = smsDubboService.sendMessage("[\""+yestaeUser.getMobile()+"\"]", messageInfo);
     		if(!result.isSucceed() || !result.getResult()){
     			throw new BussinessException(BizExceptionEnum.ERROR_SEND_SMS_SUCCESS_RESERT_PASSWORD);
-    		}
+    		}*/
+
+			ValidCodeDto validCodeDto = new ValidCodeDto();
+			validCodeDto.setBizType(SmsTypeEnum.DEPOSIT_PAY.getValue());
+			validCodeDto.setMobile(yestaeUser.getMobile());
+			validCodeDto.setPlatform(httpSmsConfig.getPlatform());
+			String code = String.valueOf(WebUtil.buildRandom(6));
+			validCodeDto.setCode(code);
+			validCodeDto.setType(0);
+			Integer expires = 300;
+			validCodeDto.setExpires(expires);
+			validCodeDto.setContent(String.format("您的益友会账号密码已重置为：\" + ucConstant.getDefaultPassword() + \"，请尽快登录验证，并设置新密码。",code,expires/60));
+			String jsonString = JSONObject.toJSONString(validCodeDto);
+			String response = HttpClientUtils.sendPost(httpSmsConfig.getValidapiUrl(), jsonString, Consts.UTF_8);
+			JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+			if (jsonObject.get("msg").getAsString().equals("success")){
+				JSONObject smsOpenResultDto = JSONObject.parseObject(String.valueOf(jsonObject.get("smsOpenResultDto")));
+				if (String.valueOf(smsOpenResultDto.get("succeed")).equals("true")){
+					if(!String.valueOf(smsOpenResultDto.get("retCode")).equals("sms.message.send.success")){
+						throw new BussinessException(BizExceptionEnum.ERROR_SEND_SMS_SUCCESS_RESERT_PASSWORD);
+					}
+				}
+			}else{
+				throw new BussinessException(BizExceptionEnum.ERROR_SEND_SMS_SUCCESS_RESERT_PASSWORD);
+			}
     	}else{
     		return new ErrorTip(0, resultUc.getRetMsg());
     	}
@@ -394,7 +408,7 @@ public class YestaeUserController extends BaseController {
     @ResponseBody
     public Object update(YestaeUserVo yestaeUserVo) {
 
-		YestaeUser yestaeUser = yestaeUserService.selectById(yestaeUserVo.getId());
+		YestaeUser yestaeUser = yestaeUserService.getById(yestaeUserVo.getId());
 		if(yestaeUser == null){
 			throw new BussinessException(BizExceptionEnum.DB_RESOURCE_NULL);
 		}
@@ -496,12 +510,12 @@ public class YestaeUserController extends BaseController {
     @RequestMapping(value = "/user/mobile")
     @ResponseBody
     public Object detail(@RequestParam(required = true) String mobile) {
-    	Wrapper<YestaeUser> wrapper = new EntityWrapper<YestaeUser>();
-    	wrapper.setSqlSelect(new String[]{"id", "user_id", "name", "mobile", "status", "source", "gender", "create_time", "birthday", "type", "upgrade_time"});
+		QueryWrapper<YestaeUser> wrapper = new QueryWrapper<YestaeUser>();
+//    	wrapper.setSqlSelect(new String[]{"id", "user_id", "name", "mobile", "status", "source", "gender", "create_time", "birthday", "type", "upgrade_time"});
     	wrapper.eq("if_del", SysEnum.NO.getCode());
     	if(StringUtils.isNotEmpty(mobile)){
     		wrapper.eq("mobile", mobile);
-    		return yestaeUserService.selectOne(wrapper);
+    		return yestaeUserService.getOne(wrapper);
     	}
     	return "";
     }
@@ -513,6 +527,6 @@ public class YestaeUserController extends BaseController {
     @RequestMapping(value = "/detail/{yestaeUserId}")
     @ResponseBody
     public Object getUserByMobile(@PathVariable("yestaeUserId") String yestaeUserId) {
-        return yestaeUserService.selectById(yestaeUserId);
+        return yestaeUserService.getById(yestaeUserId);
     }
 }

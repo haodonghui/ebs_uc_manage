@@ -1,16 +1,17 @@
 package com.yestae.user.manage.modular.invoice.controller;
 
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yestae.added.dubbo.entity.PoaTmplDubbo;
+import com.yestae.added.dubbo.entity.PoaTmplResult;
+import com.yestae.added.dubbo.service.IPoaTmplDubboService;
 import com.yestae.user.center.dubbo.entity.UserInvoiceVerifyParameter;
 import com.yestae.user.center.dubbo.entity.UserResult;
 import com.yestae.user.center.dubbo.service.IUserCenterInvoiceService;
-import com.yestae.user.center.dubbo.service.IUserCenterService;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.exception.BizExceptionEnum;
 import com.yestae.user.common.exception.BussinessException;
 import com.yestae.user.manage.common.constant.UserInvoiceVerifyState;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.constant.UcConstant;
 import com.yestae.user.manage.core.log.LogObjectHolder;
@@ -23,21 +24,16 @@ import com.yestae.user.manage.core.util.FileUtil;
 import com.yestae.user.manage.core.util.ImageUtil;
 import com.yestae.user.manage.modular.vas.persistence.model.UserInvoice;
 import com.yestae.user.manage.modular.vas.service.IUserInvoiceService;
-import com.yestae.user.tmpl.dubbo.entity.PoaTmplDubbo;
-import com.yestae.user.tmpl.dubbo.entity.PoaTmplResult;
-import com.yestae.user.tmpl.dubbo.service.IPoaTmplDubboService;
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Date;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -53,11 +49,11 @@ public class UserInvoiceController extends BaseController {
 
     private String PREFIX = "/invoice/userInvoice/";
 
-    @Autowired
+    @Resource
     private IUserInvoiceService userInvoiceService;
-    @Resource
+    @DubboReference
     private IUserCenterInvoiceService userCenterInvoiceService;
-    @Resource
+    @DubboReference
     private IPoaTmplDubboService poaTmplDubboService;
     @Resource
     private ImageUtil imageUtil;
@@ -79,7 +75,7 @@ public class UserInvoiceController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(String condition) {
-        Page<UserInvoice> page = new PageFactory<UserInvoice>().defaultPage();
+        Page<UserInvoice> page = new Page();
         Map<String, Object> paramMap = HttpKit.getRequestParametersMap();
         List<UserInvoice> userInvoices = userInvoiceService.selectUserInvoiceList(page, paramMap);
         for(UserInvoice ui: userInvoices){

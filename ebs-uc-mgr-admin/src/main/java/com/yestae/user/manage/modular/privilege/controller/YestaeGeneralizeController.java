@@ -1,30 +1,27 @@
 package com.yestae.user.manage.modular.privilege.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.dubbo.common.utils.StringUtils;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.common.util.DateUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.core.support.HttpKit;
 import com.yestae.user.manage.core.util.ExcelUtil;
 import com.yestae.user.manage.core.util.PrivacyHideUtil;
 import com.yestae.user.manage.modular.privilege.service.IYestaeGeneralizeService;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 推广明细控制器
@@ -81,7 +78,7 @@ public class YestaeGeneralizeController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeGeneralizeService.selectYestaeGeneralizeList(page, map);
         
@@ -100,7 +97,7 @@ public class YestaeGeneralizeController extends BaseController {
     @RequestMapping(value = "/sale/list")
     @ResponseBody
     public Object listSale() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	if(!StringUtils.isEmpty(map.get("startRegistTime"))){
     		List<Map<String, Object>> list = yestaeGeneralizeService.selectSaleList(page, map);
@@ -156,7 +153,7 @@ public class YestaeGeneralizeController extends BaseController {
     @RequestMapping(value = "/sale/list/detail")
     @ResponseBody
     public Object listSaleDeatil() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeGeneralizeService.selectSaleDetailList(page, map);
     	
@@ -207,7 +204,7 @@ public class YestaeGeneralizeController extends BaseController {
     @RequestMapping(value = "/relationList")
     @ResponseBody
     public Object relationList() {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, String> map = HttpKit.getRequestParameters();
     	List<Map<String, Object>> list = yestaeGeneralizeService.selectYestaeUserRelationList(page, map);
     	for(Map<String, Object> m: list){

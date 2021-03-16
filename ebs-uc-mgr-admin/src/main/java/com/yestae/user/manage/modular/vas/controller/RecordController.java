@@ -1,9 +1,8 @@
 package com.yestae.user.manage.modular.vas.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Maps;
 import com.yestae.user.center.dubbo.entity.*;
 import com.yestae.user.center.dubbo.service.IUserCenterAddedService;
@@ -13,7 +12,6 @@ import com.yestae.user.common.util.Convert;
 import com.yestae.user.common.util.ThreadPoolExecutorUtil;
 import com.yestae.user.common.util.ToolUtil;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.log.LogObjectHolder;
 import com.yestae.user.manage.core.mutidatasource.DataSourceContextHolder;
@@ -31,6 +29,7 @@ import com.yestae.user.manage.modular.vas.persistence.model.Record;
 import com.yestae.user.manage.modular.vas.service.IRecordService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +66,9 @@ public class RecordController extends BaseController {
     private IRecordService recordService;
     @Autowired
     private IYestaeUserService yestaeUserService;
-    @Resource
+	@DubboReference
    	private IUserCenterService userCenterService;
-    @Resource
+    @DubboReference
     private IUserCenterAddedService userCenterAddedService;
     @Resource
     ExcelUtil excelUtil;
@@ -102,7 +101,7 @@ public class RecordController extends BaseController {
     @RequestMapping("/record_update/{recordId}")
     @DataSource(name="dataSourceUc")
     public String recordUpdate(@PathVariable String recordId, Model model) {
-        Record record = recordService.selectById(recordId);
+        Record record = recordService.getById(recordId);
         model.addAttribute("record",record);
         LogObjectHolder.me().set(record);
         return PREFIX + "record_edit.html";
@@ -115,7 +114,7 @@ public class RecordController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object list(String condition) {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>> ().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, Object> paramMap = HttpKit.getRequestParametersMap();
     	String name = MapUtils.getString(paramMap, "name");
     	String mobile = MapUtils.getString(paramMap, "mobile");
@@ -125,14 +124,14 @@ public class RecordController extends BaseController {
     	
     	if(!StringUtils.isEmpty(name) || !StringUtils.isEmpty(mobile)){
     		
-    		EntityWrapper<YestaeUser> wrapper = new EntityWrapper<YestaeUser>();
+    		QueryWrapper<YestaeUser> wrapper = new QueryWrapper<YestaeUser>();
     		if(!StringUtils.isEmpty(name)){
     			wrapper.eq("name", name);
     		}
     		if(!StringUtils.isEmpty(mobile)){
     			wrapper.eq("mobile", mobile);
     		}
-    		userList = yestaeUserService.selectList(wrapper);
+    		userList = yestaeUserService.list(wrapper);
     		if(userList != null && userList.size() > 0){
     			List<Long> userIdList = new ArrayList<>();
         		for(YestaeUser user: userList){ 
@@ -156,9 +155,9 @@ public class RecordController extends BaseController {
     			}
     			if(userIdList.size() > 0){
     				
-    				EntityWrapper<YestaeUser> wrapper = new EntityWrapper<YestaeUser>();
+    				QueryWrapper<YestaeUser> wrapper = new QueryWrapper<YestaeUser>();
     				wrapper.in("user_id", userIdList);
-    				userList = yestaeUserService.selectList(wrapper);
+    				userList = yestaeUserService.list(wrapper);
     			}
     		}
     	}
@@ -200,8 +199,8 @@ public class RecordController extends BaseController {
     @RequestMapping("/import")
     @DataSource(name="dataSourceUc")
     @ResponseBody
-	public Object importVasRecord(@RequestParam("file") MultipartFile file, 
-			HttpServletRequest request, HttpServletResponse response){
+	public Object importVasRecord(@RequestParam("file") MultipartFile file,
+								  HttpServletRequest request, HttpServletResponse response){
     	String vasId = request.getParameter("vasId");
     	Map<String, Object> retMap = new HashMap<>();
     	
@@ -247,11 +246,11 @@ public class RecordController extends BaseController {
 						
 						//多线程需要设置数据源
 						DataSourceContextHolder.setDataSourceType(dataSourceType);
-						
-						Wrapper<YestaeUser> userWrapper = new EntityWrapper<>();
+
+						QueryWrapper<YestaeUser> userWrapper = new QueryWrapper<>();
 						userWrapper.eq("if_del", SysEnum.NO.getCode());
 						userWrapper.eq("mobile", mobile);
-						List<YestaeUser> userList = yestaeUserService.selectList(userWrapper);
+						List<YestaeUser> userList = yestaeUserService.list(userWrapper);
 						
 						Long userId = null;
 						
@@ -259,14 +258,14 @@ public class RecordController extends BaseController {
 						if(userList != null && userList.size() > 0){
 							YestaeUser yestaeUser = userList.get(0);
 							userId = Convert.toLong(yestaeUser.getUserId());
-							
-							Wrapper<Record> recordWrapper = new EntityWrapper<>();
+
+							QueryWrapper<Record> recordWrapper = new QueryWrapper<>();
 							recordWrapper.eq("added_service_id", vasId);
 							recordWrapper.eq("user_id", yestaeUser.getUserId());
 							recordWrapper.eq("invalid", UserConstant.VAS_RECORD_INVALID);
 							recordWrapper.gt("end_time", new Date().getTime());
 							recordWrapper.lt("begin_time", new Date().getTime());
-							int count = recordService.selectCount(recordWrapper);
+							int count = recordService.count(recordWrapper);
 							//该用户已购买的增值服务尚未到期
 							if(count > 0){
 								Map<String, Object> warnMap = new HashMap<>();
@@ -286,10 +285,10 @@ public class RecordController extends BaseController {
 								name = name.substring(0, UserConstant.NAME_LENGTH);
 							}
 							//查询用户名是否存在，存在则修改用户名
-							Wrapper<YestaeUser> userNameWrapper = new EntityWrapper<>();
+							QueryWrapper<YestaeUser> userNameWrapper = new QueryWrapper<>();
 							userNameWrapper.eq("if_del", SysEnum.NO.getCode());
 							userNameWrapper.eq("name", name);
-							int userNameCount = yestaeUserService.selectCount(userNameWrapper);
+							int userNameCount = yestaeUserService.count(userNameWrapper);
 							
 							//用户名存在
 							if(userNameCount > 0){
@@ -300,10 +299,10 @@ public class RecordController extends BaseController {
 									String newName = name.concat(ToolUtil.getRandomString(UserConstant.NAME_LENGTH - name.length()));
 									
 									//再次查询用户名是否存在，存在则跳过该用户
-									Wrapper<YestaeUser> userNameWrapper2 = new EntityWrapper<>();
+									QueryWrapper<YestaeUser> userNameWrapper2 = new QueryWrapper<>();
 									userNameWrapper2.eq("if_del", SysEnum.NO.getCode());
 									userNameWrapper2.eq("name", newName);
-									int reCount = yestaeUserService.selectCount(userNameWrapper2);
+									int reCount = yestaeUserService.count(userNameWrapper2);
 									if(reCount == 0){
 										userRegisterParameter.setName(newName);
 										nameFlag = false;
@@ -475,7 +474,7 @@ public class RecordController extends BaseController {
 		}
 
 		//查询用户增值服
-		Record record = recordService.selectById(recordId);
+		Record record = recordService.getById(recordId);
 		if (record != null) {
 			Long userId = record.getUserId();
 			YestaeUser yestaeUser = yestaeUserService.selectByUserId(String.valueOf(userId));

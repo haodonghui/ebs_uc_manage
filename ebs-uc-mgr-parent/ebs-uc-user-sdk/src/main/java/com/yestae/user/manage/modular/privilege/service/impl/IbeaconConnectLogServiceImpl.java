@@ -1,9 +1,9 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import com.yestae.user.manage.modular.privilege.persistence.model.IbeaconConnectLog;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.persistence.dao.IbeaconConnectLogMapper;
+import com.yestae.user.manage.modular.privilege.persistence.model.IbeaconConnectLog;
 import com.yestae.user.manage.modular.privilege.service.IIbeaconConnectLogService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

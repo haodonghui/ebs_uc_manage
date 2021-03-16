@@ -1,25 +1,8 @@
 package com.yestae.user.manage.modular.vas.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yestae.user.common.cache.CacheKit;
 import com.yestae.user.manage.common.constant.cache.Cache;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.base.tips.ErrorTip;
 import com.yestae.user.manage.core.constant.UcConstant;
@@ -37,6 +20,20 @@ import com.yestae.user.manage.modular.vas.service.IOrganizService;
 import com.yestae.user.manage.modular.vas.service.IPageContentService;
 import com.yestae.user.manage.modular.vas.service.IVasImageService;
 import com.yestae.user.manage.modular.vas.service.IVasService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 增值服务控制器
@@ -83,11 +80,11 @@ public class VasController extends BaseController {
     @RequestMapping("/vas_update/{vasId}")
     @DataSource(name="dataSourceUc")
     public String vasUpdate(@PathVariable String vasId, Model model) {
-        Vas vas = vasService.selectById(vasId);
+        Vas vas = vasService.getById(vasId);
         
         if(vas != null){
         	
-        	Organiz organiz = organizService.selectById(vas.getOrganizId());
+        	Organiz organiz = organizService.getById(vas.getOrganizId());
         	if(organiz != null){
         		model.addAttribute("organizName", organiz.getOrganizName());
         	}
@@ -126,7 +123,7 @@ public class VasController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object list(String condition) {
-    	Page<Map<String, Object>> page = new PageFactory<Map<String, Object>> ().defaultPage();
+    	Page<Map<String, Object>> page = new Page();
     	Map<String, Object> paramMap = HttpKit.getRequestParametersMap();
     	List<Map<String, Object>> vasList = vasService.selectVasList(page, paramMap);
     	for(Map<String, Object> map: vasList){
@@ -161,7 +158,7 @@ public class VasController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object delete(@RequestParam String vasId) {
-    	Vas vas = vasService.selectById(vasId);
+    	Vas vas = vasService.getById(vasId);
     	if(vas != null){
     		if(VasConstants.VAS_STATUS_NO_PUBLISH != vas.getStatus()){
     			return new ErrorTip(0, "增值服务不是待发布状态，不能删除");
@@ -181,7 +178,7 @@ public class VasController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object publish(@RequestParam String vasId) {
-    	Vas vas = vasService.selectById(vasId);
+    	Vas vas = vasService.getById(vasId);
     	if(vas != null){
     		vas.setUpdateBy(ShiroKit.getUser().getId());
     		vas.setUpdateTime(new Date().getTime());
@@ -198,7 +195,7 @@ public class VasController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object offline(@RequestParam String vasId) {
-    	Vas vas = vasService.selectById(vasId);
+    	Vas vas = vasService.getById(vasId);
     	if(vas != null){
     		vas.setUpdateBy(ShiroKit.getUser().getId());
     		vas.setUpdateTime(new Date().getTime());
@@ -230,6 +227,6 @@ public class VasController extends BaseController {
     @DataSource(name="dataSourceUc")
     @ResponseBody
     public Object detail(@PathVariable("vasId") String vasId) {
-        return vasService.selectById(vasId);
+        return vasService.getById(vasId);
     }
 }

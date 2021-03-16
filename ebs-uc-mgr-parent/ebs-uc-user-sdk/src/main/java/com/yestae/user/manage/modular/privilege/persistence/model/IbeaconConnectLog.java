@@ -1,13 +1,12 @@
 package com.yestae.user.manage.modular.privilege.persistence.model;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.yestae.user.common.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.yestae.user.common.util.DateUtils;
+import java.io.Serializable;
 
 
 /**

@@ -1,17 +1,15 @@
 package com.yestae.user.manage.modular.system.controller;
 
-import com.baomidou.mybatisplus.mapper.SqlRunner;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import com.yestae.user.manage.common.annotion.BussinessLog;
 import com.yestae.user.manage.common.annotion.Permission;
 import com.yestae.user.manage.common.constant.Const;
-import com.yestae.user.manage.common.constant.factory.PageFactory;
 import com.yestae.user.manage.core.base.controller.BaseController;
 import com.yestae.user.manage.core.mutidatasource.annotion.DataSource;
 import com.yestae.user.manage.modular.system.dao.LogDao;
 import com.yestae.user.manage.modular.system.persistence.model.OperationLog;
 import com.yestae.user.manage.modular.system.warpper.LogWarpper;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,8 +51,8 @@ public class LoginLogController extends BaseController {
     @Permission(Const.ADMIN_NAME)
     @ResponseBody
     public Object list(@RequestParam(required = false) String beginTime, @RequestParam(required = false) String endTime, @RequestParam(required = false) String logName) {
-        Page<OperationLog> page = new PageFactory<OperationLog>().defaultPage();
-        List<Map<String, Object>> result = logDao.getLoginLogs(page, beginTime, endTime, logName, page.getOrderByField(), page.isAsc());
+        Page<OperationLog> page = new Page();
+        List<Map<String, Object>> result = logDao.getLoginLogs(page, beginTime, endTime, logName, null, Boolean.FALSE);
         page.setRecords((List<OperationLog>) new LogWarpper(result).warp());
         return super.packForBT(page);
     }

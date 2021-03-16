@@ -1,9 +1,9 @@
 package com.yestae.user.manage.modular.privilege.service.impl;
 
-import com.yestae.user.manage.modular.privilege.persistence.model.PlatformUser;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yestae.user.manage.modular.privilege.persistence.dao.PlatformUserMapper;
+import com.yestae.user.manage.modular.privilege.persistence.model.PlatformUser;
 import com.yestae.user.manage.modular.privilege.service.IPlatformUserService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
